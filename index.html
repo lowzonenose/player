@@ -31,73 +31,103 @@
           <h1>
 <a id="playgroundjs" class="anchor" href="#playgroundjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>playgroundjs</h1>
 
-<p>C'est tout simplement un JsFiddle Like !
-Il est adapté pour l'utilisation de l'API JS Geoportail...</p>
+<p>C'est tout simplement un JsFiddle Like !</p>
+
+<p>Il est adapté pour l'utilisation de l'API JS Geoportail...</p>
 
 <h2>
 <a id="exemples" class="anchor" href="#exemples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exemples</h2>
 
-<p>avec {host} = http://localhost:8383/test-player/www/</p>
+<p>avec {host} = url de deploiement </p>
 
-<ol>
+<p>ex. http://localhost:8383/test-player/www/</p>
+
+<ul>
 <li>
 <p>{host}/template.html</p>
 
+<blockquote>
 <p>Par défaut, on recherche dans le répertoire ./samples/sample_1/, 
 les fichiers sample_1.(html,css,js)</p>
+</blockquote>
 </li>
 <li>
 <p>{host}/template.html?sample_name=sample_1</p>
 
+<blockquote>
 <p>Par défaut, on recherche dans le répertoire ./samples/{sample_name}/, 
 les fichiers {sample_name}.(html,css,js)</p>
+</blockquote>
 </li>
 <li>
 <p>{host}/template.html?sample_name=sample_1&amp;type=extended</p>
 
+<blockquote>
 <p>Idem, et on charge la librarie API JS Geoportail en mode Extended
 (value : extended|ext, standard|std, mobile|mob, 3d, flash|f, gouv|g, minimal|min).</p>
+</blockquote>
 </li>
 <li>
 <p>{host}/template.html?sample_path=samples&amp;sample_name=sample_1</p>
 
+<blockquote>
 <p>On recherche les fichiers {sample_name}.(html,css,js) dans le répertoire
 ./{sample_path}/{sample_name}/.</p>
+</blockquote>
 </li>
 <li>
 <p>{host}/template.html?sample_path=samples&amp;sample_name=sample_1&amp;sample_file_html=&amp;sample_file_js=&amp;sample_file_css=</p>
 
+<blockquote>
 <p>On recherche les differents fichiers dans le répertoire ./{sample_path}/{sample_name}/</p>
+</blockquote>
 </li>
 <li>
 <p>{host}/template.html?sample_file_html=./samples/sample_2/sample_2.html&amp;sample_file_js=./samples/sample_2/sample_2.js&amp;sample_file_css=./samples/sample_2/sample_2.css</p>
 
+<blockquote>
 <p>On met directement le chemin complet des fichiers.</p>
+</blockquote>
 </li>
-<li><p>{host}/template.html?sample_path=./samples/sample_2/&amp;sample_file_html=sample_2.html&amp;sample_file_js=sample_2.js&amp;sample_file_css=sample_2.css
-On recherche les differents fichiers dans le répertoire ./{sample_path}/</p></li>
+<li>
+<p>{host}/template.html?sample_path=./samples/sample_2/&amp;sample_file_html=sample_2.html&amp;sample_file_js=sample_2.js&amp;sample_file_css=sample_2.css</p>
+
+<blockquote>
+<p>On recherche les differents fichiers dans le répertoire ./{sample_path}/</p>
+</blockquote>
+</li>
 <li>
 <p>{host}/template.html?sample_name=./sample_3/&amp;sample_file_html=sample_3.html&amp;sample_file_js=sample_3.js&amp;sample_file_css=sample_3.css</p>
 
+<blockquote>
 <p>On recherche les differents fichiers dans le répertoire ./samples/{sample_name}/.</p>
+</blockquote>
 </li>
-<li><p>{host}/template.html?applysyntaxhighlighter=false
-exemple sans colorisation synthaxique</p></li>
+<li>
+<p>{host}/template.html?applysyntaxhighlighter=false</p>
+
+<blockquote>
+<p>exemple sans colorisation synthaxique</p>
+</blockquote>
+</li>
 <li>
 <p>{host}/template.html?sample_name=sample_1&amp;type=extended&amp;version=2.1.1&amp;url=http%3A%2F%2Fapi.ign.fr%2Fgeoportail%2Fapi%2Fjs%2F"</p>
 
+<blockquote>
 <p>On charge la librarie API JS Geoportail en mode Extended, et on la recherche sur une version sur une url </p>
+</blockquote>
 </li>
-</ol>
+</ul>
 
 <h2>
 <a id="exemple-3d" class="anchor" href="#exemple-3d" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exemple 3D</h2>
 
-<p>{host}/template.html?type=min&amp;sample_file_html=./samples/3d/geoportalCesium_Relief.html&amp;sample_file_js=./samples/3d/geoportalCesium_Relief.js&amp;sample_file_css=./samples/3d/css/geoportalCesium.css</p>
+<ul>
+<li>{host}/template.html?type=min&amp;sample_file_html=./samples/3d/geoportalCesium_Relief.html&amp;sample_file_js=./samples/3d/geoportalCesium_Relief.js&amp;sample_file_css=./samples/3d/css/geoportalCesium.css</li>
+<li>{host}/template.html?type=min&amp;sample_path=samples&amp;sample_name=3d&amp;sample_file_html=geoportalCesium_Relief.html&amp;sample_file_js=js/geoportalCesium_Relief.js&amp;sample_file_css=css/geoportalCesium.css</li>
+</ul>
 
-<p>ou </p>
-
-<p>{host}/template.html?type=min&amp;sample_path=samples&amp;sample_name=3d&amp;sample_file_html=geoportalCesium_Relief.html&amp;sample_file_js=js/geoportalCesium_Relief.js&amp;sample_file_css=css/geoportalCesium.css</p>
+<p><a href="www.github.com">Visit GitHub!</a></p>
         </section>
 
         <aside id="sidebar">
