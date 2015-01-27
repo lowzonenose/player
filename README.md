@@ -60,4 +60,5 @@ ex. http://localhost:8383/test-player/www/
 * {host}/template.html?type=min&sample_path=samples&sample_name=3d&sample_file_html=geoportalCesium_Relief.html&sample_file_js=js/geoportalCesium_Relief.js&sample_file_css=css/geoportalCesium.css
 
 
-[Visit GitHub!](www.github.com)
+[Visit GitHub!](https://github.com/lowzonenose) | 
+[Help md syntax!](https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown)
