@@ -1,0 +1,27 @@
+{
+    "codemirror" : {
+        "desc" : "Syntax highlighting",
+        "url" : "http://codemirror.net/",
+        "version" :"4.5.0"
+    },
+    "jquery" : {
+        "desc" : "DOM Traversal and Manipulation",
+        "url" : "http://jquery.com/",
+        "version" : "2.1.1"
+    },
+    "requirejs" : {
+        "desc" : "JavaScript file and module loader",
+        "url" : "http://requirejs.org/",
+        "version" : "2.1.15"
+    },
+    "log4javascript": {
+        "desc" : "log4javascript is a JavaScript logging framework based on the Java logging framework log4j.",
+        "url" : "http://log4javascript.org/",
+        "version" : "1.4.9"
+    },
+    "jzip" : {
+        "desc" : "A Javascript class for generating and reading zip files",
+        "url" : "http://stuartk.com/jszip",
+        "version" : "2.3.0"
+    }
+}

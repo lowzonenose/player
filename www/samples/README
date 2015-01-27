@@ -1,0 +1,13 @@
+LISTE D'EXEMPLES
+- sample_1 : exemple éclaté en 3 fichiers = html, js et css
+- sample_2 : idem mais presence des balises d'entêtes (html/head/link/body + script) dans la page principale
+- sample_3 : idem mais avec dependances externes
+- sample_4 : idem mais avec dependances internes + externes
+- sample_5 : 
+- 3d       : exemple avec de la 3D (lib. interne : cesium)
+             ex. de requete 
+             http://localhost:8383/test-player/www/template.html?type=min&sample_file_html=./samples/3d/geoportalCesium_Relief.html&sample_file_js=./samples/3d/geoportalCesium_Relief.js&sample_file_css=./samples/3d/css/geoportalCesium.css
+             http://localhost:8383/test-player/www/template.html?type=min&sample_path=samples&sample_name=3d&sample_file_html=geoportalCesium_Relief.html&sample_file_js=js/geoportalCesium_Relief.js&sample_file_css=css/geoportalCesium.css
+
+Content Delivery Networks :
+cf. https://cdnjs.com/libraries/

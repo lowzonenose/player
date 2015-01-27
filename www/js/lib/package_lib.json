@@ -1,0 +1,52 @@
+{
+    "cdn" : {
+        "desc" : "Content Delivery Networks",
+        "url" : "http://",
+        "version" :"1.0.0"
+    },
+    "config" : {
+        "desc" : "Application Configuration",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "settings" : {
+        "desc" : "Url parameters",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "download" : {
+        "desc" : "Download Management",
+        "url" : "http://",
+        "version" :"1.0.0"
+    },
+    "helper" : {
+        "desc" : "Some tools",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "syntaxhighlighter" : {
+        "desc" : "Overload of Lib. Codemirror",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "logger" : {
+        "desc" : "Overload of Log4javascript",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "type" : {
+        "desc" : "API Version Management",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "dependency" : {
+        "desc" : "Dependency Management",
+        "url" : "http://",
+        "version" : "1.0.0"
+    },
+    "exception" : {
+        "desc" : "Exception Management",
+        "url" : "http://",
+        "version" : "1.0.0"
+    }
+}

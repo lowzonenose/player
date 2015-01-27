@@ -1,0 +1,11 @@
+@import url("modules/style/PlayGroundJS.css");
+@import url("external/codemirror/lib/codemirror.css");
+@import url("external/codemirror/addon/fold/foldgutter.css");
+// THEMES
+// @import url("external/codemirror/theme/eclipse.css");
+// @import url("external/codemirror/theme/elegant.css");
+// @import url("external/codemirror/theme/mdn-like.css");
+
+body {
+    margin: 0px;
+}

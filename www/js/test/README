@@ -1,0 +1,4 @@
+Utilisation du FrameWork Jasmine pour les tests
+> lancer la page de tests : specRunner.html
+
+! ne pas oublier d'ajouter les spec*.js en dependances dans specRunner.html !

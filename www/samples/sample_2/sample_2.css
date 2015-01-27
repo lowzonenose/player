@@ -1,0 +1,38 @@
+    /* code css Exemple 2 */
+    h1 {
+        text-align:center;
+        font-size:0.75em;
+        font-style: italic;
+        width:700px;
+    }
+    div#example_explain {
+        margin:0px 0px 10px 0px;
+        border: thin solid #595E61;
+        width:700px;
+        text-align:justify;
+        font-size: 0.75em;
+        font-style: italic;
+        color: #595E61;
+    }
+    form#gpLangChange {
+        border:0px;
+        margin:0px;
+        padding:0px;
+    }
+    div#viewerDiv {
+        width:700px;
+        height:500px;
+        background-image:url(http://api.ign.fr/geoportail/api/js/2.1.0/theme/geoportal/img/loading.gif);
+        background-position:center center;
+        background-repeat:no-repeat;
+        background-color:white;
+    }
+    div#footer {
+        font-size:x-small;
+        text-align:center;
+        width:700px;
+    }
+    div#footer a, div#footer a:link, div#footer a:visited, div#footer a:hover {
+        text-decoration:none;
+        color:black;
+    }

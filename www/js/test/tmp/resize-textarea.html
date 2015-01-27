@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            table {
+                width: 100%;
+                height: 100%;
+                border-spacing: 1px;
+            }
+            div textarea {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <script type="text/javascript">
+
+            var iex = document.all;
+            var isdrag=false;
+            var x_ini, y_ini;
+            var dobj;
+            var eventButton;//2 si bouton droit
+
+
+            function movemouse(e) {
+		if(eventButton==2) {
+                    /* --------------------------------------
+                    ne pas mettre de fonction alert() dans cet evenement => fonctionne en sonnette!!!
+                    Détecte un click droit
+                    permet lors d'un click droit de modifier la taille d'une image dynamiquement
+                    ---------------------------------------- */
+                    dobj.style.width = iex ? width_ini + eval(event.clientX - x_ini) : width_ini + eval(e.clientX - x_ini);   // on recupere la nouvelle taille en X;
+                    dobj.style.height = iex ? height_ini + eval(event.clientY - y_ini) : height_ini + eval(e.clientY - y_ini); // on recupere la nouvelle taille en Y;
+
+                }
+                else {
+                    if (isdrag) {
+                        dobj.style.left = iex ? tx + event.clientX - x_ini : tx + e.clientX - x_ini;
+                        dobj.style.top  = iex ? ty + event.clientY - y_ini : ty + e.clientY - y_ini;
+                        return false;
+                    }
+                }
+            }
+
+
+
+            function selectmouse(e) {
+                eventButton = iex ? event.button: e.button;
+                isdrag = true;
+                tx = parseInt(dobj.style.left+0); //postion initiale de l'objet
+                ty = parseInt(dobj.style.top+0);
+
+                x_ini = iex ? event.clientX : e.clientX; //position initiale de la souris
+                y_ini = iex ? event.clientY : e.clientY;
+
+                width_ini = dobj.width; //largeur initiale de l'objet
+                height_ini = dobj.height; //hauteur initiale de l'objet
+
+                document.onmousemove=movemouse; //2ieme gestionnaire pour déplacement faible
+                return false;
+            }
+
+
+
+            document.onmousedown=selectmouse;
+            document.onmouseup=new Function("isdrag=false");
+
+
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <table>
+            <tbody>
+                <tr>
+                    <td><div><textarea id="textarea1">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                    <td><div><textarea id="textarea2">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                </tr>
+                <tr>
+                    <td><div><textarea id="textarea3">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                    <td><div><textarea id="textarea4">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

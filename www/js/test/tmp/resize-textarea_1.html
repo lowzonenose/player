@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.2/jquery-ui.js"></script>
+        <style>
+            table {
+                width: 100%;
+                height: 100%;
+                border-spacing: 1px;
+            }
+            #div1 {
+                border: #000 solid 1px;
+                background-color: #00FF00;
+            }
+            #div2 {
+                border: #000 solid 1px;
+                background-color: #0080FF;
+            }
+            #div3 {
+                border: #000 solid 1px;
+                background-color: red;
+            }
+            #div4 {
+                border: #000 solid 1px;
+                background-color: yellow;
+            }
+            div {
+                width: 100%;
+                height: 100%;
+            }
+            textarea {
+                width: 80%;
+                height: 80%;
+                display: block;
+            }
+        </style>
+        <script type="text/javascript">
+              $(function() {
+                $( "#div1" ).resizable();
+              });
+              $(function() {
+                $( "#div2" ).resizable();
+              });
+              $(function() {
+                $( "#div3" ).resizable();
+              });
+              $(function() {
+                $( "#div4" ).resizable();
+              });
+              
+        </script>
+    </head>
+    <body>
+        <div>TODO write content</div>
+        <table>
+            <tbody>
+                <tr>
+                    <td><div id="div1"><textarea id="textarea1">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                    <td><div id="div2"><textarea id="textarea2">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                </tr>
+                <tr>
+                    <td><div id="div3"><textarea id="textarea3">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                    <td><div id="div4"><textarea id="textarea4">cf. http://jpconnexion.free.fr/move_redim_fr/move_redim_explications.html</textarea></div></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>
