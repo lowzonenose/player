@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Player by lowzonenose</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Player</h1>
+        <h2>PlayGroundJS - JsFiddle Like</h2>
+        <a href="https://github.com/lowzonenose/player" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="playgroundjs" class="anchor" href="#playgroundjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>playgroundjs</h1>
+
+<p>C'est tout simplement un JsFiddle Like !
+Il est adapté pour l'utilisation de l'API JS Geoportail...</p>
+
+<h2>
+<a id="exemples" class="anchor" href="#exemples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exemples</h2>
+
+<p>avec {host} = http://localhost:8383/test-player/www/</p>
+
+<ol>
+<li>
+<p>{host}/template.html</p>
+
+<p>Par défaut, on recherche dans le répertoire ./samples/sample_1/, 
+les fichiers sample_1.(html,css,js)</p>
+</li>
+<li>
+<p>{host}/template.html?sample_name=sample_1</p>
+
+<p>Par défaut, on recherche dans le répertoire ./samples/{sample_name}/, 
+les fichiers {sample_name}.(html,css,js)</p>
+</li>
+<li>
+<p>{host}/template.html?sample_name=sample_1&amp;type=extended</p>
+
+<p>Idem, et on charge la librarie API JS Geoportail en mode Extended
+(value : extended|ext, standard|std, mobile|mob, 3d, flash|f, gouv|g, minimal|min).</p>
+</li>
+<li>
+<p>{host}/template.html?sample_path=samples&amp;sample_name=sample_1</p>
+
+<p>On recherche les fichiers {sample_name}.(html,css,js) dans le répertoire
+./{sample_path}/{sample_name}/.</p>
+</li>
+<li>
+<p>{host}/template.html?sample_path=samples&amp;sample_name=sample_1&amp;sample_file_html=&amp;sample_file_js=&amp;sample_file_css=</p>
+
+<p>On recherche les differents fichiers dans le répertoire ./{sample_path}/{sample_name}/</p>
+</li>
+<li>
+<p>{host}/template.html?sample_file_html=./samples/sample_2/sample_2.html&amp;sample_file_js=./samples/sample_2/sample_2.js&amp;sample_file_css=./samples/sample_2/sample_2.css</p>
+
+<p>On met directement le chemin complet des fichiers.</p>
+</li>
+<li><p>{host}/template.html?sample_path=./samples/sample_2/&amp;sample_file_html=sample_2.html&amp;sample_file_js=sample_2.js&amp;sample_file_css=sample_2.css
+On recherche les differents fichiers dans le répertoire ./{sample_path}/</p></li>
+<li>
+<p>{host}/template.html?sample_name=./sample_3/&amp;sample_file_html=sample_3.html&amp;sample_file_js=sample_3.js&amp;sample_file_css=sample_3.css</p>
+
+<p>On recherche les differents fichiers dans le répertoire ./samples/{sample_name}/.</p>
+</li>
+<li><p>{host}/template.html?applysyntaxhighlighter=false
+exemple sans colorisation synthaxique</p></li>
+<li>
+<p>{host}/template.html?sample_name=sample_1&amp;type=extended&amp;version=2.1.1&amp;url=http%3A%2F%2Fapi.ign.fr%2Fgeoportail%2Fapi%2Fjs%2F"</p>
+
+<p>On charge la librarie API JS Geoportail en mode Extended, et on la recherche sur une version sur une url </p>
+</li>
+</ol>
+
+<h2>
+<a id="exemple-3d" class="anchor" href="#exemple-3d" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exemple 3D</h2>
+
+<p>{host}/template.html?type=min&amp;sample_file_html=./samples/3d/geoportalCesium_Relief.html&amp;sample_file_js=./samples/3d/geoportalCesium_Relief.js&amp;sample_file_css=./samples/3d/css/geoportalCesium.css</p>
+
+<p>ou </p>
+
+<p>{host}/template.html?type=min&amp;sample_path=samples&amp;sample_name=3d&amp;sample_file_html=geoportalCesium_Relief.html&amp;sample_file_js=js/geoportalCesium_Relief.js&amp;sample_file_css=css/geoportalCesium.css</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/lowzonenose/player/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/lowzonenose/player/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/lowzonenose/player"></a> is maintained by <a href="https://github.com/lowzonenose">lowzonenose</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
