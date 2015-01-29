@@ -224,6 +224,58 @@
   font-style: italic;
 }
 
+/* INPUT */
+._PlayGroundJS_sidebarInput {
+    width:156px;
+    height: 16px;
+    margin: 2px; 
+}
+
+/* SPRITE BUTTON ADD/REMOVE */
+._PlayGroundJS_sidebarButton {
+    display:inline-block;
+    cursor:pointer;
+    width:16px;
+    height:16px;
+    vertical-align: middle;
+}
+
+#button_add, ._PlayGroundJS_sidebarButton {
+    
+}
+
+#button_remove, ._PlayGroundJS_sidebarButton {
+    
+}
+
+#button_search, ._PlayGroundJS_sidebarButton {
+    
+}
+
+#button_add:hover {
+    background:url("../img/list-add-sprites.png")0 0 no-repeat;
+}
+
+#button_add {
+    background:url("../img/list-add-sprites.png") 0 -16px no-repeat;
+}
+
+#button_remove:hover {
+    background:url("../img/list-remove-sprites.png")0 0 no-repeat;
+}
+
+#button_remove {
+    background:url("../img/list-remove-sprites.png") 0 -16px no-repeat;
+}
+
+#button_search:hover {
+    background:url("../img/loupe-sprites.png")0 0 no-repeat;
+}
+
+#button_search {
+    background:url("../img/loupe-sprites.png") 0 -16px no-repeat;
+}
+
 /* ESPACE DE CODE */
 
 ._PlayGroundJS_codeArea{
@@ -238,7 +290,7 @@
 
 ._PlayGroundJS_codeAreaTable{
   width:100%;
-  /* height:100%; */
+  /* FIXME height:100%; */
   border-collapse: collapse;
 }
 

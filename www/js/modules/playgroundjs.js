@@ -456,6 +456,10 @@ define([
             // INFO 
             // cf. http://stackoverflow.com/questions/4368946/javascript-callback-for-multiple-ajax-calls
             
+            // FIXME 
+            // impl. promises sous IE ? 
+            // l'utilisation à travers JQuery devrait fonctionner ?
+            // cf. http://caniuse.com/#feat=promises
             $.when(
                 
                 // HTML
@@ -668,6 +672,13 @@ define([
                 cssApiDeps += '<link rel="stylesheet" type="text/css" href="' + cssDeps[i] + '"/>'
             }
             
+            // ressources externes
+            var jsDepExternals = "";
+            var jsExternals = this.uisidebar.get_jsdep_external();
+            for(var i=0; i<jsExternals.length; i++) {
+                jsDepExternals += '<script type="text/javascript" src="' + jsExternals[i] + '"></script>'
+            }
+            
             // TODO
             // script JS Framework
             // integration des lib. optionnelles à prévoir...
@@ -683,6 +694,7 @@ define([
                     + '<head>\n' 
                     + jsApi 
                     + jsApiDeps 
+                    + jsDepExternals
                     + cssApiDeps
                     + '\n<style>\n' 
                     + codeCSS 

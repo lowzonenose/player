@@ -69,22 +69,30 @@ define(["jquery"], function($) {
 	}
     
     // class CSS
-    UISideBar.CLASSNAME = "_PlayGroundJS_sidebar";
+    UISideBar.CLASSNAME        = "_PlayGroundJS_sidebar";
     UISideBar.CLASSNAME_LIST   = "_PlayGroundJS_sidebarDivList";
     UISideBar.CLASSNAME_INPUT  = "_PlayGroundJS_sidebarInput";
     UISideBar.CLASSNAME_BUTTON = "_PlayGroundJS_sidebarButton";
     
+    // id
+    UISideBar.ID = 0;
+    
     // id for jquery
-    UISideBar.ID_JSAPI_INFO       = "_jsapi_info_div";
-    UISideBar.ID_JSAPI_MODE       = "_jsapi_mode_input";
-    UISideBar.ID_JSAPI_SELECT     = "_jsapi_dependencies_select";
-    UISideBar.ID_JSAPI_SELECT_CSS = "_jsapi_dependencies_css_select";
-     
+    UISideBar.ID_JSAPI_INFO        = "_jsapi_info_div";
+    UISideBar.ID_JSAPI_MODE        = "_jsapi_mode_div";
+    UISideBar.ID_JSAPI_MODE_CHECK  = "_jsapi_mode_input";
+    UISideBar.ID_JSAPI_DEP            = "_jsapi_dep_div";
+    UISideBar.ID_JSAPI_DEP_SELECT     = "_jsapi_dep_select";
+    UISideBar.ID_JSAPI_DEP_CSS        = "_jsapi_dep_css_div";
+    UISideBar.ID_JSAPI_DEP_SELECT_CSS = "_jsapi_dep_select_css";
+    
+    UISideBar.ID_JSCDN            = "_jsdep_cdn_div";
     UISideBar.ID_JSCDN_INPUT      = "_jsdep_cdn_input";
     UISideBar.ID_JSCDN_BUTTON     = "_jsdep_cdn_button_search";
     UISideBar.ID_JSCDN_SEL_FIND   = "_jsdep_cdn_select_find";
     UISideBar.ID_JSCDN_SEL_LIST   = "_jsdep_cdn_select_list";
     
+    UISideBar.ID_JSEXT               = "_jsdep_external_div";
     UISideBar.ID_JSEXT_INPUT         = "_jsdep_external_input";
     UISideBar.ID_JSEXT_BUTTON_ADD    = "_jsdep_external_button_add";
     UISideBar.ID_JSEXT_BUTTON_REMOVE = "_jsdep_external_button_remove";
@@ -109,6 +117,11 @@ define(["jquery"], function($) {
          * Liste des dependances JS de l'exemple
          */
         m_jsapi_dependencies : [],
+        
+        /**
+         * Liste des ressources externes
+         */
+        m_jsdep_external : [],
         
         constructor: UISideBar,
         
@@ -223,7 +236,7 @@ define(["jquery"], function($) {
             // par defaut, API JS en mode compacté
             $self.m_jsapi_selected = urlcompact;
             
-            var check = $('<input id="'+UISideBar.ID_JSAPI_MODE+'" class="_PlayGroundJS_sidebarCheck" type="checkbox"/>');
+            var check = $('<input id="'+UISideBar.ID_JSAPI_MODE_CHECK+'" class="_PlayGroundJS_sidebarCheck" type="checkbox"/>');
             check.on("click", function() {
                 check.is(":checked" ) ? $self.m_jsapi_selected = urldev : $self.m_jsapi_selected = urlcompact;
             });
@@ -231,21 +244,21 @@ define(["jquery"], function($) {
             // check.attr('disabled', 'disabled'); // .removeAttr('disabled');
             check.attr('title', '[BETA] API JS non compactée');
             
-            return $('<div class="_PlayGroundJS_sidebarContainerInto"></div>')
+            return $('<div id="'+UISideBar.ID_JSAPI_MODE+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                     .append(check)
-                    .append($('<label for="'+UISideBar.ID_JSAPI_MODE+'" class="_PlayGroundJS_sidebarLabel">mode dev.</div>'));
+                    .append($('<label for="'+UISideBar.ID_JSAPI_MODE_CHECK+'" class="_PlayGroundJS_sidebarLabel">mode dev.</div>'));
                     
         },
         
         _jsapi_dependencies: function () {
 
             var select = $('<div \n\
-                id="'   +UISideBar.ID_JSAPI_SELECT+'" \n\
+                id="'   +UISideBar.ID_JSAPI_DEP_SELECT+'" \n\
                 class="'+UISideBar.CLASSNAME_LIST+'"></div>');
             select.attr('disabled', 'disabled');
             select.attr('title', 'Liste des dependances JS');
             
-            return $('<div class="_PlayGroundJS_sidebarContainerInto"></div>')
+            return $('<div id="'+UISideBar.ID_JSAPI_DEP+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                     .append(select);
 
         },
@@ -253,12 +266,12 @@ define(["jquery"], function($) {
         _jsapi_dependencies_css: function () {
             
             var select_css = $('<div \n\
-                id="'   +UISideBar.ID_JSAPI_SELECT_CSS+'" \n\
+                id="'   +UISideBar.ID_JSAPI_DEP_SELECT_CSS+'" \n\
                 class="'+UISideBar.CLASSNAME_LIST+'"></div>');
             select_css.attr('disabled', 'disabled');
             select_css.attr('title', 'Liste des dependances CSS');
             
-            return $('<div class="_PlayGroundJS_sidebarContainerInto"></div>')
+            return $('<div id="'+UISideBar.ID_JSAPI_DEP_CSS+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                     .append(select_css);
             },
         
@@ -298,19 +311,16 @@ define(["jquery"], function($) {
                 class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
             
             input.attr('disabled', 'disabled'); // .removeAttr('disabled');
-            input.attr('title', '[TODO]...');
             
             // bouton de recherche sur le CDN
-            var button_search = $('<button \n\
-                id="'   +UISideBar.ID_JSCDN_BUTTON+'" \n\
-                class="'+UISideBar.CLASSNAME_BUTTON+'" type="button">...</button>');
+            var button_search = $('<div \n\
+                id="button_search" \n\
+                class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
             button_search.on("click", function(event) {
                 console.log(event);
                 // select_find.show();
             });
             
-            button_search.attr('disabled', 'disabled'); // .removeAttr('disabled');
-            button_search.attr('title', '[TODO]...');
             
             // liste des resultats recherchée
             var select_find = $('<select \n\
@@ -329,7 +339,7 @@ define(["jquery"], function($) {
             select_list.on("click", function(event) {console.log(event);});
             select_list.hide();
             
-            return $('<div class="_PlayGroundJS_sidebarContainerInto"></div>')
+            return $('<div id="'+UISideBar.ID_JSCDN+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                         .append(input)
                         .append(button_search)
                         .append(select_find)
@@ -338,40 +348,31 @@ define(["jquery"], function($) {
         
         _jsdep_external: function () {
             
+            var $self = this; // instance de la classe !
+            //
             // zone de saisie
             var input  = $('<input \n\
                 id="'   +UISideBar.ID_JSEXT_INPUT+'" \n\
                 class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
             
-            input.attr('disabled', 'disabled'); // .removeAttr('disabled');
-            input.attr('title', '[TODO]...');
+            // input.attr('disabled', 'disabled'); // .removeAttr('disabled');
             
-            // bouton de recherche sur le CDN
-            var button_add = $('<button \n\
-                id="'   +UISideBar.ID_JSEXT_BUTTON_ADD+'" \n\
-                class="'+UISideBar.CLASSNAME_BUTTON+'" type="button">+</button>');
+            // bouton d'ajout de la ressource
+            var button_add = $('<div \n\
+                id="button_add" \n\
+                class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
             button_add.on("click", function(event) {
-                console.log(event);
-                // select_list.show();
+                var v = input.val();
+                var regex = new RegExp("^http://.*\.js$");
+                if (v && regex.test(v)) {
+                    $self.add_jsdep_external(v);
+                    input.val('');
+                }
             });
-            
-            button_add.attr('disabled', 'disabled'); // .removeAttr('disabled');
-            button_add.attr('title', '[TODO]...');
-    
-            // liste des ajouts
-            var select_list = $('<select \n\
-                id="'   +UISideBar.ID_JSEXT_SEL_LIST+'" \n\
-                class="'+UISideBar.CLASSNAME_SELECT+'" size="0"></select>');
-            select_list.on("click", function(event) {
-                console.log(event);
-            });
-            select_list.hide();
-            
-            
-            return $('<div class="_PlayGroundJS_sidebarContainerInto"></div>')
+
+            return $('<div id="'+UISideBar.ID_JSEXT+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                         .append(input)
-                        .append(button_add)
-                        .append(select_list);
+                        .append(button_add);
         },
         
         /**
@@ -394,8 +395,8 @@ define(["jquery"], function($) {
         clean_jsapi_dependencies: function () {
             // INFO
             // clean des anciennes valeurs...
-            $('#'+UISideBar.ID_JSAPI_SELECT).children().remove();
-            $('#'+UISideBar.ID_JSAPI_SELECT_CSS).children().remove();
+            $('#'+UISideBar.ID_JSAPI_DEP_SELECT).children().remove();
+            $('#'+UISideBar.ID_JSAPI_DEP_SELECT_CSS).children().remove();
         },
         
         get_jsapi_dependencies: function () {
@@ -427,7 +428,7 @@ define(["jquery"], function($) {
             // INFO
             // ajouter des items dans la liste 
             for(var i=0; i<mydeps.length; i++) {
-                $('#'+UISideBar.ID_JSAPI_SELECT)
+                $('#'+UISideBar.ID_JSAPI_DEP_SELECT)
                     .append(
                         new Option(
                             mydeps[i], 
@@ -466,7 +467,7 @@ define(["jquery"], function($) {
             // INFO
             // ajouter des items dans la liste 
             for(var i=0; i<mydeps.length; i++) {
-                $('#'+UISideBar.ID_JSAPI_SELECT_CSS)
+                $('#'+UISideBar.ID_JSAPI_DEP_SELECT_CSS)
                     .append(
                         new Option(
                             mydeps[i], 
@@ -487,8 +488,55 @@ define(["jquery"], function($) {
         /**
          * fonction getter/setter sur JS FRAMEWORK
          */
+        get_jsdep_external: function() {
+            return this.m_jsdep_external;
+        },
         
-        // TODO
+        add_jsdep_external: function (value) {
+        
+            var $self = this; // instance de la classe !
+
+            // Identifiant de la balise, utile lors de la suppression...
+            var id = "list_external_resources_" + UISideBar.ID++;
+            
+            var container = $('<div id="'+ id +'">');
+            
+            // zone d'affichage
+            var input  = $('<input class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
+                input.attr('disabled', 'disabled');
+                input.val(value);
+                input.css({width:'80%'});
+                
+            // bouton de suppression
+            var button_remove = $('<div \n\
+                id="button_remove" \n\
+                class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
+            button_remove.on("click", function(event) {
+                $self.remove_jsdep_external(id, value);
+            });
+            
+            // generate
+            $('#'+UISideBar.ID_JSEXT)
+                .append(
+                    container
+                        .append(input)
+                        .append(button_remove));
+
+            
+            // ajout de cette ressource dans la liste
+            if ($self.m_jsdep_external != null) {
+                $self.m_jsdep_external.push(value);
+            }
+            
+        }, 
+        
+        remove_jsdep_external: function (id, value) {
+            
+            var $self = this; // instance de la classe !
+            console.log(id);
+            throw new Error("Not yet implemeented !");
+        }, 
+        
         
          /**
          * fonction d'insertion dans le menu

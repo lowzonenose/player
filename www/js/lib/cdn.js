@@ -85,7 +85,7 @@ define(function () {
             throw new Error("Param. undefined !");
         }
         
-        this.json = {};
+        this.response = {};
         this.settings = {};
         
         
@@ -172,10 +172,10 @@ define(function () {
 
                     if (XHR.readyState == 4) { // DONE
                         if (XHR.status == 200) {
-                            $self.json = JSON.parse(XHR.responseText);
+                            $self.response = JSON.parse(XHR.responseText);
                             // callback de la reponse !
                             if ($self.settings.callback !== null && typeof $self.settings.callback === 'function') {
-                                $self.settings.callback($self.json.results);
+                                $self.settings.callback.call($self, $self.response.results);
                             }
                         } else {
                             throw new Error("Errors Occured on Http Request Status (" + XHR.status + ") !");
@@ -193,9 +193,9 @@ define(function () {
                     XHR.open('GET', url);
                     XHR.onerror = function () {throw new Error("Errors Occured on Http Request with XDomainRequest !");};
                     XHR.onload = function() {
-                        $self.json = JSON.parse(XHR.responseText);   
+                        $self.response = JSON.parse(XHR.responseText);   
                         if ($self.settings.callback !== null && typeof $self.settings.callback === 'function') {
-                            $self.settings.callback($self.json.results);
+                            $self.settings.callback($self.response.results);
                         }
                     };
                     XHR.send();
@@ -220,7 +220,7 @@ define(function () {
                 scriptf.innerHTML = 'var' + ' ' + CDN.CALLBACK + ' = ' + this.settings.callback.toString();
                 document.body.appendChild(scriptf);
             }
-            else { // FIXME ???
+            else { // FIXME utile ???
                 throw new Error("Not Implemented yet !");
             }
             
@@ -255,28 +255,28 @@ define(function () {
         // ************************************* //
 
         json: function () {
-            return this.json;
+            return this.response;
         },
         
         length: function () {
-            return this.json.total;
+            return this.response.total;
         },
         
         version: function (index) {
-            if (index < this.lenght() || index != null) {
-                return this.json.results[index].version;
+            if (index < this.length() || index != null) {
+                return this.response.results[index].version;
             }
         }
 ,
         name: function (index) {
-            if (index < this.lenght() || index != null) {
-                return this.json.results[index].name;
+            if (index < this.length() || index != null) {
+                return this.response.results[index].name;
             }
         },
         
         url: function (index) {
-            if (index < this.lenght() || index != null) {
-                return this.json.results[index].url;
+            if (index < this.length() || index != null) {
+                return this.response.results[index].latest;
             }
         }
     };

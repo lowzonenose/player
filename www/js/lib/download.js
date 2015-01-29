@@ -9,17 +9,18 @@ define([
      * INFORMATION
      *   types de fonctionnement selon les parametres d'entrée :
      *    - cas n° 1 : Une archive est fournie 
-     *                  donc transfert par URL-HREF 
+     *                  donc simple transfert (mode URI, URL ou TAG)
      *    - cas n° 2 : Une liste de fichier est fournie 
-     *                  donc compression et transfert par DATA-URL ou XHR
+     *                  donc compression et transfert (mode URI)
      *    - cas n° 3 : contenu d'un fichier HTML
-     *                  donc compression et transfert par DATA-URL ou XHR
+     *                  donc compression et transfert (mode URI, URL)
      *    
-     *  +ieurs mode de téléchargements (param. interne)
-     *  Par defaut, en mode XHR ()
+     *  +ieurs mode de téléchargements (param. interne, orienté !)
+     *  Par defaut, en mode URI :
      *      {
      *        mode : (
-     *          "XHR",
+     *          "TAG",
+     *          "URL",
      *          "URI",
      *          "JSP"  // TODO cross-domain possible donc proxy !?
      *          )
@@ -68,7 +69,7 @@ define([
      * NOTES
      * 
      *   l'option 'scope' permet d'interagir avec la fonction 'callback':
-     *   Si "scope : this", le this du callback renvoie l'objet player.
+     *   Si "scope : this", le this du callback renvoie l'objet 'player'.
      *   Par defaut, si le scope n'est pas renseignée, this est associé à l'objet 
      *   'Download'.
      *   
@@ -233,10 +234,9 @@ define([
                     
                 // par defaut !
                 case "URL":
-                    this._sendWithModeXHRtoURL();
-                    
                 default:
-                    throw new Error("mode unknown !?");
+                    this._sendWithModeXHRtoURL();
+
             }
             
         },
@@ -351,7 +351,6 @@ define([
             //   * IE          :  ??
             
             // FIXME
-            // - cf. cdn.js pour la compatibilité sous IE
             // - probleme de contexte de 'this' (impl. du scope)
             // - comment capturer le message d'erreur envoyé par XHR
             
@@ -360,28 +359,16 @@ define([
                             + '/'
                             + $self.settings.archive 
                             + '.zip';
-                    
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", archive_url, true);
-            xhr.responseType = "blob";
-            xhr.overrideMimeType('application/zip');
             
-            xhr.onerror= function(e) {
-                var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
-                
-                if ($self.settings.scope) {
-                    $self.settings.onfailure.call($self.settings.scope, message);
-                } else {
-                    $self.settings.onfailure(message);
-                }
-            };
+            var XHR = null;
             
-            xhr.onload = function(e) {
+            var callbackOnLoad  = function() {
+                // INFO 
                 // je recupère une reponse de type 'blob' !
-                var blob   = xhr.response;
-                
+                var blob   = XHR.response;
+
                 var reader = new FileReader();
-            
+
                 reader.onload = function (event) {
                     var contents = event.target.result;
                     console.log("[mode:XHR][URI] File contents: " + contents);
@@ -391,18 +378,20 @@ define([
                     if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
                         if ($self.settings.scope) {
                             // this : Player class
-                            $self.settings.onsuccess.call($self.settings.scope, "[mode:XHR][URI] cool!");
+                            $self.settings.onsuccess.call($self.settings.scope, "[mode:XHR][URI] All that's cool !");
                             // this : FileReader class
                             // $self.settings.onsuccess.call(this, "[mode:XHR][URI] cool!");
                         } else {
                             // this : Download class
-                            $self.settings.onsuccess.call($self, "[mode:XHR][URI] cool!");
+                            $self.settings.onsuccess.call($self, "[mode:XHR][URI] All that's cool!");
                         }
                     }
                 };
 
                 reader.onerror = function(event) {
-                    var message = "[mode:XHR][URI] File could not be read! Code " + event.target.error.code;
+                    var code     = event.target.error.code;
+                    var response = event.target.responseText;
+                    var message = "[mode:XHR][URI] Errors Occured with FileReader (" + response + ") !";
                     if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
                         if ($self.settings.scope) {
                             $self.settings.onfailure.call($self.settings.scope, message);
@@ -414,11 +403,68 @@ define([
 
                 reader.readAsDataURL(blob);
             };
-            xhr.onreadystatechange = function(e) {
-                // cf. cdn.js
+            var callbackOnError = function(message) {
+                if ($self.settings.scope) {
+                    $self.settings.onfailure.call($self.settings.scope, message);
+                } else {
+                    $self.settings.onfailure(message);
+                }
             };
             
-            xhr.send();
+            if (XMLHttpRequest) {
+                
+                console.log("XMLHttpRequest");
+                
+                XHR = new XMLHttpRequest();
+                XHR.open("GET", archive_url, true);
+                XHR.responseType = "blob";
+                XHR.overrideMimeType('application/zip');
+
+                XHR.onerror = function () {
+                        var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
+                        callbackOnError(message);
+                    };
+
+                XHR.onreadystatechange = function(e) {
+
+                    if (XHR.readyState == 4) { // DONE
+
+                            if (XHR.status == 200) {
+
+                                callbackOnLoad();
+
+                            } 
+                            else {
+                                var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest (Status != 200) !";
+                                if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') { 
+                                    if ($self.settings.scope) {
+                                        $self.settings.onfailure.call($self.settings.scope, message);
+                                    } else {
+                                        $self.settings.onfailure.call($self, message);
+                                    }
+                                }
+                            }
+                        }
+                };
+
+                XHR.send();
+            }
+            else if(XDomainRequest) { // IE+
+                    console.log("Xdomain");
+                    
+                    XHR = new XDomainRequest();
+                    XHR.open('GET', archive_url);
+                    
+                    XHR.onerror = function () {
+                        var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
+                        callbackOnError(message);
+                    };
+                    XHR.onload  = callbackOnLoad;
+                    XHR.send();
+            } 
+            else {
+                throw new Error('CORS not supported');
+            }
         },
         
         _sendWithModeXHRtoURL: function () {
