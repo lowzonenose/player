@@ -1,4 +1,4 @@
-define(["jquery"], function($) {
+define(["jquery", "cdn"], function($, CDN) {
     
     /**
      * DESCRIPTION
@@ -73,9 +73,11 @@ define(["jquery"], function($) {
     UISideBar.CLASSNAME_LIST   = "_PlayGroundJS_sidebarDivList";
     UISideBar.CLASSNAME_INPUT  = "_PlayGroundJS_sidebarInput";
     UISideBar.CLASSNAME_BUTTON = "_PlayGroundJS_sidebarButton";
+    UISideBar.CLASSNAME_SELECT = "_PlayGroundJS_sidebarSelect";
     
-    // id
-    UISideBar.ID = 0;
+    // compteur id
+    UISideBar.COUNT_JSEXT_LIST  = 0;
+    UISideBar.COUNT_JSCDN_LIST  = 0;
     
     // id for jquery
     UISideBar.ID_JSAPI_INFO        = "_jsapi_info_div";
@@ -88,15 +90,16 @@ define(["jquery"], function($) {
     
     UISideBar.ID_JSCDN            = "_jsdep_cdn_div";
     UISideBar.ID_JSCDN_INPUT      = "_jsdep_cdn_input";
-    UISideBar.ID_JSCDN_BUTTON     = "_jsdep_cdn_button_search";
     UISideBar.ID_JSCDN_SEL_FIND   = "_jsdep_cdn_select_find";
-    UISideBar.ID_JSCDN_SEL_LIST   = "_jsdep_cdn_select_list";
+    UISideBar.ID_JSCDN_LIST       = "_jsdep_cdn_list";
     
     UISideBar.ID_JSEXT               = "_jsdep_external_div";
     UISideBar.ID_JSEXT_INPUT         = "_jsdep_external_input";
-    UISideBar.ID_JSEXT_BUTTON_ADD    = "_jsdep_external_button_add";
-    UISideBar.ID_JSEXT_BUTTON_REMOVE = "_jsdep_external_button_remove";
-    UISideBar.ID_JSEXT_SEL_LIST      = "_jsdep_external_select_list";
+    UISideBar.ID_JSEXT_LIST          = "_jsdep_external_list";
+    
+    UISideBar.ID_BUTTON_ADD    = "button_add";
+    UISideBar.ID_BUTTON_REMOVE = "button_remove";
+    UISideBar.ID_BUTTON_SEARCH = "button_search";
     
     UISideBar.prototype = {
         
@@ -123,11 +126,17 @@ define(["jquery"], function($) {
          */
         m_jsdep_external : [],
         
+        /**
+         * Liste des dependances JS Framework
+         */
+        m_jsdep_cdn : [],
+        
         constructor: UISideBar,
         
         /**
          * fonction de generation du code html principale
          */
+        
         generate: function() {
 			
 			// Création JS des sous-menus
@@ -169,11 +178,14 @@ define(["jquery"], function($) {
         clean: function() {
             this.clean_jsapi_dependencies();
             this.clean_jsapi_info();
+            this.clean_jsdep_cdn();
+            this.clean_jsdep_external();
         },
         
         /** 
          * menu sur la rubrique 'geoportail'
          */
+        
         generate_jsapi: function () {
             
             var $this = this.context;
@@ -305,61 +317,106 @@ define(["jquery"], function($) {
         
         _jsdep_cdn: function () {
             
+            var $self = this; // instance de la classe !
+            
             // zone de recherche
             var input  = $('<input \n\
                 id="'   +UISideBar.ID_JSCDN_INPUT+'" \n\
                 class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
             
-            input.attr('disabled', 'disabled'); // .removeAttr('disabled');
+            // input.attr('disabled', 'disabled'); // .removeAttr('disabled');
+            input.attr('title', 'Saisir un mot clef de recherche.');
             
             // bouton de recherche sur le CDN
             var button_search = $('<div \n\
-                id="button_search" \n\
+                id="'   +UISideBar.ID_BUTTON_SEARCH+'" \n\
                 class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
             button_search.on("click", function(event) {
+                
                 console.log(event);
-                // select_find.show();
+                
+                // existe t il deja des anciennes valeurs ? on nettoie ...
+                $self.clean_jsdep_cdn();
+                
+                // on peut maintenant rechercher qqch ...
+                var v = input.val();
+                if (v) {
+
+                    var cdn = new CDN(v);
+                    cdn.request({ 
+                        mode: "json",
+                        callback: function (response) {
+                            // a t on qqch de trouver ?
+                            if (this.length()) {
+
+                                console.log(this.json());
+                                
+                                // on ajoute les resultats dans la liste
+                                for(var i=0; i<this.length(); i++) {
+                                    select_find
+                                        .append(
+                                            new Option(
+                                                this.name(i), 
+                                                this.url(i))
+                                        );
+                                }
+                                
+                                // mise à jour de la taille d'affichage de la liste
+                                // on limite a 5 affichages !
+                                if (this.length() > 5) {
+                                    select_find.attr("size", 5);
+                                }
+                                else {
+                                    select_find.attr("size", this.length());
+                                }
+                                
+                                // affichage de la liste
+                                select_find.show();
+                            }
+                        }
+                    });
+                }
             });
             
             
-            // liste des resultats recherchée
+            // liste des resultats recherchée dans le CDN
             var select_find = $('<select \n\
                 id="'   +UISideBar.ID_JSCDN_SEL_FIND+'" \n\
                 class="'+UISideBar.CLASSNAME_SELECT+'" size="0"></select>');
             select_find.on("click", function(event) {
+                // TODO 
+                // ajout à faire
                 console.log(event);
-                // select_list.show();
+                var k = event.target.textContent;
+                var v = event.target.value;
+                console.log("key:" + k);
+                console.log("val:" + v);
+                
+                $self.add_jsdep_cdn(k, v);
+
             });
             select_find.hide();
-            
-            // ajout d'une lib. externe dans la liste des selections
-            var select_list = $('<select \n\
-                id="'   +UISideBar.ID_JSCDN_SEL_LIST+'" \n\
-                class="'+UISideBar.CLASSNAME_SELECT+'" size="0"></select>');
-            select_list.on("click", function(event) {console.log(event);});
-            select_list.hide();
             
             return $('<div id="'+UISideBar.ID_JSCDN+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                         .append(input)
                         .append(button_search)
-                        .append(select_find)
-                        .append(select_list);
+                        .append(select_find);
         },
         
         _jsdep_external: function () {
             
             var $self = this; // instance de la classe !
-            //
+            
             // zone de saisie
             var input  = $('<input \n\
                 id="'   +UISideBar.ID_JSEXT_INPUT+'" \n\
                 class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
             
-            // input.attr('disabled', 'disabled'); // .removeAttr('disabled');
+            input.attr('title', "Saisir une URL d'une ressource JS"); // .removeAttr('disabled');
             
             // bouton d'ajout de la ressource
             var button_add = $('<div \n\
-                id="button_add" \n\
+                id="'   +UISideBar.ID_BUTTON_ADD+'" \n\
                 class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
             button_add.on("click", function(event) {
                 var v = input.val();
@@ -378,6 +435,7 @@ define(["jquery"], function($) {
         /**
          * fonction getter/setter sur JS API
          */
+        
         get_jsapi_selected: function () {
             return this.m_jsapi_selected;
         },
@@ -390,13 +448,6 @@ define(["jquery"], function($) {
             // INFO
             // clean des anciennes valeurs...
             $('#'+UISideBar.ID_JSAPI_INFO).children().remove();
-        },
-        
-        clean_jsapi_dependencies: function () {
-            // INFO
-            // clean des anciennes valeurs...
-            $('#'+UISideBar.ID_JSAPI_DEP_SELECT).children().remove();
-            $('#'+UISideBar.ID_JSAPI_DEP_SELECT_CSS).children().remove();
         },
         
         get_jsapi_dependencies: function () {
@@ -485,11 +536,96 @@ define(["jquery"], function($) {
 
         },
     
+        clean_jsapi_dependencies: function () {
+            // INFO
+            // clean des anciennes valeurs...
+            $('#'+UISideBar.ID_JSAPI_DEP_SELECT).children().remove();
+            $('#'+UISideBar.ID_JSAPI_DEP_SELECT_CSS).children().remove();
+        },
+        
         /**
-         * fonction getter/setter sur JS FRAMEWORK
+         * fonctions sur JS FRAMEWORK
          */
+        
+        get_jsdep_cdn: function() {
+            return this.m_jsdep_cdn;
+        },
+        
+        clean_jsdep_cdn: function() {
+            $('#'+UISideBar.ID_JSCDN_SEL_FIND).children().remove();
+            $('#'+UISideBar.ID_JSCDN_SEL_FIND).attr("size", 0);
+            $('#'+UISideBar.ID_JSCDN_SEL_FIND).hide();
+        },
+        
+        add_jsdep_cdn: function (key, value) {
+        
+            var $self = this; // instance de la classe !
+
+            // Identifiant de la balise, utile lors de la suppression...
+            var id    = UISideBar.COUNT_JSCDN_LIST++;
+            var idcss = UISideBar.ID_JSCDN_LIST + "_" + id;
+            
+            var container = $('<div id="'+ idcss +'">');
+            
+            // zone d'affichage
+            var input  = $('<input class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
+                input.attr('disabled', 'disabled');
+                input.val(key);
+                input.css({width:'80%'});
+                
+            // bouton de suppression
+            var button_remove = $('<div \n\
+                id="'   +UISideBar.ID_BUTTON_REMOVE+'" \n\
+                class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
+            button_remove.on("click", function(event) {
+                $self.remove_jsdep_cdn(id);
+            });
+            
+            // ajout de l'entrée à la suite...
+            $('#'+UISideBar.ID_JSCDN)
+                .append(
+                    container
+                        .append(input)
+                        .append(button_remove));
+
+            
+            // ajout de cette ressource dans la liste
+            if ($self.m_jsdep_cdn != null) {
+                $self.m_jsdep_cdn.push(value);
+            }
+            
+        },
+        
+        remove_jsdep_cdn: function (index) {
+            
+            var $self = this; // instance de la classe !
+            console.log(index);
+            
+            if (index > ($self.m_jsdep_cdn.length - 1)) {
+                throw new RangeError("Index Out Of Bounds");
+                return;
+            }
+            
+            // mise à vide de la ressource, mais on ne la supprime pas !
+            if ($self.m_jsdep_cdn != null) {
+                $self.m_jsdep_cdn[index] = null;
+            }
+            
+            console.log($('#'+UISideBar.ID_JSCDN_LIST+'_'+index));
+            
+            $('#'+UISideBar.ID_JSCDN_LIST+'_'+index).remove();
+        }, 
+        
+        /**
+         * fonctions sur JS EXTERNAL
+         */
+        
         get_jsdep_external: function() {
             return this.m_jsdep_external;
+        },
+        
+        clean_jsdep_external: function() {
+            throw new Error("Not yet implemented !");
         },
         
         add_jsdep_external: function (value) {
@@ -497,9 +633,10 @@ define(["jquery"], function($) {
             var $self = this; // instance de la classe !
 
             // Identifiant de la balise, utile lors de la suppression...
-            var id = "list_external_resources_" + UISideBar.ID++;
+            var id    = UISideBar.COUNT_JSEXT_LIST++;
+            var idcss = UISideBar.ID_JSEXT_LIST + "_" + id;
             
-            var container = $('<div id="'+ id +'">');
+            var container = $('<div id="'+ idcss +'">');
             
             // zone d'affichage
             var input  = $('<input class="'+UISideBar.CLASSNAME_INPUT+'" type="text">');
@@ -509,13 +646,13 @@ define(["jquery"], function($) {
                 
             // bouton de suppression
             var button_remove = $('<div \n\
-                id="button_remove" \n\
+                id="'   +UISideBar.ID_BUTTON_REMOVE+'" \n\
                 class="'+UISideBar.CLASSNAME_BUTTON+'"></div>');
             button_remove.on("click", function(event) {
-                $self.remove_jsdep_external(id, value);
+                $self.remove_jsdep_external(id);
             });
             
-            // generate
+            // ajout de l'entrée à la suite...
             $('#'+UISideBar.ID_JSEXT)
                 .append(
                     container
@@ -530,13 +667,25 @@ define(["jquery"], function($) {
             
         }, 
         
-        remove_jsdep_external: function (id, value) {
+        remove_jsdep_external: function (index) {
             
             var $self = this; // instance de la classe !
-            console.log(id);
-            throw new Error("Not yet implemeented !");
+            console.log(index);
+            
+            if (index > ($self.m_jsdep_external.length - 1)) {
+                throw new RangeError("Index Out Of Bounds");
+                return;
+            }
+            
+            // mise à vide de la ressource, mais on ne la supprime pas !
+            if ($self.m_jsdep_external != null) {
+                $self.m_jsdep_external[index] = null;
+            }
+            
+            console.log($('#'+UISideBar.ID_JSEXT_LIST+'_'+index));
+            
+            $('#'+UISideBar.ID_JSEXT_LIST+'_'+index).remove();
         }, 
-        
         
          /**
          * fonction d'insertion dans le menu
@@ -544,6 +693,7 @@ define(["jquery"], function($) {
          * - sous-rubrique
          * - element 
          */
+        
         topic: function () {
             throw new Error("Not yet implemented !");
         },

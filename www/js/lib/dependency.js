@@ -172,8 +172,8 @@ define(function () {
                 (function(j){
                     var dep = $this.dependencies[j];
                     if (dep.type === type) {
-                   deps.push(dep); 
-                }
+                        deps.push(dep); 
+                    }
                 })(i);
             }
             

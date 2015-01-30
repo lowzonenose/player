@@ -224,14 +224,21 @@
   font-style: italic;
 }
 
-/* INPUT */
+._PlayGroundJS_sidebarSelect {
+    border:1px solid black;
+    overflow:auto;
+    font-style: italic;
+    background-color: #C77A04;
+    width: 100%;
+}
+
+/* SPRITE BUTTON ADD/REMOVE/SEARCH */
 ._PlayGroundJS_sidebarInput {
     width:156px;
     height: 16px;
     margin: 2px; 
 }
 
-/* SPRITE BUTTON ADD/REMOVE */
 ._PlayGroundJS_sidebarButton {
     display:inline-block;
     cursor:pointer;

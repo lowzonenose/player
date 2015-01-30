@@ -12,12 +12,13 @@ define(["cdn"], function (CDN) {
         var url     = "http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.js";
         
         beforeEach(function() {
-            cdn = new CDN("codemirror");
+            
             
         });
        
         it("Test requete avec callback sur mode JSON (anonyme)", function() {
 
+            cdn = new CDN("codemirror");
             cdn.request({
                 callback: function (response) {
                     console.log(this.json());
@@ -38,6 +39,7 @@ define(["cdn"], function (CDN) {
         
         it("Test requete avec callback sur mode JSON", function() {
             
+            cdn = new CDN("codemirror");
             cdn.request({
                 callback: callback
             });
@@ -53,6 +55,7 @@ define(["cdn"], function (CDN) {
         
         it("Test requete avec callback sur mode JSONP (anonyme)", function() {
             
+            cdn = new CDN("codemirror");
             cdn.request({
                 mode: "jsonp",
                 callback: function (response) {
@@ -67,6 +70,7 @@ define(["cdn"], function (CDN) {
         
         it("Test requete avec callback sur mode JSONP", function() {
 
+            cdn = new CDN("codemirror");
             cdn.request({
                 mode: "jsonp",
                 callback: "callback4jsonp"
@@ -82,5 +86,20 @@ define(["cdn"], function (CDN) {
         
         });
         
+        it("Test requete sans resultat", function() {
+
+            cdn = new CDN("test");
+            cdn.request({
+                mode: "jsonp",
+                callback: function (response) {
+                    console.log(response);
+                    console.log(response.total);
+                    console.log(response.results[0].version);
+                    console.log(response.results[0].name);
+                    console.log(response.results[0].latest);
+                }
+            });
+
+        });
     });
 });

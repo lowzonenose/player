@@ -672,16 +672,26 @@ define([
                 cssApiDeps += '<link rel="stylesheet" type="text/css" href="' + cssDeps[i] + '"/>'
             }
             
+            
+            // script JS Framework
+            var jsDepFramework = "";
+            var jsFrameworks = this.uisidebar.get_jsdep_cdn();
+            for(var i=0; i<jsFrameworks.length; i++) {
+                // on filtre celles qui sont nulles !
+                if (jsFrameworks[i] != null) {
+                    jsDepFramework += '<script type="text/javascript" src="' + jsFrameworks[i] + '"></script>';
+                }
+            }
+
             // ressources externes
             var jsDepExternals = "";
             var jsExternals = this.uisidebar.get_jsdep_external();
             for(var i=0; i<jsExternals.length; i++) {
-                jsDepExternals += '<script type="text/javascript" src="' + jsExternals[i] + '"></script>'
+                // on filtre celles qui sont nulles !
+                if (jsExternals[i] != null) {
+                    jsDepExternals += '<script type="text/javascript" src="' + jsExternals[i] + '"></script>';
+                }
             }
-            
-            // TODO
-            // script JS Framework
-            // integration des lib. optionnelles à prévoir...
             
             // TODO 
             // callback à mettre en place !
@@ -695,6 +705,7 @@ define([
                     + jsApi 
                     + jsApiDeps 
                     + jsDepExternals
+                    + jsDepFramework
                     + cssApiDeps
                     + '\n<style>\n' 
                     + codeCSS 
@@ -714,6 +725,8 @@ define([
                     + '</body>\n'
                     + '</html>';
 
+            this.m_Logger.debug(this.m_resultHtml);
+            
             this.doWriteResult(this.m_resultHtml);
         },
 
