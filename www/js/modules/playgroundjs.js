@@ -835,7 +835,7 @@ define([
             
             // FIXME
             // téléchargement du fichier resultat zippé avec AJAX en utilisant la servlet du projet API :
-            // XMLHttpRequest cannot load http://localhost:9999/geoportail/api/save?&fn=downloadSample2.html&ct=text/html&dt=null. 
+            // XMLHttpRequest cannot load http://localhost:9999/geoportail/api/save?fn=downloadSample2.html&ct=text/html&dt=null. 
             // No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8383' is therefore not allowed access.
             // => on a un probleme de cross domain avec des servlets hebergées sur un autre domaine !!!
             // 
@@ -843,7 +843,7 @@ define([
             // en mode GET, on risque un pb de longueur d'url en mode HTML ...
             // 
             // FIXME 
-            // en mode POST, la servlet ne permet de choisir le nom du fichier, ni son content...
+            // en mode POST, la servlet ne permet de choisir le nom du fichier...
             // => dev. à prevoir sur la servlet...
 
 

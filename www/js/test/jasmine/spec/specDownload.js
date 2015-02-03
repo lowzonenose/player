@@ -37,7 +37,7 @@ define(["download"], function (Download) {
                 base: "resources/",
                 mode: "TAG",
                 onsuccess: function (e) {
-                    console.log("failure : " + e);
+                    console.log("success : " + e);
                 },
                 onfailure: function (e) {
                     console.log("failure : " + e);
@@ -101,7 +101,7 @@ define(["download"], function (Download) {
         });
         
         it("Test du téléchargement d'une archive en mode par defaut", function() {
-            pending();
+            // pending();
             var options = {
                 archive: "sample",
                 base: "resources/",

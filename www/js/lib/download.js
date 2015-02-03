@@ -168,7 +168,7 @@ define([
             throw new ReferenceError("Not yet implemented !");
         }
 
-        // callback à mettre en place 
+        // callback  
         //  * onsuccess 
         //  * onfailure
         if (this.settings.onsuccess == null) {
@@ -232,9 +232,9 @@ define([
                     this._sendWithModeXHRtoURI();
                     break;
                     
-                // par defaut !
+                // par defaut !    
                 case "URL":
-                default:
+                default:    
                     this._sendWithModeXHRtoURL();
 
             }
@@ -266,10 +266,16 @@ define([
             
         },
         
-        /**
+        /****************************
          * Méthode de téléchargements 
-         */
+         ****************************/
         
+        /**
+         * Mise en place d'une balise <a> dans le "document", 
+         * et execution de l'evenement "click()".
+         * 
+         * @returns {undefined}
+         */
         _sendWithModeTAG: function () {
             
             var $self = this;
@@ -279,18 +285,18 @@ define([
             //   '<a href=... download=... />'
             // puis, execution de l'event 'click'
             
+            // FAKE
+            // à cause d'un BUG sous FF, il faut mettre en place reellement la balise 
+            // de téléchargement mais cachée :
+            // '<a href=... download=... style="visibility: hidden;" />'
             
             // FIXME 
-            // compatibilité difficile entre navigateur
-            //   * FF 34       : NOK
+            // compatibilité entre navigateur
+            //   * FF 34       :  OK
+            //   * FF 35       :  OK
             //   * Chromium 39 :  OK
             //   * Opera 12.16 :  OK
             //   * IE          : ???
-            
-            // FIXME
-            // - archive avec extension 'zip' uniquement !
-            // - test sur le path de l'url
-            
             
             var archive_name = 
                     Download.PARAMS_ARCHIVE_NAME + '.' + 
@@ -299,36 +305,56 @@ define([
             var archive_url = $self.settings.base 
                             + '/'
                             + $self.settings.archive 
-                            + '.zip';
+                            + '.zip'; // FIXME, extension en dur !
             
-            var elt = document.createElement('a');
-            elt.setAttribute('href', archive_url);
-            elt.setAttribute('download', archive_name);
-            if (elt.addEventListener) {
-                elt.addEventListener("click",
-                    function(event){
-                        console.log("addEventListener : " + event);
-                        $self.settings.onsuccess("[mode:URIonTAG][addEventListener] cool!");
-                    },
-                    true
-                );
-            }
-            else if (elt.attachEvent) {
-                elt.attachEvent('onclick', 
-                    function(event){
-                        console.log("attachEvent : " + event);
-                        $self.settings.onsuccess("[mode:URIonTAG][attachEvent] cool!");
-                    }
-                );
-            }
-            else {
-                $self.settings.onfailure("[mode:URIonTAG] Gestionnaire d'evenements non pris en compte sur ce navigateur !?");
+            // id de la balise
+            var id  = "_download_archive_sample";
+            
+            var elt = null;
+            var elt = document.getElementById(id);
+            if (elt === undefined || elt === null) {
+                
+                elt = document.createElement('a');
+                elt.setAttribute('id', id);
+                elt.setAttribute('href', archive_url);
+                elt.setAttribute('download', archive_name);
+                elt.setAttribute('style', "visibility: hidden;");
+                
+                document.body.appendChild(elt);
+            
+                if (elt.addEventListener) {
+                    elt.addEventListener("click",
+                        function(event){
+                            console.log("addEventListener : " + event);
+                            $self.settings.onsuccess("[mode:TAG][addEventListener] cool!");
+                        },
+                        false
+                    );
+                }
+                else if (elt.attachEvent) { // IE+
+                    elt.attachEvent('onclick', 
+                        function(event){
+                            console.log("attachEvent : " + event);
+                            $self.settings.onsuccess("[mode:TAG][attachEvent] cool!");
+                        }
+                    );
+                }
+                else { // au cas où...
+                    $self.settings.onfailure("[mode:TAG] Gestionnaire d'evenements non pris en compte sur ce navigateur !?");
+                }
             }
             
             // execute !
             elt.click();
         },
         
+        /**
+         * Mise en place d'une requête XHR avec passage du content de l'archive 
+         * en URI data scheme.
+         * appel de "document.location"
+         * 
+         * @returns {undefined}
+         */
         _sendWithModeXHRtoURI: function () {
             
             var $self = this;
@@ -344,7 +370,7 @@ define([
             // cf. http://webreflection.blogspot.fr/2011/08/html5-how-to-create-downloads-on-fly.html
             
             // FIXME 
-            // compatibilité difficile entre navigateur 
+            // compatibilité entre navigateur 
             //   * FF 34       :  OK but not allow to define a file name (random name)
             //   * Chromium 39 :  OK
             //   * Opera 12.16 :  OK but not allow to define a file name (random name)
@@ -467,13 +493,103 @@ define([
             }
         },
         
+        /**
+         * Create an object URL for the binary data (blob) from the XHR response.
+         * 
+         * @returns {undefined}
+         */
         _sendWithModeXHRtoURL: function () {
-            throw new ReferenceError("Not yet implemented !");
+            
+            // INFO
+            // cf. http://blogs.adobe.com/webplatform/2012/01/17/displaying-xhr-downloaded-images-using-the-file-api/
+
+            // FIXME 
+            // compatibilité entre navigateur
+            //   * FF 34       :  OK
+            //   * FF 35       :  OK
+            //   * Chromium 39 :  OK
+            //   * Opera 12.16 : NOK
+            //   * IE          : ???
+            
+            var $self = this;
+            
+            var archive_url = $self.settings.base 
+                            + '/'
+                            + $self.settings.archive 
+                            + '.zip';
+            
+            var XHR = null;
+            var callbackOnLoad  = function() {
+                
+                var imageObjectURL = window.URL.createObjectURL(XHR.response);
+                
+                // INFO 
+                // ouverture d'une fenetre avec l'URL de l'archive...
+                window.open(imageObjectURL);
+                
+                if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
+                    if ($self.settings.scope) {
+                        // this : Player class
+                        $self.settings.onsuccess.call($self.settings.scope, "[mode:XHR][URL] All that's cool : " + imageObjectURL);
+                        // this : FileReader class
+                        // $self.settings.onsuccess.call(this, "[mode:XHR][URL] cool!");
+                    } else {
+                        // this : Download class
+                        $self.settings.onsuccess.call($self, "[mode:XHR][URL] All that's cool : " + imageObjectURL);
+                    }
+                }
+            };
+            var callbackOnError = function(message) {
+                if ($self.settings.scope) {
+                    $self.settings.onfailure.call($self.settings.scope, message);
+                } else {
+                    $self.settings.onfailure(message);
+                }
+            };
+            
+            if (XMLHttpRequest) {
+                
+                console.log("XMLHttpRequest");
+                
+                XHR = new XMLHttpRequest();
+                XHR.open("GET", archive_url, true);
+                XHR.responseType = "blob";
+                XHR.overrideMimeType('application/zip');
+
+                XHR.onerror = function () {
+                        var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
+                        callbackOnError(message);
+                    };
+
+                XHR.onreadystatechange = function(e) {
+
+                    if (XHR.readyState == 4) { // DONE
+
+                            if (XHR.status == 200) {
+
+                                callbackOnLoad();
+
+                            } 
+                            else {
+                                var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest (Status != 200) !";
+                                if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') { 
+                                    if ($self.settings.scope) {
+                                        $self.settings.onfailure.call($self.settings.scope, message);
+                                    } else {
+                                        $self.settings.onfailure.call($self, message);
+                                    }
+                                }
+                            }
+                        }
+                };
+
+                XHR.send();
+            }
         },
         
-        /**
+        /***************
          * Getter/Setter
-         */
+         ***************/
         
         setMode: function (mode) {
             this.settings.mode = mode;
