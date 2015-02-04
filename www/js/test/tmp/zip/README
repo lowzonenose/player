@@ -1,2 +1,3 @@
 pb avec les promises sous IE
 cf. http://caniuse.com/#search=promises
+=> il faut forcer IE à emuler sur une version > IE 11,10,9

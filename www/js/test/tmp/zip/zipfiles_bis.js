@@ -47,7 +47,7 @@ jQuery(function ($) {
         function () {
             
             var zip  = new JSZip();
-            var root = zip.folder("sample");
+            var root = zip.folder("sample-lvl0").folder("sample-lvl1");
             
             var deferreds = [];
 

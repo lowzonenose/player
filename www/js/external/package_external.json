@@ -19,9 +19,19 @@
         "url" : "http://log4javascript.org/",
         "version" : "1.4.9"
     },
-    "jzip" : {
+    "jszip" : {
         "desc" : "A Javascript class for generating and reading zip files",
         "url" : "http://stuartk.com/jszip",
         "version" : "2.3.0"
+    },
+    "jszip-utils" : {
+        "desc" : "A collection of cross-browser utilities to go along with JSZip.",
+        "url" : "http://stuk.github.io/jszip-utils",
+        "version" : ""
+    },
+    "FileSAver" : {
+        "desc" : "A saveAs() FileSaver implementation.",
+        "url" : "https://github.com/eligrey/FileSaver.js",
+        "version" : ""
     }
 }

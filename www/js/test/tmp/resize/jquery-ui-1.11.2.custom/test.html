@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>jQuery UI Resizable - Synchronous resize</title>
+  <link rel="stylesheet" href="jquery-ui.css">
+  <script src="external/jquery/jquery.js"></script>
+  <script src="jquery-ui.js"></script>
+  
+  <style>
+  #topLeft { 
+      display: inline-block;
+  }
+  #topLeft, #topRight, #bottomLeft, #bottomRight { width: 150px; height: 120px; }
+  #topLeft h3, #topRight h3 { text-align: center; }
+  #bottomLeft h3, #bottomRight h3 { text-align: center; }
+  #topRight { display: inline-block;}
+  #bottomLeft, #bottomRight { display: inline-block;}
+  #bottomRight { display: inline-block;}
+  </style>
+  <script>
+  $(function() {
+    $( "#topLeft" ).resizable({
+      alsoResize: "#topRight, #bottomLeft, #bottomRight"
+    });
+  });
+  </script>
+</head>
+<body>
+<table>
+            <tbody>
+                <tr>
+                    <td> 
+                        <div id="topLeft" class="ui-widget-header">
+                          <h3 class="ui-state-header">Resize</h3>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="topRight" class="ui-widget-content">
+                          <h3 class="ui-widget-active">auto</h3>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="bottomLeft" class="ui-widget-header">
+                          <h3 class="ui-widget-header">auto</h3>
+                        </div>
+                    </td>
+                    <td> 
+                        <div id="bottomRight" class="ui-widget-content">
+                          <h3 class="ui-widget-active">auto</h3>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</body>
+</html>

@@ -1,10 +1,14 @@
 define([ 
-        "jszip"
-    ], function (JSZip) {
+        "jquery",
+        "zip",
+        "zip-utils",
+        "zip-save"
+    ], function ($, JSZip, JSZipUtils, JSFileSave) {
     
     /**
      * DESCRIPTION
      *   Gestion des téléchargements des exemples au format 'zip'.
+     *   Gestion de la construction  des archives au format 'zip'.
      *   
      * INFORMATION
      *   types de fonctionnement selon les parametres d'entrée :
@@ -16,12 +20,12 @@ define([
      *                  donc compression et transfert (mode URI, URL)
      *    
      *  +ieurs mode de téléchargements (param. interne, orienté !)
-     *  Par defaut, en mode URI :
+     *  Par defaut, en mode TAG :
      *      {
      *        mode : (
-     *          "TAG",
-     *          "URL",
-     *          "URI",
+     *          "TAG", // insertion d'une balise <a>
+     *          "URL", // requete XHR
+     *          "URI", // requete XHR
      *          "JSP"  // TODO cross-domain possible donc proxy !?
      *          )
      *       } 
@@ -30,7 +34,8 @@ define([
      * 
      *   // cas n° 1 
      *   var options = { 
-     *      scope    : this,        // cf. notes  
+     *      scope    : this,        // cf. notes !
+     *      mode     : "URI",       // cf. notes !
      *      archive  : "exemple",   // ex. exemple.zip
      *      base     : "./www/site/download/",
      *      onsuccess: callback,
@@ -41,10 +46,10 @@ define([
      *   
      *   // cas n° 2
      *   var options = {  
-     *      scope    : this,                // cf. notes 
+     *      scope    : this,                // cf. notes  
      *      archive  : "exemple",           // ex. exemple.zip
      *      base     : "./www/site/download/",
-     *      files    : ["exemple",          // cad structure de fichiers
+     *      files    : ["exemple/",          // cad structure de fichiers
      *                  "exemple/file.js", 
      *                  "exemple/file.html",
      *                  "exemple/file.css"], 
@@ -56,8 +61,8 @@ define([
      *   
      *   // cas n° 3
      *   var options = {  
-     *      scope    : this,             // cf. notes 
-     *      archive  : exemple"",        // ex. exemple.zip
+     *      scope    : this,             // cf. notes  
+     *      archive  : "exemple",        // ex. exemple.zip
      *      base     : "",               // vide ou null...
      *      content  : "some content !", // cad contenu d'un fichier
      *      onsuccess: callback,
@@ -68,10 +73,15 @@ define([
      *   
      * NOTES
      * 
+     *  - scope
      *   l'option 'scope' permet d'interagir avec la fonction 'callback':
      *   Si "scope : this", le this du callback renvoie l'objet 'player'.
      *   Par defaut, si le scope n'est pas renseignée, this est associé à l'objet 
      *   'Download'.
+     *   
+     *  - mode
+     *   l'option 'mode' est utile dans le cas d'un téléchargement d'une archive. 
+     *   par defaut, on est dans le mode 'TAG'.
      *   
      * RETURN
      * 
@@ -98,6 +108,15 @@ define([
             this.settings.archive = Download.PARAMS_ARCHIVE_NAME;
         }
 
+        // gestion des path : on verifie le '/' final !
+        if (this.settings.base != null ||
+            this.settings.base != "") {
+            var baseUrl = this.settings.base;
+            if (baseUrl.lastIndexOf("/")+1 !== baseUrl.length) {
+                this.settings.base = baseUrl+"/";
+            }
+        }
+               
         // cas n° 1
         //  uniquement un envoie de l'archive 
         //  { 
@@ -143,7 +162,7 @@ define([
             
             this.instance = 2;
             
-            throw new ReferenceError("Not yet implemented !");
+            // throw new ReferenceError("Not yet implemented !");
             
         }
         
@@ -165,7 +184,7 @@ define([
             
             this.instance = 3;
             
-            throw new ReferenceError("Not yet implemented !");
+            // throw new ReferenceError("Not yet implemented !");
         }
 
         // callback  
@@ -209,7 +228,7 @@ define([
     };
     
     // mode d'impl. du téléchargement...
-    Download.MODES        = ["URL", "URI", "TAG"];
+    Download.MODES        = ["TAG", "URL", "URI"];
     Download.DEFAULT_MODE = Download.MODES[0];
     
     // params par defaut de l'archive
@@ -222,16 +241,48 @@ define([
         
         send : function () {
             
-            switch (this.getMode()) {
+            switch(this.instance) {
                 
+                // oups...
+                case 0:
+                    throw new Error("some problems !?");
+                    
+                // on envoie uniquement une archive.
+                case 1:
+                    this.sendArchive();
+                    break;
+                    
+                // on construit une archive à partir d'une liste de fichiers
+                // puis on l'envoie.
+                case 2:
+                    this.createArchive();
+                    break;
+                    
+                // inutile ???
+                case 3:
+                    throw new Error("Not yet implemented !");
+                    break;
+                    
+                // pas de choix par defaut...
+                default:
+                    throw new Error("some problems !?");
+                            
+            }
+            
+        },
+        
+        sendArchive : function () {
+            
+            switch (this.getMode()) {
+
                 case "TAG":
                     this._sendWithModeTAG();
                     break;
-                    
+
                 case "URI":
                     this._sendWithModeXHRtoURI();
                     break;
-                    
+
                 // par defaut !    
                 case "URL":
                 default:    
@@ -241,15 +292,9 @@ define([
             
         },
         
-        save : function () {
+        createArchive : function () {
             
-            throw new ReferenceError("Not yet implemented !");
-            
-        },
-        
-        zip : function () {
-            
-            throw new ReferenceError("Not yet implemented !");
+            var $self = this;
 
             // Browser support and resulting filename :
             // * Opera    : "default.zip"	
@@ -264,6 +309,113 @@ define([
             // cf. http://eligrey.com/blog/post/saving-generated-files-on-the-client-side/
             // cf. https://github.com/eligrey/Blob.js/blob/master/Blob.js
             
+            // ...
+            // base : "./www/site/download/"        --> / end !    url
+            // files :["exemple/",                  --> / end !    dir
+            //         "exemple/file.0",            --> no / end ! file
+            //         "exemple/file.1",            --> no / end ! file
+            //         "exemple/file.2"             --> no / end ! file
+            //         "exemple/folder0/"           --> / end !    dir
+            //         "exemple/folder0/file.0"     --> no / end ! file
+            //         "exemple/folder0/file.1"     --> no / end ! file
+            //         "exemple/folder0/file.2"     --> no / end ! file
+            //         "exemple/folder1/"           --> / end !    dir   FIXME faire du recursif !!!
+            //         "exemple/folder1/file.0"     --> no / end ! file
+            //         "exemple/folder1/file.1"     --> no / end ! file
+            //         "exemple/folder1/file.2"     --> no / end ! file
+                
+            var zip  = new JSZip();
+
+            var files     = $self.settings.files;
+            var archive   = $self.settings.archive + '.zip';
+            var url       = $self.settings.base;
+            
+            var deferreds = $self._deferredAddFilesZip(url, files, zip)
+            
+            if(! deferreds) {
+                // TODO
+            }
+            
+            // callback
+            
+            var callback_failure = function(message) {
+                if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
+                    if ($self.settings.scope) {
+                        $self.settings.onfailure.call($self.settings.scope, message);
+                    } else {
+                        $self.settings.onfailure(message);
+                    }
+                }
+            };
+            var callback_success = function(message) {
+                if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
+                        if ($self.settings.scope) {
+                            // this : Player class
+                            $self.settings.onsuccess.call($self.settings.scope, message);
+                            // this : FileReader class
+                            // $self.settings.onsuccess.call(this, "[mode:XHR][URI] cool!");
+                        } else {
+                            // this : Download class
+                            $self.settings.onsuccess.call($self, message);
+                        }
+                }
+            };
+            
+                // when everything has been downloaded, we can trigger the dl
+            $.when.apply($, deferreds)
+                .done(function() {
+                    
+                    var blob = zip.generate({type:"blob"});
+
+                    // see FileSaver.js
+                    saveAs(blob, archive);
+                    
+                    callback_success("yes!");
+                })
+                .fail(function (err) {
+                    callback_failure("Argh!");
+                });
+        },
+        
+        /****************************
+         * Méthode d'archivage 
+         ****************************/
+        _deferredAddFilesZip : function(url, files, zip) {
+            
+            var $self = this;
+            
+            var deferreds = [];
+            var hdl_zip   = zip;
+            $.each(files, function (index, value) {
+                
+                // gestion des path : on supprime les debut de path "./" ou "/" !
+                if (value.indexOf('./', 0) === 0) {value=value.substring(2);}
+                if (value.indexOf('/' , 0) === 0) {value=value.substring(1);}
+                
+                var filepath = url + value;
+                var filename = filepath.substring(filepath.lastIndexOf("/")+1);
+                if (!filename) {
+                    // c'est un repertoire !
+                    hdl_zip = hdl_zip.folder(value); // FIXME mais il faudrait du recursif !
+                    return true;
+                }
+                
+                deferreds.push($self._deferredAddFileZip(filepath, filename, hdl_zip));
+            });
+            return deferreds;
+        },
+        
+        _deferredAddFileZip : function(url, filename, zip) {
+            var deferred = $.Deferred();
+            JSZipUtils.getBinaryContent(url, function (err, data) {
+                if(err) {
+                    deferred.reject(err);
+                } else {
+                    zip.file(filename, data, {binary:true});
+                    deferred.resolve(data);
+                }
+            });
+            return deferred;
         },
         
         /****************************
@@ -296,14 +448,13 @@ define([
             //   * FF 35       :  OK
             //   * Chromium 39 :  OK
             //   * Opera 12.16 :  OK
-            //   * IE          : ???
+            //   * IE          :  OK
             
             var archive_name = 
                     Download.PARAMS_ARCHIVE_NAME + '.' + 
                     Download.PARAMS_ARCHIVE_EXT;
             
             var archive_url = $self.settings.base 
-                            + '/'
                             + $self.settings.archive 
                             + '.zip'; // FIXME, extension en dur !
             
@@ -374,7 +525,7 @@ define([
             //   * FF 34       :  OK but not allow to define a file name (random name)
             //   * Chromium 39 :  OK
             //   * Opera 12.16 :  OK but not allow to define a file name (random name)
-            //   * IE          :  ??
+            //   * IE          : NOK car l'URI risque d'etre trop grande pour IE !!!
             
             // FIXME
             // - probleme de contexte de 'this' (impl. du scope)
@@ -382,7 +533,6 @@ define([
             
             
             var archive_url = $self.settings.base 
-                            + '/'
                             + $self.settings.archive 
                             + '.zip';
             
@@ -509,12 +659,11 @@ define([
             //   * FF 35       :  OK
             //   * Chromium 39 :  OK
             //   * Opera 12.16 : NOK
-            //   * IE          : ???
+            //   * IE          : NOK car pb de sécurité à ouvrir une fenetre ?!
             
             var $self = this;
             
             var archive_url = $self.settings.base 
-                            + '/'
                             + $self.settings.archive 
                             + '.zip';
             
@@ -585,6 +734,22 @@ define([
 
                 XHR.send();
             }
+            else if(XDomainRequest) { // IE+
+                    console.log("Xdomain");
+                    
+                    XHR = new XDomainRequest();
+                    XHR.open('GET', archive_url);
+                    
+                    XHR.onerror = function () {
+                        var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
+                        callbackOnError(message);
+                    };
+                    XHR.onload  = callbackOnLoad;
+                    XHR.send();
+            } 
+            else {
+                throw new Error('CORS not supported');
+            }
         },
         
         /***************
@@ -599,8 +764,8 @@ define([
             return this.settings.mode;
         },
         
-        getModes: function () {
-            return Download.MODES;
+        getDefaultMode: function () {
+            return Download.DEFAULT_MODE;
         },
         
         setOptions: function (options) {

@@ -9,12 +9,14 @@
             'jasmine': '../test/jasmine/lib/jasmine/jasmine',
             'jasmine-html': '../test/jasmine/lib/jasmine/jasmine-html',
             'boot': '../test/jasmine/lib/jasmine/boot',
-            'jszip': "../test/jasmine/lib/jszip", 
+            'zip': "../test/jasmine/lib/jszip", 
+            'zip-utils': "../test/jasmine/lib/jszip-utils", 
+            'zip-save': "../test/jasmine/lib/FileSaver", 
             'jquery': "../test/jasmine/lib/jquery"
         },
 
         shim: {
-            jasmine: {
+            'jasmine': {
                 exports: 'window.jasmineRequire'
             },
             'jasmine-html': {
