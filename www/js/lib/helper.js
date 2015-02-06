@@ -10,19 +10,10 @@ define({
      * 
      */
     
-    /**
-     * Logger de type console par defaut.
-     *  TODO : mettre en place un fichier de log...
-     * @param {type} text
-     */
     log : function  (text) {
         console.log(text);
     },
-
-    /**
-     * Chargement des CSS de l'application.
-     * @param {type} url
-     */
+    
     loadCss : function (url) {
         var link  = document.createElement("link");
         link.type = "text/css";
@@ -107,6 +98,24 @@ define({
             lstscripts.push(scripts[i].outerHTML);
         }
         return lstscripts;
-    }
+    },
     
+    extractResourcesIntoCSS : function (css) {
+
+        var lstresources = [];
+        
+        var regex = /(url\(.*\);)/g;
+        var index = 0;
+        var match;
+        while (match = regex.exec(css)) {
+            lstresources.push(match[index]
+                    .replace('url', '')
+                    .replace(';', '')
+                    .replace('(', '')
+                    .replace(')', '')
+                    .replace('\'', '')
+                    .replace('\'', ''));
+        }
+        return lstresources;
+    }
 });

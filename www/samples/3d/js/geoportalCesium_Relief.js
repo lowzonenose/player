@@ -12,7 +12,7 @@ function initMap() {
     //The api is loaded at this step
     //L'api est chargée à cette étape
     
-    var carteLayerConf= Geoportal.Catalogue.CONFIG["GEOGRAPHICALGRIDSYSTEMS.MAPS$GEOPORTAIL:OGC:WMTS"] ;
+    var carteLayerConf= Geoportal.Catalogue.CONFIG["ORTHOIMAGERY.ORTHOPHOTOS$GEOPORTAIL:OGC:WMTS"] ; // GEOGRAPHICALGRIDSYSTEMS.MAPS
    
     var viewer = new Cesium.Viewer('viewerDiv', {
         baseLayerPicker : false,
@@ -35,8 +35,8 @@ function initMap() {
     //adds the wmts geoportal layer
     //ajoute la couche wmts geoportail
     var ignMapLayer = layers.addImageryProvider(new Cesium.WebMapTileServiceImageryProvider({
-        url :  gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey].resources['GEOGRAPHICALGRIDSYSTEMS.MAPS:WMTS'].url,     //   'http://wxs.ign.fr/CLE/geoportail/wmts'
-        layer : 'GEOGRAPHICALGRIDSYSTEMS.MAPS',
+        url :  gGEOPORTALRIGHTSMANAGEMENT[gGEOPORTALRIGHTSMANAGEMENT.apiKey].resources['ORTHOIMAGERY.ORTHOPHOTOS:WMTS'].url,     // GEOGRAPHICALGRIDSYSTEMS.MAPS  'http://wxs.ign.fr/CLE/geoportail/wmts'
+        layer : 'ORTHOIMAGERY.ORTHOPHOTOS', //GEOGRAPHICALGRIDSYSTEMS.MAPS
         style : carteLayerConf.layerOptions.style,            // 'normal'
         format : carteLayerConf.serviceParams["WMTS"].format, // 'image/jpeg'
         tileMatrixSetID : carteLayerConf.layerOptions.matrixSet,          // 'PM'

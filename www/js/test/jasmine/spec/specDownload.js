@@ -5,7 +5,9 @@ define(["download"], function (Download) {
     describe("Test de la classe Download.",
     function () {
         
-        beforeEach(function() {});
+        beforeEach(function() {
+
+        });
         afterEach (function() {});
         
         it("Test avec parametres vides !", function() {
@@ -199,6 +201,35 @@ define(["download"], function (Download) {
 
         });
         
+        it("Test avec une liste de fichiers non triée !", function() {
+
+            var options = {
+                archive: "sample-3",
+                base: "resources/",
+                files:["sample/", 
+                       "sample/folder/",
+                       "sample/folder/README",
+                       "sample/folder/logo-api.png",
+                       "sample/sample.css",
+                       "sample/sample.html",
+                       "sample/sample.js",
+                       "sample/folder-bis/",
+                       "sample/folder-bis/README",
+                       "sample/folder-bis/logo-api.png"
+                   ],
+                onsuccess: function (e) {
+                    console.log("success : " + e);
+                },
+                onfailure: function (e) {
+                    console.log("failure : " + e);
+                }
+            };
+            
+            var dl = new Download(options);
+            dl.send();
+
+        });
+        
         it("Test avec une liste de fichiers mais certain n'existe pas !", function() {
 
             var options = {
@@ -225,15 +256,53 @@ define(["download"], function (Download) {
 
         });
         
-        it("Test avec un contenu !", function() {
-            pending();
+        it("Test avec une liste de fichiers avec un contenu !", function() {
+
             var options = {
-                archive: "sample-fake",
+                archive: "sample-4",
                 base: "resources/",
-                mode: "URI",
-                content: "README",
-                onsuccess: function () {},
-                onfailure: function () {}
+                files: [
+                    {path: "sample/"},
+                    {path: "sample/sample.css",content:"test css"},
+                    {path: "sample/sample.html",content:"test html"},
+                    {path: "sample/sample.js",content:"test js"},
+                    {path: "sample/folder/"},
+                    {path: "sample/folder/README"},
+                    {path: "sample/folder/logo-api.png"}
+                ],
+                onsuccess: function (e) {
+                    console.log("success : " + e);
+                },
+                onfailure: function (e) {
+                    console.log("failure : " + e);
+                }
+            };
+            
+            var dl = new Download(options);
+            dl.send();
+
+        });
+        
+        it("Test avec une liste de fichiers avec un contenu mais non triée !", function() {
+
+            var options = {
+                archive: "sample-5",
+                base: "resources/",
+                files: [
+                    {path: "sample/"},
+                    {path: "sample/folder/"},
+                    {path: "sample/folder/README"},
+                    {path: "sample/sample.css",content:"test css"},
+                    {path: "sample/sample.html",content:"test html"},
+                    {path: "sample/sample.js",content:"test js"},
+                    {path: "sample/folder/logo-api.png"}
+                ],
+                onsuccess: function (e) {
+                    console.log("success : " + e);
+                },
+                onfailure: function (e) {
+                    console.log("failure : " + e);
+                }
             };
             
             var dl = new Download(options);

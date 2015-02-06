@@ -37,6 +37,7 @@
     specs.push('../test/jasmine/spec/specDependency');
     specs.push('../test/jasmine/spec/specDownload');
     specs.push('../test/jasmine/spec/specSyntaxHighlighter');
+    specs.push('../test/jasmine/spec/specSort');
     
     require(['boot'], function () {
 

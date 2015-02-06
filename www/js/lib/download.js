@@ -1,9 +1,12 @@
 define([ 
         "jquery",
+        // dependances zip lib.
         "zip",
         "zip-utils",
-        "zip-save"
-    ], function ($, JSZip, JSZipUtils, JSFileSave) {
+        "zip-save",
+        // libs. 
+        "sort"
+    ], function ($, JSZip, JSZipUtils, JSFileSave, Sort) {
     
     /**
      * DESCRIPTION
@@ -13,20 +16,19 @@ define([
      * INFORMATION
      *   types de fonctionnement selon les parametres d'entrée :
      *    - cas n° 1 : Une archive est fournie 
-     *                  donc simple transfert (mode URI, URL ou TAG)
+     *                  donc simple transfert
+     *                  on peut choisir un mode de téléchargement.
      *    - cas n° 2 : Une liste de fichier est fournie 
      *                  donc compression et transfert (mode URI)
-     *    - cas n° 3 : contenu d'un fichier HTML
-     *                  donc compression et transfert (mode URI, URL)
      *    
-     *  +ieurs mode de téléchargements (param. interne, orienté !)
-     *  Par defaut, en mode TAG :
+     *  Il existe +ieurs mode de téléchargements (param. interne !)
+     *  Par defaut, on utilise le mode TAG :
+     *  cf. notes !
      *      {
      *        mode : (
      *          "TAG", // insertion d'une balise <a>
      *          "URL", // requete XHR
-     *          "URI", // requete XHR
-     *          "JSP"  // TODO cross-domain possible donc proxy !?
+     *          "URI"  // requete XHR
      *          )
      *       } 
      * 
@@ -49,7 +51,7 @@ define([
      *      scope    : this,                // cf. notes  
      *      archive  : "exemple",           // ex. exemple.zip
      *      base     : "./www/site/download/",
-     *      files    : ["exemple/",          // cad structure de fichiers
+     *      files    : ["exemple/",
      *                  "exemple/file.js", 
      *                  "exemple/file.html",
      *                  "exemple/file.css"], 
@@ -59,12 +61,16 @@ define([
      *   var dl = new Download(options);
      *   dl.send();
      *   
-     *   // cas n° 3
+     *   // cas n° 2 avec gestion des contents
      *   var options = {  
      *      scope    : this,             // cf. notes  
      *      archive  : "exemple",        // ex. exemple.zip
-     *      base     : "",               // vide ou null...
-     *      content  : "some content !", // cad contenu d'un fichier
+     *      base     : "./www/site/download/",               
+     *      files    : [
+     *                  {path: "sample/"},
+                        {path: "sample/file.1",content:"test contenu!"},
+                        {path: "sample/file.2",content:"test contenu!"}"
+                       ] 
      *      onsuccess: callback,
      *      onfailure: callback,
      *   };
@@ -82,10 +88,11 @@ define([
      *  - mode
      *   l'option 'mode' est utile dans le cas d'un téléchargement d'une archive. 
      *   par defaut, on est dans le mode 'TAG'.
+     *   (fonctionnalité orientée maintenance !)
      *   
      * RETURN
      * 
-     *  cf. callback
+     *  une archive !
      *  
      * SEE ASLO
      * 
@@ -162,29 +169,6 @@ define([
             
             this.instance = 2;
             
-            // throw new ReferenceError("Not yet implemented !");
-            
-        }
-        
-        // cas n° 3
-        // envoie du contenu dans un fichier HTML
-        //  { 
-        //      archive: "exemple",
-        //      content: "qsdqdqscqsc"
-        //  }
-        if (this.settings.content != null) {
-            
-            if (this.settings.content == "") {
-                throw new Error("Content value is empty ?!");
-            }
-            
-            if (typeof this.settings.content !== "string") {
-                throw new Error("Content value must be a string ?!");
-            }
-            
-            this.instance = 3;
-            
-            // throw new ReferenceError("Not yet implemented !");
         }
 
         // callback  
@@ -202,6 +186,7 @@ define([
             };
         }
         
+        // mode de téléchargement utilisé
         var mode = this.settings.mode;
         if (mode != null) {
             if (! _checkMode(mode)) {
@@ -258,7 +243,7 @@ define([
                     this.createArchive();
                     break;
                     
-                // inutile ???
+                // un autre cas ???
                 case 3:
                     throw new Error("Not yet implemented !");
                     break;
@@ -309,24 +294,24 @@ define([
             // cf. http://eligrey.com/blog/post/saving-generated-files-on-the-client-side/
             // cf. https://github.com/eligrey/Blob.js/blob/master/Blob.js
             
-            // ...
-            // base : "./www/site/download/"        --> / end !    url
-            // files :["exemple/",                  --> / end !    dir
-            //         "exemple/file.0",            --> no / end ! file
-            //         "exemple/file.1",            --> no / end ! file
-            //         "exemple/file.2"             --> no / end ! file
-            //         "exemple/folder0/"           --> / end !    dir
-            //         "exemple/folder0/file.0"     --> no / end ! file
-            //         "exemple/folder0/file.1"     --> no / end ! file
-            //         "exemple/folder0/file.2"     --> no / end ! file
-            //         "exemple/folder1/"           --> / end !    dir   FIXME faire du recursif !!!
-            //         "exemple/folder1/file.0"     --> no / end ! file
-            //         "exemple/folder1/file.1"     --> no / end ! file
-            //         "exemple/folder1/file.2"     --> no / end ! file
+            // INFO
+            // base : "./www/site/download/"        --> / at the end !     url
+            // files :["exemple/",                  --> / at the end !     dir
+            //         "exemple/file.0",            --> not / at the end ! file
+            //         "exemple/file.1",            --> not / at the end ! file
+            //         "exemple/file.2"             --> not / at the end ! file
+            //         "exemple/folder0/"           --> / at the end !     dir
+            //         "exemple/folder0/file.0"     --> not / at the end ! file
+            //         "exemple/folder0/file.1"     --> not / at the end ! file
+            //         "exemple/folder0/file.2"     --> not / at the end ! file
+            //         "exemple/folder1/"           --> / at the end !     dir   
+            //         "exemple/folder1/file.0"     --> not / at the end ! file
+            //         "exemple/folder1/file.1"     --> not / at the end ! file
+            //         "exemple/folder1/file.2"     --> not / at the end ! file
                 
             var zip  = new JSZip();
 
-            var files     = $self.settings.files;
+            var files     = $self.sortFiles($self.settings.files);
             var archive   = $self.settings.archive + '.zip';
             var url       = $self.settings.base;
             
@@ -337,7 +322,6 @@ define([
             }
             
             // callback
-            
             var callback_failure = function(message) {
                 if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
                     if ($self.settings.scope) {
@@ -361,7 +345,7 @@ define([
                 }
             };
             
-                // when everything has been downloaded, we can trigger the dl
+            // when everything has been downloaded, we can trigger the dl
             $.when.apply($, deferreds)
                 .done(function() {
                     
@@ -383,38 +367,95 @@ define([
         _deferredAddFilesZip : function(url, files, zip) {
             
             var $self = this;
-            
+                       
             var deferreds = [];
-            var hdl_zip   = zip;
-            $.each(files, function (index, value) {
+            var hdl_zip   = null;
+            var root_zip  = zip; // racine de zip, toujours un nom du repertoire !
+            
+            console.log(files);
+            
+            while(files.length > 0) {
                 
-                // gestion des path : on supprime les debut de path "./" ou "/" !
-                if (value.indexOf('./', 0) === 0) {value=value.substring(2);}
-                if (value.indexOf('/' , 0) === 0) {value=value.substring(1);}
+                var value = files.shift();
                 
-                var filepath = url + value;
-                var filename = filepath.substring(filepath.lastIndexOf("/")+1);
-                if (!filename) {
-                    // c'est un repertoire !
-                    hdl_zip = hdl_zip.folder(value); // FIXME mais il faudrait du recursif !
-                    return true;
-                }
+                // closure
+                (function(v){
+                    
+                    var path    = null;
+                    var content = null;
+                    
+                    if (typeof v === "string") {
+                        console.log("string");
+                        path = v;
+                    }
+                    else {
+                        if (v.hasOwnProperty('path')) {
+                            path = v.path;
+                        }
+                        if (v.hasOwnProperty('content')) {
+                            content = v.content;
+                        }
+                    }
+                    
+                    if (path == null || path == '') {
+                        // TODO
+                    }
+                    
+                    // valeur courrante !
+                    console.log(path);
+
+                    // gestion des path : on supprime les debut de path "./" ou "/" !
+                    if (path.indexOf('./', 0) === 0) {path=path.substring(2);}
+                    if (path.indexOf('/' , 0) === 0) {path=path.substring(1);}
+
+                    //  source to target path 
+                    var filepath_source = url + path;
+                    var filepath_target = path;
+                    
+                    // file or directory ?
+                    if (filepath_target.lastIndexOf("/")+1 === filepath_target.length) {
+                        
+                        // c'est un repertoire !
+                        var dirs = filepath_target.split("/");
+                        hdl_zip  = root_zip;
+                        for(var i=0; i<dirs.length; i++) { 
+                            var dirname = dirs[i];
+                            if (dirname) {
+                                hdl_zip = hdl_zip.folder(dirname);
+                                console.log("> add directory : " + dirname);
+                            }
+                        }
+                        return true;
+                    }
+                    
+                    // c'est un fichier !
+                    var filename_target = filepath_target.substring(filepath_target.lastIndexOf("/")+1);
+                    console.log("> add file : " + filename_target + " into the last directory");
+                    deferreds.push($self._deferredAddFileZip(filepath_source, filename_target, content, hdl_zip));
+
+                })(value);
                 
-                deferreds.push($self._deferredAddFileZip(filepath, filename, hdl_zip));
-            });
+            }
             return deferreds;
         },
         
-        _deferredAddFileZip : function(url, filename, zip) {
+        _deferredAddFileZip : function(source, target, content, zip ) {
             var deferred = $.Deferred();
-            JSZipUtils.getBinaryContent(url, function (err, data) {
-                if(err) {
-                    deferred.reject(err);
-                } else {
-                    zip.file(filename, data, {binary:true});
-                    deferred.resolve(data);
-                }
-            });
+            if (!content) {
+                JSZipUtils.getBinaryContent(source, function (err, data) {
+                    if(err) {
+                        deferred.reject(err);
+                    } else {
+                        zip.file(target, data, {binary:true});
+                        deferred.resolve(data);
+                    }
+                });
+            }
+            else {
+                zip.file(target, content, {binary:true});
+                deferred.resolve(content);
+            }
+            
             return deferred;
         },
         
@@ -774,8 +815,18 @@ define([
         
         getOptions: function () {
             return this.settings;
-        }
+        },
 
+        /****************
+         * Other function
+         ****************/
+        sortFiles : function (array) {
+
+            var s = new Sort(array);
+            var sort_array = s.pathsort();
+            return sort_array;
+            
+        }
     };
     
     return Download;
