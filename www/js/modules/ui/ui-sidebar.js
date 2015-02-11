@@ -134,14 +134,14 @@ define(["jquery", "cdn"], function($, CDN) {
         constructor: UISideBar,
         
         /**
-         * fonction de generation du code html principale
+         * fonction de generation du code GUI
          */
         
         generate: function() {
 			
 			// Création JS des sous-menus
-            var menu_geoportail   = this.generate_jsapi();
-            var menu_dependencies = this.generate_jsdep();
+            var menu_geoportail   = this.g_jsapi();
+            var menu_dependencies = this.g_jsdep();
 
             var openSideBar = function () {
                 if ($('.'+UISideBar.CLASSNAME).hasClass('sideBarClosed')) {
@@ -186,7 +186,7 @@ define(["jquery", "cdn"], function($, CDN) {
          * menu sur la rubrique 'geoportail'
          */
         
-        generate_jsapi: function () {
+        g_jsapi: function () {
             
             var $this = this.context;
             var $self = this; // instance de la classe !
@@ -201,23 +201,23 @@ define(["jquery", "cdn"], function($, CDN) {
                     .append('<div class="_PlayGroundJS_sidebarBigTitle">API JS Géoportail</div>')
                     .append(
                         $('<div class="_PlayGroundJS_sidebarContainer"></div>')
-                            .append(this._jsapi_info())
-                            .append(this._jsapi_mode())
+                            .append(this.g_jsapi_info())
+                            .append(this.g_jsapi_mode())
                             .append(dependJS)
-                            .append(this._jsapi_dependencies())
+                            .append(this.g_jsapi_dependencies())
                             .append(dependCSS)
-                            .append(this._jsapi_dependencies_css())
+                            .append(this.g_jsapi_dependencies_css())
                     );
         },
         
-        _jsapi_info: function () {
+        g_jsapi_info: function () {
             return $('<div id="'+UISideBar.ID_JSAPI_INFO+'" class="_PlayGroundJS_sidebarContainerInto"></div>')
                         .append('<div class="_PlayGroundJS_sidebarLabel"><span class="boldLabel">Type    :</span> <span class="italicLabel">' + this.settings.jsapi.type    + '</span></div>')
                         .append('<div class="_PlayGroundJS_sidebarLabel"><span class="boldLabel">Version :</span> <span class="italicLabel">' + this.settings.jsapi.version + '</span></div>')
                         .append('<div class="_PlayGroundJS_sidebarLabel"><span class="boldLabel">URL     :</span> <span class="italicLabel">' + this.settings.jsapi.url     + '</span></div>');
         },
         
-        _jsapi_mode: function () {
+        g_jsapi_mode: function () {
             
             var $self = this; // instance de la classe ! 
             
@@ -262,7 +262,7 @@ define(["jquery", "cdn"], function($, CDN) {
                     
         },
         
-        _jsapi_dependencies: function () {
+        g_jsapi_dependencies: function () {
 
             var select = $('<div \n\
                 id="'   +UISideBar.ID_JSAPI_DEP_SELECT+'" \n\
@@ -275,7 +275,7 @@ define(["jquery", "cdn"], function($, CDN) {
 
         },
         
-        _jsapi_dependencies_css: function () {
+        g_jsapi_dependencies_css: function () {
             
             var select_css = $('<div \n\
                 id="'   +UISideBar.ID_JSAPI_DEP_SELECT_CSS+'" \n\
@@ -289,8 +289,9 @@ define(["jquery", "cdn"], function($, CDN) {
         
         /** 
          *  menu sur la rubrique 'dependances'
-         */  
-        generate_jsdep: function () {
+         */
+        
+        g_jsdep: function () {
             
             var $this = this.context;
             var $self = this; // instance de la classe !
@@ -309,13 +310,13 @@ define(["jquery", "cdn"], function($, CDN) {
                     .append(
                         $('<div class="_PlayGroundJS_sidebarContainer"></div>')
                         .append(rechercheCDN)
-                        .append(this._jsdep_cdn())
+                        .append(this.g_jsdep_cdn())
                         .append(saisirAdresse)
-                        .append(this._jsdep_external())
+                        .append(this.g_jsdep_external())
                     );
         }, 
         
-        _jsdep_cdn: function () {
+        g_jsdep_cdn: function () {
             
             var $self = this; // instance de la classe !
             
@@ -403,7 +404,7 @@ define(["jquery", "cdn"], function($, CDN) {
                         .append(select_find);
         },
         
-        _jsdep_external: function () {
+        g_jsdep_external: function () {
             
             var $self = this; // instance de la classe !
             

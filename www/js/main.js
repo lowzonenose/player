@@ -17,10 +17,12 @@ requirejs.config({
         //      "cm-css"       : "../external/codemirror/mode/css/css",
         //      "cm-xml"       : "../external/codemirror/mode/xml/xml"
         "log4js": "../external/log4javascript/log4javascript_uncompressed",
+        // "uri"   : "../external/URI",
         // jszip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",
         "zip-save"  : "../external/FileSaver",
+       
     }
 });
 

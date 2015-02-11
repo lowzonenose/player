@@ -3,14 +3,14 @@ define(["sort"], function (Sort) {
     function () {
         
         var sort_array_string = [
-                       "sample/",
-                       "sample/sample.css",
-                       "sample/sample.html",
-                       "sample/sample.js",
-                       "sample/folder/",
-                       "sample/folder/README",
-                       "sample/folder-bis/",
-                       "sample/folder-bis/README"
+               "sample/",
+               "sample/sample.css",
+               "sample/sample.html",
+               "sample/sample.js",
+               "sample/folder/",
+               "sample/folder/README",
+               "sample/folder-bis/",
+               "sample/folder-bis/README"
         ];
         var sort_array_json = [
                {path:"sample/"},

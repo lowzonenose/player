@@ -230,6 +230,33 @@ define(["download"], function (Download) {
 
         });
         
+        it("Test avec une liste de fichiers mais sans entrée pour les réperoires !", function() {
+
+            var options = {
+                archive: "sample-fake",
+                base: "resources/",
+                files:["sample/", 
+                       "sample/sample.css",
+                       "sample/sample.html",
+                       "sample/sample.js",
+                       "sample/folder/README", // <-- FIXME repertoire 'folder' n'existe pas dans l'archive ! -->
+                       "sample/folder/logo-api.png",
+                       "sample/folder-bis/README", // <-- FIXME repertoire 'folder-bis' n'existe pas dans l'archive ! -->
+                       "sample/folder-bis/logo-api.png"
+                   ],
+                onsuccess: function (e) {
+                    console.log("success : " + e);
+                },
+                onfailure: function (e) {
+                    console.log("failure : " + e);
+                }
+            };
+            
+            var dl = new Download(options);
+            dl.send();
+
+        });
+        
         it("Test avec une liste de fichiers mais certain n'existe pas !", function() {
 
             var options = {

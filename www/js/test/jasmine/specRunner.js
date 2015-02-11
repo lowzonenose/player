@@ -12,7 +12,8 @@
             'zip': "../test/jasmine/lib/jszip", 
             'zip-utils': "../test/jasmine/lib/jszip-utils", 
             'zip-save': "../test/jasmine/lib/FileSaver", 
-            'jquery': "../test/jasmine/lib/jquery"
+            'jquery': "../test/jasmine/lib/jquery",
+            "uri" : "../test/jasmine/lib/URI"
         },
 
         shim: {
@@ -38,6 +39,7 @@
     specs.push('../test/jasmine/spec/specDownload');
     specs.push('../test/jasmine/spec/specSyntaxHighlighter');
     specs.push('../test/jasmine/spec/specSort');
+    specs.push('../test/jasmine/spec/specURI');
     
     require(['boot'], function () {
 

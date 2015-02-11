@@ -3,7 +3,12 @@ define(["helper"], function (Helper) {
     function () {
         var html = '<html><head><title>test</title><script type="text/javascript" src="test_externe.js"></script></head><body><div id="test">test</div><script type="text/javascript" src="test_interne.js"></script></body></html>';
         var body = '<div id="test">test</div>';
-        var css  = "div#viewerDiv { width:700px; height:500px; background-image:url('http://api.ign.fr/geoportail/api/js/2.1.0/theme/geoportal/img/loading.gif');\nbackground-image:url(img/loading.gif);}";
+        var css  = "\
+div#viewerDiv {\n\
+ width:700px; height:500px; \n\
+background-image:url('http://api.ign.fr/geoportail/api/js/2.1.0/theme/geoportal/img/loading.gif');\n\
+background-image:url(img/loading.gif);\n\
+}";
         var script_interne = '<script type="text/javascript" src="test_interne.js"></script>';
         var script_externe = '<script type="text/javascript" src="test_externe.js"></script>';
         
@@ -28,7 +33,7 @@ define(["helper"], function (Helper) {
         it("Extract Resources", function() {
             var myresources = Helper.extractResourcesIntoCSS(css);
             console.log(myresources);
-            expect(myresources.length).toEqual(2);
+            expect(myresources.length).toEqual(1);
         });
     });
 });

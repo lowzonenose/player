@@ -45,20 +45,20 @@ define(["jquery"], function($) {
     
     UICodeArea.prototype = {
 
-         /**
-         * objets
+        /**
+         * objets (handler JQuery)
          */
         
         boxHTML: null,
         boxJS: null,
         boxCSS: null,
-        boxResult:null,
+        boxResult:null, // c'est l'iframe !
         
         constructor: UICodeArea,
         
-        /**
-         * fonction de generation du code html
-         */
+        /***********************************
+         * fonction de manipulation du code 
+         ***********************************/
         generate: function() {
             
             var $this = this.context;
@@ -148,6 +148,65 @@ define(["jquery"], function($) {
             
             throw new Error("Not yet implemented !");
         },
+        
+        /********************
+         * methodes publiques
+         ********************/
+        
+        /**
+         * Test si le code a été modifié...
+         * @returns {Boolean}
+         */
+        
+        isModified : function () {
+            var $this = this.context;
+            var $self = this; // instance de la classe ! 
+            
+            if ($('#'+UICodeArea.IDBOXHTML).val() !== $self.boxHTML[0].innerText) {
+                return true;
+            }
+            if ($('#'+UICodeArea.IDBOXJS).val()   !== $self.boxJS[0].innerText) {
+                return true;
+            }
+            if ($('#'+UICodeArea.IDBOXCSS).val()  !== $self.boxCSS[0].innerText) {
+                return true;
+            }
+            return false;
+        },
+        
+        /**
+         * HTML
+         */
+        getHTML  : function() {
+            return this.boxHTML.val();
+        },
+        initHTML : function() {
+            return this.boxHTML[0].defaultValue;
+        },
+        
+        /**
+         * CSS
+         */
+        getCSS  : function() {
+            return this.boxCSS.val();
+        },
+        initCSS : function() {
+            return this.boxCSS[0].defaultValue;
+        },
+        
+        /**
+         * JS
+         */
+        getJS  : function() {
+            return this.boxJS.val();
+        },
+        initJS : function() {
+            return this.boxJS[0].defaultValue;
+        },
+        
+        /******************
+         * methodes privées
+         ******************/
         
         _boxHTML: function () {
             this.boxHTML = $('<textarea class="_PlayGroundJS_boxEdit" id="html"></textarea>');

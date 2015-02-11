@@ -368,6 +368,29 @@ define(function () {
         },
         
         /**
+         * Liste des css internes
+         * Possibilité d'ajouter une base url aux lib. trouvées
+         * 
+         * @returns {undefined|Array}
+         */
+        getCssExternal : function (baseUrl) {
+ 
+            if (this.isEmpty("css")) {
+                return;
+            }
+            
+            var css = [];
+            for (var i = 0; i < this.dependencies.length; ++i) {
+                if (filterUrl(this.dependencies[i].source, "^http://")) {
+                    if (this.dependencies[i].type === 'css') {
+                        css.push(this.dependencies[i].source);
+                    }
+                }
+            }
+            return css;
+        },
+        
+        /**
          * Tableau de scripts vide ?
          * @returns {Boolean}
          */

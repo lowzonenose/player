@@ -356,8 +356,8 @@ define([
                     
                     callback_success("yes!");
                 })
-                .fail(function (err) {
-                    callback_failure("Argh!");
+                .fail(function (err, source) {
+                    callback_failure("Source : " + source + " | ERROR (" + err + ")!");
                 });
         },
         
@@ -444,7 +444,7 @@ define([
             if (!content) {
                 JSZipUtils.getBinaryContent(source, function (err, data) {
                     if(err) {
-                        deferred.reject(err);
+                        deferred.reject(err, source);
                     } else {
                         zip.file(target, data, {binary:true});
                         deferred.resolve(data);

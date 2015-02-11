@@ -3,7 +3,7 @@ define(function () {
     /**
      * DESCRIPTION
      *   
-     *   Tri du liste de chemins.
+     *   Tri du liste de chemins (path).
      *   
      * INFORMATION
      * 
@@ -17,7 +17,7 @@ define(function () {
      *     "sample/sample.html",
      *     "sample/sample.js",
      *     "sample/folder-bis/",
-     *      "sample/folder-bis/README"
+     *     "sample/folder-bis/README"
      *   ]
      *   
      *   - object 
@@ -107,7 +107,7 @@ define(function () {
                         function(el) {
                             return el.split(sep);
                 })
-                   .sort(this.sorter).map(
+                   .sort(this._sorter).map(
                         function(el) {
                             return el.join(sep);
                 });
@@ -138,7 +138,7 @@ define(function () {
             
             return array_sort;
         },
-        sorter : function(a, b) {
+        _sorter : function(a, b) {
         
             var l = Math.max(a.length, b.length);
             for (var i = 0; i < l; i += 1) {

@@ -22,7 +22,7 @@
     div#viewerDiv {
         width:700px;
         height:500px;
-        background-image:url(http://api.ign.fr/geoportail/api/js/2.1.0/theme/geoportal/img/loading.gif);
+        background-image:url(img/loading.gif);
         background-position:center center;
         background-repeat:no-repeat;
         background-color:white;
