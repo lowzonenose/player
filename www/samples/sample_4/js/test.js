@@ -1,3 +1,3 @@
 (function() {
-    console.log("Un test...");
+    console.log("comment insérer très rapidement un test...");
 })();

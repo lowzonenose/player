@@ -5,22 +5,16 @@
         
 define([
         "helper",
-        // ie "cm-lib", 
-        "../external/codemirror/lib/codemirror",
-        // ie  "cm-htmlmixed",
-        "../external/codemirror/mode/htmlmixed/htmlmixed",   
-        // ie  "cm-javascript",
-        "../external/codemirror/mode/javascript/javascript",
-        // ie  "cm-css",
-        "../external/codemirror/mode/css/css",              
-        // ie  "cm-xml"
-        "../external/codemirror/mode/xml/xml",
-        // ie  "cm-fold
-        "../external/codemirror/addon/fold/foldcode",
-        "../external/codemirror/addon/fold/foldgutter",
-        "../external/codemirror/addon/fold/brace-fold",
-        "../external/codemirror/addon/fold/xml-fold",
-        "../external/codemirror/addon/fold/comment-fold",
+        "cm/lib/codemirror", // cf. FIXME ../external/codemirror/
+        "cm/mode/htmlmixed/htmlmixed", 
+        "cm/mode/javascript/javascript",
+        "cm/mode/css/css",
+        "cm/mode/xml/xml",
+        "cm/addon/fold/foldcode",
+        "cm/addon/fold/foldgutter",
+        "cm/addon/fold/brace-fold",
+        "cm/addon/fold/xml-fold",
+        "cm/addon/fold/comment-fold",
     ], 
 
     function (Helper, CodeMirror) {

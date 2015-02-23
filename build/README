@@ -1,0 +1,26 @@
+qq tests :
+../../../../node_modules/gulp-requirejs/node_modules/requirejs/bin/r.js -o gulpfile-r.js 
+ou
+gulp --gulpfile gulpfile-rjs.js
+ou 
+gulp
+
+/*
+ * Script d'optimisation des JS dans un projet sous RequireJS.
+ * Les JS et les CSS sont minifiés puis mergés dans le repertoire : 
+ *  ./build/js/
+ *  
+ * Les ressources minimales pour le fonctionnement du site sont :
+ *       build/
+ *       ├── js/
+ *       │   ├── external/
+ *       │   │   └── require.js
+ *       │   ├── main.css
+ *       │   ├── main.js
+ *       │   └── modules/
+ *       │       └── img/
+ *       │           └── *.png
+ *       ├── samples/
+ *       └── template.html
+ *
+ */

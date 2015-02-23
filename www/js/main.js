@@ -8,17 +8,11 @@ requirejs.config({
         // my module
         "module": "../modules",
         "ui"    : "../modules/ui",
-        // jquery
+        // framework
         "jquery": "../external/jquery",
-        // codemirror (cf. ../external/codemirror/FIXME) :
-        //      "cm-lib"       : "../external/codemirror/codemirror",
-        //      "cm-htmlmixed" : "../external/codemirror/mode/htmlmixed/htmlmixed",
-        //      "cm-javascript": "../external/codemirror/mode/javascript/javascript",
-        //      "cm-css"       : "../external/codemirror/mode/css/css",
-        //      "cm-xml"       : "../external/codemirror/mode/xml/xml"
+        "cm"    : "../external/codemirror",
         "log4js": "../external/log4javascript/log4javascript_uncompressed",
-        // "uri"   : "../external/URI",
-        // jszip
+        // zip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",
         "zip-save"  : "../external/FileSaver",

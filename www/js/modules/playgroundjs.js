@@ -29,9 +29,9 @@ define([
     // GUI :
     UICrossBar,
     UISideBar,
-    UICodeArea,
+    UICodeArea
     // Other:
-    URI
+    // URI
     ) 
 {
 
@@ -919,7 +919,7 @@ define([
                 // et non pas pour une execution dans l'application !
                 // on reconstruit donc les chemins...
                 var url_sample = this.m_loadSample.sample_file.html;
-                var url        = url_sample.substring(0, url_sample.lastIndexOf("/"));
+                var url_base   = url_sample.substring(0, url_sample.lastIndexOf("/"));
                 
                 var m_strApiJS           = "", 
                     m_strApiCSSDeps      = "", 
@@ -931,14 +931,22 @@ define([
                 
                 var jsDeps = this.uisidebar.get_jsapi_dependencies();
                 for(var i=0; i<jsDeps.length; i++) {
-                    var v = Helper.path2relative(url, jsDeps[i]);
+                    var v = Helper.path2relative(url_base, jsDeps[i]);
                     m_strApiJSDeps += Helper.createScript(v);
                 }
 
                 var cssDeps = this.uisidebar.get_jsapi_dependencies_css();
                 for(var i=0; i<cssDeps.length; i++) {
-                    var v = Helper.path2relative(url, cssDeps[i]);
+                    var v = Helper.path2relative(url_base, cssDeps[i]);
                     m_strApiCSSDeps += Helper.createCss(v);
+                }
+                
+                // INFO
+                // cas SPECIAL où le fichier HTML est livré sans entête (head)... possible !?
+                // on ajoute donc la dependance CSS et JS !
+                if (m_strApiCSSDeps == "" && m_strApiJSDeps == "") {
+                    m_strApiCSSDeps = Helper.createCss(Helper.path2relative(url_base, this.m_loadSample.sample_file.css));
+                    m_strApiJSDeps  = Helper.createScript(Helper.path2relative(url_base, this.m_loadSample.sample_file.js));
                 }
 
                 var jsFrameworks = this.uisidebar.get_jsdep_cdn();
@@ -982,10 +990,14 @@ define([
                 var filepath_css  = $this.m_loadSample.sample_file.css;
                 var filepath_js   = $this.m_loadSample.sample_file.js;
 
+                // INFO
+                // encodage des fichiers en UTF-8 -> ISO-8859-15
+                
                 // ajout de l'entête du fichier HTML
                 var html = "";
                     html = html.concat('<html> ', '\n');
                     html = html.concat('<head>',  '\n');
+                    html = html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
                     html = html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
                     html = html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
                     html = html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
@@ -1017,13 +1029,15 @@ define([
                 }
                 
                 // ajout des ressources des CSS (internes uniquement)
+                // et recherche des paths
                 var resources_css = Helper.extractResourcesIntoCSS(result.code.css);
                 for(var i=0; i<resources_css.length; i++) {
+                    // FIXME hummm..., pb de path 
+                    // ex. url(img/loading.png)
+                    // au lieu de url(samples/sample_4/img/loading.png)
                     entries.files.push( {path:resources_css[i]} );
                 }
                 
-                // recherche des paths dans les css, et 
-                // ajout des ressources (internes uniquement)
                 var paths_css = Helper.paths(resources_css);
                 for(var i=0; i<paths_css.length; i++) {
                     entries.files.push( {path:paths_css[i]} );
