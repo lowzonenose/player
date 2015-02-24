@@ -607,6 +607,7 @@ define([
                     dataType : 'text',
                     success : function(code_text, statut){
                         $this.m_Logger.debug("code : " + code_text);
+                        // insertion du code dans la page
                         $this.uicodearea.boxJS.text(code_text);
                         
                     },
@@ -630,7 +631,25 @@ define([
                     dataType : 'text',
                     success : function(code_text, statut){
                         $this.m_Logger.debug("code : " + code_text);
-                        $this.uicodearea.boxCSS.text(code_text);
+                        
+                        // FIXME hummm..., pb de path relatif...
+                        // ex. url(img/loading.png)
+                        //     au lieu de url(samples/sample_4/img/loading.png)
+                        var css_text = code_text;
+                        
+                        var css =  Helper.pathIntoCSS(code_text);
+                        for(var i=0; i<css.length; i++) {
+                            // sinon, on determine le nom de l'archive à partir du fichier HTML
+                            var file = $this.m_loadSample.sample_file.css;
+                            var path = file.substring(0, file.lastIndexOf("/")+1);
+                            (function(k){
+                                var v = css[k];
+                                css_text = css_text.replace(v, path + v);
+                            })(i);
+                        }
+                        
+                        // insertion du code dans la page
+                        $this.uicodearea.boxCSS.text(css_text);
                     },
                     error : function(resultat, statut, erreur){
                         if (!erreur) {erreur="???"}
@@ -914,13 +933,6 @@ define([
                     files :[]
                 };
 
-                // INFO
-                // les paths doivent être en relatifs par rapport à l'exemple, 
-                // et non pas pour une execution dans l'application !
-                // on reconstruit donc les chemins...
-                var url_sample = this.m_loadSample.sample_file.html;
-                var url_base   = url_sample.substring(0, url_sample.lastIndexOf("/"));
-                
                 var m_strApiJS           = "", 
                     m_strApiCSSDeps      = "", 
                     m_strApiJSDeps       = "", 
@@ -928,6 +940,13 @@ define([
                     m_strFrameworkJSDeps = "";
             
                 m_strApiJS = '<script type="text/javascript" src="' + this.uisidebar.get_jsapi_selected() + '"></script>';
+                
+                // INFO
+                // les paths internes doivent être relatifs à l'exemple, 
+                // et non pas par rapport à l'execution dans l'application !
+                // on reconstruit donc les chemins...
+                var url_sample = this.m_loadSample.sample_file.html;
+                var url_base   = url_sample.substring(0, url_sample.lastIndexOf("/"));
                 
                 var jsDeps = this.uisidebar.get_jsapi_dependencies();
                 for(var i=0; i<jsDeps.length; i++) {
@@ -949,17 +968,21 @@ define([
                     m_strApiJSDeps  = Helper.createScript(Helper.path2relative(url_base, this.m_loadSample.sample_file.js));
                 }
 
+                // INFO
+                // pas de gestion des paths sur des lib. externes...
                 var jsFrameworks = this.uisidebar.get_jsdep_cdn();
                 for(var i=0; i<jsFrameworks.length; i++) {
-                    // on filtre celles qui sont nulles !
+                    // par contre, on filtre celles qui sont nulles !
                     if (jsFrameworks[i] != null) {
                         m_strFrameworkJSDeps += Helper.createScript(jsFrameworks[i]);
                     }
                 }
-
+                
+                // INFO
+                // pas de gestion des paths sur des dependances externes...
                 var jsExternals = this.uisidebar.get_jsdep_external();
                 for(var i=0; i<jsExternals.length; i++) {
-                    // on filtre celles qui sont nulles !
+                    // par contre, on filtre celles qui sont nulles !
                     if (jsExternals[i] != null) {
                         m_strExternalJSDeps += Helper.createScript(jsExternals[i]);
                     }
@@ -980,10 +1003,11 @@ define([
                     }
                 };
                 
-                // obtenir une liste des dependances locales 
+                // INFO
+                // obtenir une liste de fichiers avec leur chemin dans l'archive sur :
                 // - des fichiers HTML, CSS et JS, 
                 // - des ressources du CSS, 
-                // - des dependances JS
+                // - des dependances JS,
                 // - des dependances CSS
                 
                 var filepath_html = $this.m_loadSample.sample_file.html;
@@ -991,33 +1015,46 @@ define([
                 var filepath_js   = $this.m_loadSample.sample_file.js;
 
                 // INFO
-                // encodage des fichiers en UTF-8 -> ISO-8859-15
-                
                 // ajout de l'entête du fichier HTML
-                var html = "";
-                    html = html.concat('<html> ', '\n');
-                    html = html.concat('<head>',  '\n');
-                    html = html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
-                    html = html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
-                    html = html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
-                    html = html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
-                    html = html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
-                    html = html.concat("<!-- CSS API Deps -->", '\n',     result.css_api_deps, '\n');
-                    html = html.concat('</head>', '\n');
-                    html = html.concat('<body'  , '\n');
-                    html = html.concat(result.code.html, '\n');
-                    html = html.concat('</body' , '\n');
-                    html = html.concat('</html> ','\n');
+                // avec encodage du fichier : UTF-8 -> ISO-8859-15
+                var content_html = "";
+                    content_html = content_html.concat('<html> ', '\n');
+                    content_html = content_html.concat('<head>',  '\n');
+                    content_html = content_html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
+                    content_html = content_html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
+                    content_html = content_html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
+                    content_html = content_html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
+                    content_html = content_html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
+                    content_html = content_html.concat("<!-- CSS API Deps -->", '\n',     result.css_api_deps, '\n');
+                    content_html = content_html.concat('</head>', '\n');
+                    content_html = content_html.concat('<body'  , '\n');
+                    content_html = content_html.concat(result.code.html, '\n');
+                    content_html = content_html.concat('</body' , '\n');
+                    content_html = content_html.concat('</html> ','\n');
 
+                // INFO
+                // gestion des paths des ressources des CSS 
+                // ex. les images (cf. doImport(), importation du fichier CSS)
+                var content_css = result.code.css;
+                
+                var css = Helper.pathIntoCSS(result.code.css);
+                for(var i=0; i<css.length; i++) {
+                    var path = filepath_css.substring(0, filepath_css.lastIndexOf("/")+1);
+                    (function(k){
+                        var v = css[k];
+                        content_css = content_css.replace(path, '');
+                    })(i);
+                 }
+                        
                 // ajout des fichiers HTML, JS et CSS
                 entries.files.push(
-                    {path:filepath_html, content: html},
-                    {path:filepath_css,  content: result.code.css},
+                    {path:filepath_html, content: content_html},
+                    {path:filepath_css,  content: content_css},
                     {path:filepath_js,   content: result.code.js}
                 );
                 
-                // recherche des paths dans les fichiers HTML, JS et CSS, 
-                // et ajout des chemins
+                // on recherche des paths dans les fichiers HTML, JS et CSS, 
+                // et ajout des chemins dans l'archive
                 var files = [];
                 files.push(filepath_html);
                 files.push(filepath_css);
@@ -1030,11 +1067,9 @@ define([
                 
                 // ajout des ressources des CSS (internes uniquement)
                 // et recherche des paths
-                var resources_css = Helper.extractResourcesIntoCSS(result.code.css);
+                //  ex. les images
+                var resources_css = Helper.pathIntoCSS(result.code.css);
                 for(var i=0; i<resources_css.length; i++) {
-                    // FIXME hummm..., pb de path 
-                    // ex. url(img/loading.png)
-                    // au lieu de url(samples/sample_4/img/loading.png)
                     entries.files.push( {path:resources_css[i]} );
                 }
                 
@@ -1042,7 +1077,6 @@ define([
                 for(var i=0; i<paths_css.length; i++) {
                     entries.files.push( {path:paths_css[i]} );
                 }
-                
                 
                 // ajout des CSS en dependances (internes uniquement)
                 // et recherche des paths

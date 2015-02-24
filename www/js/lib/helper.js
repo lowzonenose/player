@@ -27,8 +27,25 @@ define({
         url = url + url_pathname.substring(0, url_pathname.lastIndexOf("/")+1);
         
         return url;
-}, 
+    }, 
     
+    /**
+     * Tri et decomposition en chemins 
+     * ex.
+     *  Pour une liste de fichiers et/ou répertoires :
+
+     *      "root/folder/files/file"
+     *      
+     *  on aura en sortie la liste suivante :
+     *  
+     *      "root/"
+     *      "root/folder/"
+     *      "root/folder/files/"
+     *      "root/folder/files/file"
+     *     
+     * @param {type} lstpath
+     * @returns {Array}
+     */
     paths: function(lstpath) {
         
         var paths    = [];
@@ -57,6 +74,17 @@ define({
         return paths.sort();
     },
     
+    /**
+     * Gestion des chemins relatifs 
+     * ex.
+     *   URL  : "/root/folder/"
+     *   PATH : "/root/folder/files/file.html"
+     *   on a en sortie : "files/file.html"
+     *   
+     * @param {type} url
+     * @param {type} path
+     * @returns {String}
+     */
     path2relative : function(url, path) {
         
         // FIXME 
@@ -93,6 +121,45 @@ define({
         }
         
         return path_rel;
+    },
+    
+    /**
+     * Extraction d'une liste des ressources dans un fichier CSS
+     * ex.
+     * sur un texte :
+     *  (...)
+     *  background-image : url('img/image.png');
+     *  (...)
+     *  on a une liste en sortie :
+     *    "img/image.png"
+     *    
+     * @param {type} css
+     * @returns {Array}
+     */
+    pathIntoCSS : function (css) {
+        
+        // INFO
+        // recherche uniquement les URL locales !
+        
+        var lstresources = [];
+        
+        var regex = /(url\(.*\);)/g;
+        var regex_url = /(https?:\/\/[^\s]+)/;
+        var index = 0;
+        var match;
+        while (match = regex.exec(css)) {
+            var value = match[index]
+                    .replace('url', '')
+                    .replace(';', '')
+                    .replace('(', '')
+                    .replace(')', '')
+                    .replace('\'', '')
+                    .replace('\'', '');
+            if (! regex_url.test(value)) {
+                lstresources.push(value);
+            }
+        }
+        return lstresources;
     },
     
     /********************
@@ -231,29 +298,4 @@ define({
         return lstscripts;
     },
     
-    extractResourcesIntoCSS : function (css) {
-        
-        // INFO
-        // recherche uniquement les URL locales !
-        
-        var lstresources = [];
-        
-        var regex = /(url\(.*\);)/g;
-        var regex_url = /(https?:\/\/[^\s]+)/;
-        var index = 0;
-        var match;
-        while (match = regex.exec(css)) {
-            var value = match[index]
-                    .replace('url', '')
-                    .replace(';', '')
-                    .replace('(', '')
-                    .replace(')', '')
-                    .replace('\'', '')
-                    .replace('\'', '');
-            if (! regex_url.test(value)) {
-                lstresources.push(value);
-            }
-        }
-        return lstresources;
-    }
 });

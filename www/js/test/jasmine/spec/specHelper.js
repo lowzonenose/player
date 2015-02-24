@@ -31,7 +31,7 @@ background-image:url(img/loading.gif);\n\
         });
         
         it("Extract Resources", function() {
-            var myresources = Helper.extractResourcesIntoCSS(css);
+            var myresources = Helper.pathIntoCSS(css);
             console.log(myresources);
             expect(myresources.length).toEqual(1);
         });
