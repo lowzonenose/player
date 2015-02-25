@@ -1,30 +1,25 @@
-// options 
-//  --tasks, --silent, --color, ...
-//  ex. gulp <task> <othertask> ...
-var gulp   = require('gulp');
-
-/*********
- * Modules
- *********/
-var del    = require('del');
-var image  = require('imagemin');
-
-var uglify  = require('gulp-uglify');
-var rename  = require('gulp-rename');
-var gutil   = require('gulp-util');
-var jshint  = require('gulp-jshint');
-var css     = require('gulp-minify-css');
+var gulp      = require('gulp');
+var rjs       = require('gulp-requirejs-optimize');
+var clean     = require('gulp-clean');
+var gutil     = require('gulp-util');
+var jshint    = require('gulp-jshint');
+var css       = require('gulp-minify-css');
+var jasmine   = require('gulp-jasmine');
+var uglify    = require('gulp-uglify');
+var normalize = require('gulp-bower-normalize');
+var bower     = require('main-bower-files');
+// optimisation des images...
+var image     = require('imagemin');
 
 /*********************************
  * options de la ligne de commande
  *********************************/
 // ex. gulp --dev --check --test --sample
-//  dev    : cette option desactive les taches 'merge' and/or 'minify'
+//  dev    : cette option desactive les taches d'optimisation
 //  check  : controle synthaxique des JS
 //  test   : execution des tests
 //  sample : deployer des exemples
-
-var options = require("minimist")(process.argv.slice(3));
+var argv = require('minimist')(process.argv.slice(4));
 
 var bDev = false;
 if(gutil.env.dev === true) {
@@ -36,9 +31,9 @@ if(gutil.env.check === true) {
     bCheck = true;
 }
 
-var bSample = false;
+var bSamples = false;
 if(gutil.env.sample === true) {
-    bSample = true;
+    bSamples = true;
 }
 
 var bTests = false;
@@ -52,200 +47,164 @@ if(gutil.env.test === true) {
 var targetdir = "target/build/";
 var sourcedir = "../www/";
 
-var paths = {
-    source : {
-        jsdir         : sourcedir + "js/",
-        jslibdir      : sourcedir + "js/lib/",
-        jsmodulesdir  : sourcedir + "js/modules/",
-        jsexternaldir : sourcedir + "js/external/",
-        jstestdir     : sourcedir + "js/test/",
-        jssamplesdir  : sourcedir + "samples/",
-        
-        module  : {
-            js  : sourcedir + "js/modules/**/*.js",
-            img : sourcedir + "js/modules/img/*.*",
-            css : sourcedir + "js/modules/**/*.css"
-        },
-        
-        main    : {
-            js  : sourcedir + "js/*.js",
-            css : sourcedir + "js/*.css",
-            img : sourcedir + "js/img*.*"
-        },
-        
-        page : sourcedir + "*.html",
-        
-    },
-    target : {
-        jsbuild       : targetdir + "js/",
-        jslibdir      : targetdir + "js/lib/",
-        jsmodulesdir  : targetdir + "js/modules/",
-        jsexternaldir : targetdir + "js/external/",
-        jstestdir     : targetdir + "js/test/",
-        jssamplesdir  : targetdir + "samples/",
-        page          : targetdir,
-        main          : targetdir + "js/"
-    }
-};
-
 /***********************
  * Définition des tâches
- ************************/
+ ***********************/
 
-// sans argument, 'gulp' lance la tâche 'default'.
+// tâche principale 
 gulp.task('default', [
-    "clean", 
-    "check",  // OPTION!
-    "test",   // OPTION!
-    "sample", // OPTION!
-    "build",
-    "licence",
-    "deploy"
+    "clean",
+    "test",
+    "check",
+    "dependencies",
+    "build"
 ]);
 
-// nettoyage du target complet
-gulp.task("clean", function(cb) {
-    del([targetdir], cb);
-    
+// nettoyage du repertoire de "build"
+gulp.task("clean", function () {
+    return gulp.src(targetdir, {read: false})
+        .pipe(clean());
 });
 
-// OPTIONS FACULTATIF : --> "gulp --check"
+// OPTIONS FACULTATIF : --> "--check"
 // controle des sources JS avec 'jshint'
 gulp.task('check', function() {
     
     if (!bCheck) {
-        console.log("SKIP Task : check (jshint)");
+        console.log("SKIP Task : check !");
     }
     
     gulp.src([
-        paths.source.jslibdir + "**/*.js", 
-        paths.source.jsmodulesdir + "**/*.js"
+        sourcedir + "js/lib/**/*.js", 
+        sourcedir + "js/modules/**/*.js"
     ])
     .pipe(bCheck ? jshint() : gutil.noop())
     .pipe(jshint.reporter('default'));
 });
 
-// OPTIONS FACULTATIF : --> "gulp --test"
-// copie et execution des tests
+// OPTIONS FACULTATIF : --> "--test"
+// execution des tests
 gulp.task('test', function() {
+	
     // TODO 
     // execution des tests sous jasmin ? 
     if (!bTests) {
-        console.log("SKIP Task : test (jasmin)");
+        console.log("SKIP Task : test !");
+        return;
     }
-    gulp.src([paths.source.jstestdir  + "**"])
-        .pipe((bTests ? gulp.dest(paths.target.jstestdir) : gutil.noop() ));
-});
-
-// OPTIONS FACULTATIF : --> "gulp --sample"
-// copie des exemples
-gulp.task('sample', function() {
     
-    if (!bSample) {
-        console.log("SKIP Task : deploy samples");
-    }
-    gulp.src([paths.source.jssamplesdir + "**"])
-        .pipe((bSample ? gulp.dest(paths.target.jssamplesdir) : gutil.noop() ));
+    console.log("Not yet implemented : test !");
+    
+    // return gulp.src(sourcedir + 'js/test/jasmine/spec/*.js')
+    //    .pipe(jasmine({verbose:true}));
+        
+    // gulp.src(sourcedir  + "js/test/jasmine/**")
+    //     .pipe((bTests ? gulp.dest(targetdir + "test/") : gutil.noop() ));
 });
 
-// OPTIONS FACULTATIF : --> "gulp --dev"
-// build : 
-// - JS,
-//   - lib,
-//   - modules
-//   - external 
-//   - main 
-// - page principale
-// - ressources (images, css, ..)
+// recuperation des dependances "bower"
+gulp.task('dependencies', function() {
+	// TODO
+	// les dependances doivent être placées dans le répertoire : target/build/js/external/
+	// avec la possibilité d'utilisé une version minifiée ou non (cf. --dev)
+	// Il faut normaliser les nons des lib., cad on ne veut pas de *.min.js !
+	
+    return gulp.src(bower(), {base: './bower_components'})
+        .pipe(normalize({bowerJson: './bower.json', flatten:true}))
+        .pipe(gulp.dest('./bower_dependencies/'));
+});
+
+// construction
 gulp.task('build', [
-    'build:js',
-    'build:html',
-    'build:resources'
-], function() {
-    
-});
-
-gulp.task('build:js', [
-    "build:minify:lib", 
-    "build:minify:module",
-    "build:minify:external",
-    "build:minify:main"
-], function() {
-    // en mode dev., 
-    // on fait une simple copie des fichiers...
-    // sinon, on minifie et merge les JS...
-    if (bDev) {
-        gulp.src([paths.source.jslibdir + "**"])
-            .pipe(gulp.dest(paths.target.jslibdir));
-        gulp.src([paths.source.jsmodulesdir + "**"])
-            .pipe(gulp.dest(paths.target.jsmodulesdir));
-        gulp.src([paths.source.jsexternaldir + "**"])
-            .pipe(gulp.dest(paths.target.jsexternaldir));
-        gulp.src(paths.source.jsdir + "*.js")
-            .pipe(gulp.dest(paths.target.main));
-        gulp.src(paths.source.jsdir + "*.css")
-            .pipe(gulp.dest(paths.target.main));
-    }
-});
-gulp.task('build:html',      ['clean'], function() {
-    gulp.src(paths.source.page)
-        .pipe(gulp.dest(paths.target.page));
-});
-gulp.task("build:resources", [
-    "resources:lib",
-    "resources:module",
-    "resources:external",
-    "resources:main"
-], function() {});
+	"build:js", 
+    "build:third-party",
+    "build:dependencies",
+    "build:image", 
+    "build:css", 
+    "build:html",
+    "build:sample"
+]);
 
 // minification des JS
-gulp.task("build:minify:lib",      ['clean'], function() {
+// option --> "--dev"
+gulp.task('build:js', ["clean"], function () {
+	
+	if (bDev) {
+		
+		gulp.src([sourcedir + "js/lib/*.js"])
+			.pipe(gulp.dest(targetdir + 'js/lib/'));
+		gulp.src([sourcedir + "js/modules/**/*.js"])
+			.pipe(gulp.dest(targetdir + 'js/modules/'));
+		gulp.src([sourcedir + "js/*.js"])
+			.pipe(gulp.dest(targetdir + 'js/'));	
+	}
+	else {
+	
+		return gulp.src(sourcedir + 'js/main.js')
+			.pipe(rjs({
+				paths: {
+					
+					// my module
+					module: "modules",
+					ui    : "modules/ui",
+			
+					// my lib
+					config : "lib/config",
+					helper : "lib/helper",
+					cdn : "lib/cdn",
+					dependency : "lib/dependency",
+					download : "lib/download",
+					logger : "lib/logger",
+					settings : "lib/settings",
+					sort : "lib/sort",
+					type : "lib/type",
+					syntaxhighlighter : "lib/syntaxhighlighter",
 
-    return gulp.src(paths.source.jslibdir + "*.js")
-        .pipe(!bDev ? uglify() : gutil.noop())
-        .pipe(!bDev ? rename( {extname:'.js'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.jslibdir));
+					// framework
+					jquery: "empty:",
+					log4js: "empty:",
+					cm    : "empty:",
 
+					// zip
+					"zip"       : "empty:",
+					"zip-utils" : "empty:",
+					"zip-save"  : "empty:",
+				}
+			}))
+			.pipe(gulp.dest(targetdir + 'js/'));
+	}
 });
-gulp.task("build:minify:module",   ['clean'], function() {
-    
-    return gulp.src(paths.source.jsmodulesdir + "**/*.js")
-        .pipe(!bDev ? uglify() : gutil.noop())
-        .pipe(!bDev ? rename( {extname:'.js'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.jsmodulesdir));
 
-});
-gulp.task("build:minify:external", ['clean'], function() {
-    
-    return gulp.src(paths.source.jsexternaldir  + "**/*.js")
-        .pipe(!bDev ? uglify() : gutil.noop())
-        .pipe(!bDev ? rename( {extname:'.js'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.jsexternaldir));
-
-});
-gulp.task("build:minify:main",     ['clean'], function() {
-
-    return gulp.src(paths.source.main.js)
-        .pipe(!bDev ? uglify() : gutil.noop())
-        .pipe(!bDev ? rename( {extname:'.js'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.main));
-
+// ajout des JS externes (dependances)
+gulp.task('build:third-party', ["clean"], function () {
+	
+	// FIXME 
+	// on ne recupere que le framework "codemirror" car 
+	// il est trop compliqué à gerer ...
+    return gulp.src(sourcedir + 'js/external/codemirror/**')
+        .pipe(gulp.dest(targetdir + 'js/external/codemirror/'));
 });
 
-// ajout des ressources
-gulp.task("resources:lib",      ['clean'], function() {});
-gulp.task("resources:module",   ['clean'], function() {
-    
-    // css
-    gulp.src([paths.source.module.css])
-        .pipe(!bDev ? css() : gutil.noop())
-        .pipe(!bDev ? rename( {extname:'.css'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.jsmodulesdir));
+// ajout des JS externes (dependances)
+gulp.task('build:dependencies', ["clean"], function () {
+   
+    return gulp.src('./bower_dependencies/js/*.js')
+		.pipe(!bDev ? uglify() : gutil.noop())
+		.pipe(gulp.dest(targetdir + 'js/external/'));
+});
 
-    // images
-    var imagemin = new image()
-        .src(paths.source.module.img)
-        .dest(paths.target.jsmodulesdir + 'img') // FIXME
+// copie et optimisation des ressources images
+// option --> "--dev"
+gulp.task('build:image', ["clean"], function () {
+	
+	if (bDev) {
+		return gulp.src(sourcedir + 'js/modules/img/*.*')
+			.pipe(gulp.dest(targetdir + 'js/modules/img/'));
+	}
+	
+	var imagemin = new image()
+        .src(sourcedir  + 'js/modules/img/*.*')
+        .dest(targetdir + 'js/modules/img/')
         .use(image.jpegtran({ progressive: true }));
  
     imagemin.run(
@@ -255,52 +214,37 @@ gulp.task("resources:module",   ['clean'], function() {
             }
         }
     );
-});
-gulp.task('resources:external', ['clean'], function() {
-    var res = !paths.source.jsexternaldir + "**/*.js";
-    return gulp.src([res])
-        .pipe(gulp.dest(paths.target.jsexternaldir));
-});
-gulp.task('resources:main',     ['clean'], function() {
-    // FIXME ???
-    return gulp.src(paths.source.main.css)
-        // .pipe(!bDev ? css() : gutil.noop())
-        // .pipe(!bDev ? rename( {extname:'.css'} ) : gutil.noop())
-        .pipe(gulp.dest(paths.target.main));   
+
 });
 
+// copie et optimisation des ressources CSS
+// option --> "--dev"
+gulp.task('build:css', ["clean"], function () {
+	
+    gulp.src(sourcedir + 'js/*.css')
+        .pipe(gulp.dest(targetdir + 'js/'));
+        
+    gulp.src(sourcedir + 'js/modules/**/*.css')
+		.pipe(!bDev ? css() : gutil.noop())
+        .pipe(gulp.dest(targetdir + 'js/modules/'));    
 
-// TODO : ajout des licences sur les sources du build : JS, CSS, HTML
-gulp.task("licence", [
-    "licence:html",
-    "licence:main", 
-    "licence:lib", 
-    "licence:module"
-], function() {});
-gulp.task("licence:html"  , ['build'], function() {});
-gulp.task("licence:main"  , ['build'], function() {
-});
-gulp.task("licence:lib"   , ['build'], function() {
-});
-gulp.task("licence:module", ['build'], function() {
 });
 
+// copie du html
+gulp.task('build:html', ["clean"], function () {
+    return gulp.src(sourcedir + 'template.html')
+        .pipe(gulp.dest(targetdir));
+});
 
-// TODO : configuration par environnement
-gulp.task("deploy", [
-    "deploy:local", 
-    "deploy:dev", 
-    "deploy:prod",
-    "deploy:preprod",
-    "deploy:qualif"
-], function() {});
-gulp.task("deploy:local"  , ['licence'], function() {
+// OPTIONS FACULTATIF : --> "--sample"
+// copie des exemples
+gulp.task('build:sample', ["clean"], function() {
+    
+    if (!bSamples) {
+        console.log("SKIP Task : samples !");
+    }
+    
+    return gulp.src(sourcedir + "samples/**")
+        .pipe((bSamples ? gulp.dest(targetdir + "samples/") : gutil.noop() ));
 });
-gulp.task("deploy:dev"    , ['licence'], function() {
-});
-gulp.task("deploy:prod"   , ['licence'], function() {
-});
-gulp.task("deploy:preprod", ['licence'], function() {
-});
-gulp.task("deploy:qualif" , ['licence'], function() {
-});
+

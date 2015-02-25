@@ -1,9 +1,46 @@
-qq tests :
+TESTS avec r.js :
+################
 ../../../../node_modules/gulp-requirejs/node_modules/requirejs/bin/r.js -o gulpfile-r.js 
-ou
-gulp --gulpfile gulpfile-rjs.js
-ou 
-gulp
+
+Utilisation de GULP :
+#####################
+!!! 
+installation à prévoir :
+> sudo npm install -g gulp 
+!!!
+
+ex. 
+  gulp --gulpfile gulpfile-rjs.js
+   ou 
+  gulp (par defaut, gulpfile.js)
+
+Installation des dependances NodeJS :
+#####################################
+!!! 
+installation de nodejs à prévoir
+cf. http://openclassrooms.com/courses/des-applications-ultra-rapides-avec-node-js/installer-node-js
+!!!
+npm avec package.json
+
+Installation des dependances JS du projet :
+###########################################
+!!! 
+installation à prévoir :
+> sudo npm install -g bower
+!!!
+bower avec bower.json
+
+Resultats :
+###########
+options de deploiement :
+
+--test    : execution des tests avec Jasmine
+--samples : possibilité de deployer des exemples
+--check   : controle des JS du projet
+--dev     : simple copie des sources
+          sinon, on est en mode minification, aggregation des sources
+
+les ressources externes (ex. jquery) ne sont pas concaténées aux sources...
 
 /*
  * Script d'optimisation des JS dans un projet sous RequireJS.
@@ -24,3 +61,30 @@ gulp
  *       └── template.html
  *
  */
+
+Doc :
+#####
+
+cf. commande BOWER
+http://bower.io/
+
+cf. commande NPM
+https://docs.npmjs.com/
+
+cf. gulp-bower-normalize
+https://github.com/cthrax/gulp-bower-normalize
+
+Integration dans MAVEN :
+########################
+pilote les actions sur les JS suivantes :
+- gestion des dependances (npm et bower)
+- multi environnement
+- licences
+- packaging 
+...
+
+utilisation du plugin 
+https://github.com/eirslett/frontend-maven-plugin
+> run npm, bower, gulp
+> possibilité d'installer node et npm ?
+

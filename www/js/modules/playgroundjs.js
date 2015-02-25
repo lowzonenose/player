@@ -371,9 +371,8 @@ define([
                 // on traite qq cas sur le path..., 
                 // on supprime les '/' en debut de path !
                 // mais on les ajoute à la fin !
-                if (path.indexOf('./', 0) === 0) {path=path.substring(2);}
-                if (path.indexOf('.', 0)  === 0) {path=path.substring(1);}
-                if (path.indexOf('/', 0)  === 0) {path=path.substring(1);}
+                if (path.indexOf('./', 0) === 0)  {path=path.substring(2);}
+                if (path.indexOf('/',  0)  === 0) {path=path.substring(1);}
                 if (path.lastIndexOf("/")+1 !== path.length) {
                     path=path.concat("/");
                 }
@@ -388,9 +387,10 @@ define([
             // un repertoire ou un bout de chemin...
             if (name) {
                 // on traite qq cas sur le path..., c'est aussi un simple nom d'exemple !
-                if (name.indexOf('/', 0)  === 0) {name=name.substring(1);}
-                if (name.lastIndexOf("/")+1 === name.length) {
-                    name=name.substring(0, name.length-1);
+                if (name.indexOf('./', 0) === 0) {name=name.substring(2);}
+                if (name.indexOf('/',  0) === 0) {name=name.substring(1);}
+                if (name.lastIndexOf("/")+1 !== name.length) {
+                    name=name.concat("/");
                 }
                 
                 // on sauvegarde 
@@ -402,9 +402,9 @@ define([
             }
             
             // on ajoute les fichiers aux chemins precedents...
-            html_file =  html_file.concat('/', $this.m_loadSample.sample_file.html);
-            js_file   =  js_file.concat(  '/', $this.m_loadSample.sample_file.js);
-            css_file  =  css_file.concat( '/', $this.m_loadSample.sample_file.css);
+            html_file =  html_file.concat($this.m_loadSample.sample_file.html);
+            js_file   =  js_file.concat($this.m_loadSample.sample_file.js);
+            css_file  =  css_file.concat($this.m_loadSample.sample_file.css);
             
             // on sauvegarde
             $this.m_loadSample.sample_file.html = html_file;

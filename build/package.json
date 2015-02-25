@@ -1,0 +1,27 @@
+{
+  "name": "playergroundjs",
+  "version": "1.0.0",
+  "description": "",
+  "license": "Copyright (c) IGN, released under the BSD license",
+  "author": "lowzonenose <jpbazonnais@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lowzonenose/player.git"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11 ",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.2.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-util": "~3.0.4",
+    "gulp-uglify": "~1.1.0",
+    "gulp-minify-css": "~0.4.6",
+    "gulp-jshint": "~1.9.2",
+    "gulp-requirejs-optimize": "^0.1.2",
+    "gulp-bower-normalize": "~1.0.4",
+    "gulp-jasmine": "~2.0.0",
+    "minimist": "~1.1.0",
+    "imagemin": "~3.1.0",
+    "main-bower-files": "~2.5.0"
+  }
+}

@@ -1,4 +1,4 @@
-    // code javascript Exemple 1
+    // code javascript Exemple 5
     var iv= null;
     window.onload= function() {
         iv= Geoportal.load(

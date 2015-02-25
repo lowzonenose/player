@@ -12,7 +12,7 @@ define({
     
     /**
      * Obtenir l'url de l'application.
-     *   WARNING, '/' à la fin de l'URL !
+     *   WARNING, toujours un '/' à la fin de l'URL !
      * @returns URI
      */
     url: function() {

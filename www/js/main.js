@@ -11,7 +11,7 @@ requirejs.config({
         // framework
         "jquery": "../external/jquery",
         "cm"    : "../external/codemirror",
-        "log4js": "../external/log4javascript/log4javascript_uncompressed",
+        "log4js": "../external/log4javascript/log4javascript",
         // zip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",
