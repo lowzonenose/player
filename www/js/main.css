@@ -1,10 +1,10 @@
 @import url("modules/style/PlayGroundJS.css");
-@import url("external/codemirror/lib/codemirror.css");
-@import url("external/codemirror/addon/fold/foldgutter.css");
+@import url("thirdparty/codemirror/lib/codemirror.css");
+@import url("thirdparty/codemirror/addon/fold/foldgutter.css");
 // THEMES
-// @import url("external/codemirror/theme/eclipse.css");
-// @import url("external/codemirror/theme/elegant.css");
-// @import url("external/codemirror/theme/mdn-like.css");
+// @import url("thirdparty/codemirror/theme/eclipse.css");
+// @import url("thirdparty/codemirror/theme/elegant.css");
+// @import url("thirdparty/codemirror/theme/mdn-like.css");
 
 body {
     margin: 0px;

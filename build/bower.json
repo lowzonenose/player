@@ -16,13 +16,13 @@
       "jszip" : "~2.4.0",
       "jszip-utils" : "~0.0.2",
       "log4javascript" : "~1.4.9",
-      "require" : "",
+      "requirejs" : "~2.1.16",
       "FileSaver" : ""
   },
   
   "overrides": {
-      "require" : {
-            "main": "build/require.js"
-    }
+      "FileSaver" : {
+            "main": "FileSaver.js"
+      }
   }
 }

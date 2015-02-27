@@ -1,4 +1,1 @@
-ajouter les licences > MAVEN
-deploiement par environnement > MAVEN : attention, comment ajouter la config/env sur des JS minifiés et aggregés !?
 execution des tests sous jasmine ?
-"codemirror" reste une dependance embarquée dans le projet !

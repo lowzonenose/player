@@ -14,6 +14,7 @@ var image     = require('imagemin');
 /*********************************
  * options de la ligne de commande
  *********************************/
+ 
 // ex. gulp --dev --check --test --sample
 //  dev    : cette option desactive les taches d'optimisation
 //  check  : controle synthaxique des JS
@@ -44,8 +45,48 @@ if(gutil.env.test === true) {
 /*******
  * Paths
  *******/
+ 
 var targetdir = "target/build/";
 var sourcedir = "../www/";
+
+// TODO : mettre en place les paths
+var paths = {
+	src : {
+		jsdir    : sourcedir + "js/",
+		
+		jslibdir : sourcedir + "js/lib/*.js",
+		jscfgdir : sourcedir + "js/cfg/*.js",
+		jsmoddir : sourcedir + "js/modules/**/*.js",
+		jstestdir: sourcedir + "js/test/jasmine/spec/*.js",
+		
+		imgdir : sourcedir + "js/modules/img/*.*",
+		cssdir : sourcedir + "js/modules/style/*.css",
+		
+		jsinternaldir :  sourcedir + "js/thirdparty/**",
+		jsexternaldir :  sourcedir + "js/external/**",
+		
+		sampledir : sourcedir + "samples/**",
+		
+		page : sourcedir + "*.html"
+		
+	},
+	tgt : {
+		jsdir    : targetdir + "js/",
+		
+		jslibdir : targetdir + "js/lib/",
+		jscfgdie : targetdir + "js/cfg/",
+		jsmoddir : targetdir + "js/modules/",
+		jstestdir: targetdir + "js/test/jasmine/spec/",
+		
+		imgdir : targetdir + "js/modules/img/",
+		cssdir : targetdir + "js/modules/style/",
+		
+		jsinternaldir : targetdir + "js/thirdparty/",
+		jsexternaldir : targetdir + "js/external/",
+		
+		sampledir : targetdir + "samples/",
+	}
+};
 
 /***********************
  * Définition des tâches
@@ -76,6 +117,7 @@ gulp.task('check', function() {
     
     gulp.src([
         sourcedir + "js/lib/**/*.js", 
+        sourcedir + "js/cfg/**/*.js", 
         sourcedir + "js/modules/**/*.js"
     ])
     .pipe(bCheck ? jshint() : gutil.noop())
@@ -104,10 +146,10 @@ gulp.task('test', function() {
 
 // recuperation des dependances "bower"
 gulp.task('dependencies', function() {
-	// TODO
-	// les dependances doivent être placées dans le répertoire : target/build/js/external/
-	// avec la possibilité d'utilisé une version minifiée ou non (cf. --dev)
-	// Il faut normaliser les nons des lib., cad on ne veut pas de *.min.js !
+    
+    // les dependances doivent être placées dans le répertoire : target/build/js/external/
+    // avec la possibilité d'utilisé une version minifiée ou non (cf. --dev)
+    // Il faut normaliser les nons des lib., cad on ne veut pas de *.min.js !
 	
     return gulp.src(bower(), {base: './bower_components'})
         .pipe(normalize({bowerJson: './bower.json', flatten:true}))
@@ -116,7 +158,8 @@ gulp.task('dependencies', function() {
 
 // construction
 gulp.task('build', [
-	"build:js", 
+    "build:js", 
+    "build:cfg", 
     "build:third-party",
     "build:dependencies",
     "build:image", 
@@ -142,47 +185,56 @@ gulp.task('build:js', ["clean"], function () {
 	
 		return gulp.src(sourcedir + 'js/main.js')
 			.pipe(rjs({
-				paths: {
-					
-					// my module
-					module: "modules",
-					ui    : "modules/ui",
-			
-					// my lib
-					config : "lib/config",
-					helper : "lib/helper",
-					cdn : "lib/cdn",
-					dependency : "lib/dependency",
-					download : "lib/download",
-					logger : "lib/logger",
-					settings : "lib/settings",
-					sort : "lib/sort",
-					type : "lib/type",
-					syntaxhighlighter : "lib/syntaxhighlighter",
+                            paths: {
 
-					// framework
-					jquery: "empty:",
-					log4js: "empty:",
-					cm    : "empty:",
+                                // my module
+                                module: "modules",
+                                ui    : "modules/ui",
+                                
+                                // my conf
+                                config : "empty:",
+                                
+                                // my lib
+                                helper : "lib/helper",
+                                cdn : "lib/cdn",
+                                dependency : "lib/dependency",
+                                download : "lib/download",
+                                logger : "lib/logger",
+                                settings : "lib/settings",
+                                sort : "lib/sort",
+                                type : "lib/type",
+                                syntaxhighlighter : "lib/syntaxhighlighter",
 
-					// zip
-					"zip"       : "empty:",
-					"zip-utils" : "empty:",
-					"zip-save"  : "empty:",
-				}
+                                // thirdparty
+                                cm    : "empty:",
+                                
+                                // framework
+                                jquery: "empty:",
+                                log4js: "empty:",
+  
+                                // zip
+                                "zip"       : "empty:",
+                                "zip-utils" : "empty:",
+                                "zip-save"  : "empty:",
+                            }
 			}))
 			.pipe(gulp.dest(targetdir + 'js/'));
 	}
 });
 
+// ajout de la config.
+gulp.task('build:cfg', ["clean"], function () {
+    
+    return gulp.src(sourcedir + 'js/cfg/*.js')
+		.pipe(!bDev ? uglify() : gutil.noop())
+        .pipe(gulp.dest(targetdir + 'js/cfg/'));
+});
+
 // ajout des JS externes (dependances)
 gulp.task('build:third-party', ["clean"], function () {
-	
-	// FIXME 
-	// on ne recupere que le framework "codemirror" car 
-	// il est trop compliqué à gerer ...
-    return gulp.src(sourcedir + 'js/external/codemirror/**')
-        .pipe(gulp.dest(targetdir + 'js/external/codemirror/'));
+    
+    return gulp.src(sourcedir + 'js/thirdparty/codemirror/**')
+        .pipe(gulp.dest(targetdir + 'js/thirdparty/codemirror/'));
 });
 
 // ajout des JS externes (dependances)

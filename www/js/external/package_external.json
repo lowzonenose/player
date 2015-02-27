@@ -1,9 +1,4 @@
 {
-    "codemirror" : {
-        "desc" : "Syntax highlighting",
-        "url" : "http://codemirror.net/",
-        "version" :"4.5.0"
-    },
     "jquery" : {
         "desc" : "DOM Traversal and Manipulation",
         "url" : "http://jquery.com/",

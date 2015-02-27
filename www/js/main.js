@@ -8,10 +8,13 @@ requirejs.config({
         // my module
         "module": "../modules",
         "ui"    : "../modules/ui",
-        // framework
+        // my config
+        "config": "../cfg/config",
+        // framework internal
+        "cm"    : "../thirdparty/codemirror",
+        // framework external
         "jquery": "../external/jquery",
-        "cm"    : "../external/codemirror",
-        "log4js": "../external/log4javascript/log4javascript",
+        "log4js": "../external/log4javascript",
         // zip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",

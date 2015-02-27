@@ -1,7 +1,6 @@
 define([
     "jquery", 
     // libs :
-    "config", 
     "helper", 
     "settings", 
     "syntaxhighlighter",
@@ -12,13 +11,12 @@ define([
     // GUI :
     "ui/ui-crossbar",
     "ui/ui-sidebar",
-    "ui/ui-codearea"
+    "ui/ui-codearea",
     // other
-    // "uri"
+    "config"
 ], function(
     $, 
     // libs :
-    Config, 
     Helper, 
     Settings, 
     SyntaxHighlighter, 
@@ -29,9 +27,9 @@ define([
     // GUI :
     UICrossBar,
     UISideBar,
-    UICodeArea
+    UICodeArea,
     // Other:
-    // URI
+    Config
     ) 
 {
 

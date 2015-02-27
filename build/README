@@ -1,18 +1,7 @@
 TESTS avec r.js :
 ################
+Test de minification avec le binaire r.js de requireJS
 ../../../../node_modules/gulp-requirejs/node_modules/requirejs/bin/r.js -o gulpfile-r.js 
-
-Utilisation de GULP :
-#####################
-!!! 
-installation à prévoir :
-> sudo npm install -g gulp 
-!!!
-
-ex. 
-  gulp --gulpfile gulpfile-rjs.js
-   ou 
-  gulp (par defaut, gulpfile.js)
 
 Installation des dependances NodeJS :
 #####################################
@@ -29,6 +18,19 @@ installation à prévoir :
 > sudo npm install -g bower
 !!!
 bower avec bower.json
+> bower
+
+Utilisation de GULP :
+#####################
+!!! 
+installation à prévoir :
+> sudo npm install -g gulp 
+!!!
+
+> gulp --gulpfile gulpfile-r.js (test)
+ou 
+(par defaut, gulpfile.js)
+> gulp 
 
 Resultats :
 ###########
@@ -38,7 +40,7 @@ options de deploiement :
 --samples : possibilité de deployer des exemples
 --check   : controle des JS du projet
 --dev     : simple copie des sources
-          sinon, on est en mode minification, aggregation des sources
+          sinon, on est en mode minification, et aggregation des sources
 
 les ressources externes (ex. jquery) ne sont pas concaténées aux sources...
 
@@ -50,11 +52,17 @@ les ressources externes (ex. jquery) ne sont pas concaténées aux sources...
  * Les ressources minimales pour le fonctionnement du site sont :
  *       build/
  *       ├── js/
+ *       │   ├── cfg/
+ *       │   │   └── config.js
  *       │   ├── external/
- *       │   │   └── require.js
+ *       │   │   └── *.js
+ *       │   ├── thirdparty/
+ *       │   │   └── *.*
  *       │   ├── main.css
  *       │   ├── main.js
  *       │   └── modules/
+ *       │       ├── style/
+ *       │           └── *.css
  *       │       └── img/
  *       │           └── *.png
  *       ├── samples/
