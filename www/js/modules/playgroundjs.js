@@ -822,9 +822,9 @@ define([
             var html = "";
                 html = html.concat('<html> ', '\n');
                 html = html.concat('<head>',  '\n');
-                html = html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
-                html = html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
                 html = html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
+                html = html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
+                html = html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
                 html = html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
                 html = html.concat("<!-- Scripts -->", '\n');
                 html = html.concat("<script type=\"text/javascript\">", '\n');
@@ -1019,10 +1019,10 @@ define([
                     content_html = content_html.concat('<html> ', '\n');
                     content_html = content_html.concat('<head>',  '\n');
                     content_html = content_html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
-                    content_html = content_html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
-                    content_html = content_html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
                     content_html = content_html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
                     content_html = content_html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
+                    content_html = content_html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
+                    content_html = content_html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
                     content_html = content_html.concat("<!-- CSS API Deps -->", '\n',     result.css_api_deps, '\n');
                     content_html = content_html.concat('</head>', '\n');
                     content_html = content_html.concat('<body'  , '\n');
@@ -1080,7 +1080,7 @@ define([
                 // et recherche des paths
                 for(var i=0; i<cssDeps.length; i++) {
                     var regex = new RegExp("http://");
-                    if (! regex.test(jsDeps[i])) {
+                    if (! regex.test(cssDeps[i])) {
                         entries.files.push( {path:cssDeps[i]} );
                     }
                 }

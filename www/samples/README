@@ -3,7 +3,9 @@ LISTE D'EXEMPLES
 - sample_2 : idem mais presence des balises d'entêtes (html/head/link/body + script) dans la page principale
 - sample_3 : idem mais avec dependances externes
 - sample_4 : idem mais avec dependances internes + externes
-- sample_5 : 
+- sample_5 : test sur l'ordre des dependances
+            ex. de requete 
+            http://localhost:8383/test-player/www/template.html?type=min&sample_file_html=./samples/sample_5/geoportalOL2_WMTSL93.html&sample_file_js=./samples/sample_5/js/geoportalOL2_WMTSL93.js&sample_file_css=./samples/sample_5/css/geoportalOL2_WMTSL93.css
 - 3d       : exemple avec de la 3D (lib. interne : cesium)
              ex. de requete 
              http://localhost:8383/test-player/www/template.html?type=min&sample_file_html=./samples/3d/geoportalCesium_Relief.html&sample_file_js=./samples/3d/geoportalCesium_Relief.js&sample_file_css=./samples/3d/css/geoportalCesium.css

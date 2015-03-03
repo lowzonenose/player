@@ -8,6 +8,7 @@ var jasmine   = require('gulp-jasmine');
 var uglify    = require('gulp-uglify');
 var normalize = require('gulp-bower-normalize');
 var bower     = require('main-bower-files');
+var runtask   = require('gulp-bower');
 // optimisation des images...
 var image     = require('imagemin');
 
@@ -97,7 +98,8 @@ gulp.task('default', [
     "clean",
     "test",
     "check",
-    "dependencies",
+    "download",
+    "normalize",
     "build"
 ]);
 
@@ -144,8 +146,13 @@ gulp.task('test', function() {
     //     .pipe((bTests ? gulp.dest(targetdir + "test/") : gutil.noop() ));
 });
 
-// recuperation des dependances "bower"
-gulp.task('dependencies', function() {
+// recuperation des dependances via "bower"s 
+gulp.task('download', ["clean"], function() {
+  return runtask();
+});
+
+// normalisation des noms de dependances issu de "bower"
+gulp.task('normalize', ["download"], function() {
     
     // les dependances doivent être placées dans le répertoire : target/build/js/external/
     // avec la possibilité d'utilisé une version minifiée ou non (cf. --dev)
@@ -170,7 +177,7 @@ gulp.task('build', [
 
 // minification des JS
 // option --> "--dev"
-gulp.task('build:js', ["clean"], function () {
+gulp.task('build:js', ["normalize"], function () {
 	
 	if (bDev) {
 		
@@ -223,7 +230,7 @@ gulp.task('build:js', ["clean"], function () {
 });
 
 // ajout de la config.
-gulp.task('build:cfg', ["clean"], function () {
+gulp.task('build:cfg', ["normalize"], function () {
     
     return gulp.src(sourcedir + 'js/cfg/*.js')
 		.pipe(!bDev ? uglify() : gutil.noop())
@@ -231,14 +238,14 @@ gulp.task('build:cfg', ["clean"], function () {
 });
 
 // ajout des JS externes (dependances)
-gulp.task('build:third-party', ["clean"], function () {
+gulp.task('build:third-party', ["normalize"], function () {
     
     return gulp.src(sourcedir + 'js/thirdparty/codemirror/**')
         .pipe(gulp.dest(targetdir + 'js/thirdparty/codemirror/'));
 });
 
 // ajout des JS externes (dependances)
-gulp.task('build:dependencies', ["clean"], function () {
+gulp.task('build:dependencies', ["normalize"], function () {
    
     return gulp.src('./bower_dependencies/js/*.js')
 		.pipe(!bDev ? uglify() : gutil.noop())
@@ -247,7 +254,7 @@ gulp.task('build:dependencies', ["clean"], function () {
 
 // copie et optimisation des ressources images
 // option --> "--dev"
-gulp.task('build:image', ["clean"], function () {
+gulp.task('build:image', ["normalize"], function () {
 	
 	if (bDev) {
 		return gulp.src(sourcedir + 'js/modules/img/*.*')
@@ -271,9 +278,11 @@ gulp.task('build:image', ["clean"], function () {
 
 // copie et optimisation des ressources CSS
 // option --> "--dev"
-gulp.task('build:css', ["clean"], function () {
+gulp.task('build:css', ["normalize"], function () {
+    // FIXME : ça ne marche pas à tous les coups !?
 	
     gulp.src(sourcedir + 'js/*.css')
+        // .pipe(!bDev ? css() : gutil.noop())
         .pipe(gulp.dest(targetdir + 'js/'));
         
     gulp.src(sourcedir + 'js/modules/**/*.css')
@@ -283,14 +292,14 @@ gulp.task('build:css', ["clean"], function () {
 });
 
 // copie du html
-gulp.task('build:html', ["clean"], function () {
+gulp.task('build:html', ["normalize"], function () {
     return gulp.src(sourcedir + 'template.html')
         .pipe(gulp.dest(targetdir));
 });
 
 // OPTIONS FACULTATIF : --> "--sample"
 // copie des exemples
-gulp.task('build:sample', ["clean"], function() {
+gulp.task('build:sample', ["normalize"], function() {
     
     if (!bSamples) {
         console.log("SKIP Task : samples !");

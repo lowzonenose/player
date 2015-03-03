@@ -1,14 +1,13 @@
-    /* code css Exemple 5 */
-    h1 {
+  h1 {
         text-align:center;
         font-size:0.75em;
         font-style: italic;
-        width:700px;
+        width:800px;
     }
     div#example_explain {
         margin:0px 0px 10px 0px;
         border: thin solid #595E61;
-        width:700px;
+        width:800px;
         text-align:justify;
         font-size: 0.75em;
         font-style: italic;
@@ -20,19 +19,42 @@
         padding:0px;
     }
     div#viewerDiv {
-        width:700px;
-        height:500px;
-        background-image:url(img/loading.gif);
+        width:800px;
+        height:600px;
+        background-color:white;
         background-position:center center;
         background-repeat:no-repeat;
-        background-color:white;
     }
     div#footer {
         font-size:x-small;
         text-align:center;
-        width:700px;
+        width:800px;
     }
     div#footer a, div#footer a:link, div#footer a:visited, div#footer a:hover {
         text-decoration:none;
         color:black;
+    }
+    .olControlNavToolbar {
+        top:450px;
+        left:10px;
+    }
+    .gpControlPermanentLogo {
+        left:45%;
+    }
+    .gpControlTermsOfService {
+        left:45%;
+    }
+    div#code a, div#code a:link, div#code a:visited, div#code a:hover {
+        text-decoration:none;
+        color: #595E61;
+    }
+    div#code {
+        margin:0px 0px 10px 0px;
+        width:800px;
+        position:relative;
+        left:0px;
+        top:0px;
+        text-align:justify;
+        font-size: 0.75em;
+        font-style: italic;
     }

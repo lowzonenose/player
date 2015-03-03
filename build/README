@@ -8,6 +8,7 @@ Installation des dependances NodeJS :
 !!! 
 installation de nodejs à prévoir
 cf. http://openclassrooms.com/courses/des-applications-ultra-rapides-avec-node-js/installer-node-js
+Sous debian, il faut installer le package nodejs-legacy, ce qui permet d'avoir le lien symbolique nodejs -> node
 !!!
 npm avec package.json
 
