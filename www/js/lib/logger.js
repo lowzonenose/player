@@ -1,28 +1,19 @@
+/**
+ * Log
+ * @tutorial Logger
+ * @module Logger
+ * @see module:log4js
+ * @see module:config
+ */
 define(["log4js", "config"], function (Log4js, Config) {
-    
-    /**
-     * DESCRIPTION
-     *  Gestion du logger.
-     *  (surcharge de la librairie 'log4javascript')
-     *   
-     * INFO
-     *   Par defaut, le logger est actif en mode ALL.
-     *   La configuration est gérée via la class 'config.js'.
-     *   
-     * USAGE
-     *  var m_Logger = new Logger();
-     *  m_Logger.debug("Activation du logger en mode " + m_Logger.level());
-     *
-     * RETURN
-     *  Affichage d'un message dans la console.
-     * 
-     * SEE ASLO
-     *   config.js
-     *   
-     */
     
     "use strict";
     
+    /**
+     * Description
+     * @method Logger
+     * @return 
+     */
     function Logger() {
         
         if (!(this instanceof Logger)) {
@@ -77,21 +68,56 @@ define(["log4js", "config"], function (Log4js, Config) {
     Logger.prototype = {
         
         constructor: Logger,
+        /**
+         * Description
+         * @method log
+         * @param {} message
+         * @return 
+         */
         log: function (message) {
             this.logger.log(this.logger.getLevel(), message);
         },
+        /**
+         * Description
+         * @method info
+         * @param {} message
+         * @return 
+         */
         info: function (message) {
             this.logger.info(message);
         },
+        /**
+         * Description
+         * @method debug
+         * @param {} message
+         * @return 
+         */
         debug: function (message) {
             this.logger.debug(message);
         },
+        /**
+         * Description
+         * @method warn
+         * @param {} message
+         * @return 
+         */
         warn: function (message) {
             this.logger.warn(message);
         },
+        /**
+         * Description
+         * @method error
+         * @param {} message
+         * @return 
+         */
         error: function (message) {
             this.logger.error(message);
         },
+        /**
+         * Description
+         * @method level
+         * @return CallExpression
+         */
         level: function() {
             return this.logger.getLevel().toString();
         }

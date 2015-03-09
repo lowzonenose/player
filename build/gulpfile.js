@@ -9,18 +9,24 @@ var uglify    = require('gulp-uglify');
 var normalize = require('gulp-bower-normalize');
 var bower     = require('main-bower-files');
 var runtask   = require('gulp-bower');
+var jsdoc     = require("gulp-jsdoc");
+var debug     = require('gulp-debug');
 // optimisation des images...
 var image     = require('imagemin');
+// system file...
+var fs = require('fs');
 
 /*********************************
  * options de la ligne de commande
  *********************************/
  
-// ex. gulp --dev --check --test --sample
-//  dev    : cette option desactive les taches d'optimisation
-//  check  : controle synthaxique des JS
-//  test   : execution des tests
-//  sample : deployer des exemples
+// ex. gulp --dev --check --test --doc --sample --download
+//  dev      : cette option desactive les taches d'optimisation
+//  check    : controle synthaxique des JS
+//  test     : execution des tests
+//  doc      : documentation JSdoc
+//  sample   : deployer des exemples
+//  download : tétélchargement des dependances externes via bower (ex. jquery)
 var argv = require('minimist')(process.argv.slice(4));
 
 var bDev = false;
@@ -33,6 +39,11 @@ if(gutil.env.check === true) {
     bCheck = true;
 }
 
+var bDoc = false;
+if(gutil.env.doc === true) {
+    bDoc = true;
+}
+
 var bSamples = false;
 if(gutil.env.sample === true) {
     bSamples = true;
@@ -41,6 +52,11 @@ if(gutil.env.sample === true) {
 var bTests = false;
 if(gutil.env.test === true) {
     bTests = true;
+}
+
+var bDownload = false;
+if(gutil.env.download === true) {
+    bDownload = true;
 }
 
 /*******
@@ -78,7 +94,8 @@ var paths = {
 		jscfgdie : targetdir + "js/cfg/",
 		jsmoddir : targetdir + "js/modules/",
 		jstestdir: targetdir + "js/test/jasmine/spec/",
-		
+		jsdoc    : targetdir + "js/doc",
+                
 		imgdir : targetdir + "js/modules/img/",
 		cssdir : targetdir + "js/modules/style/",
 		
@@ -98,6 +115,7 @@ gulp.task('default', [
     "clean",
     "test",
     "check",
+    "doc",
     "download",
     "normalize",
     "build"
@@ -114,7 +132,7 @@ gulp.task("clean", function () {
 gulp.task('check', function() {
     
     if (!bCheck) {
-        console.log("SKIP Task : check !");
+        gutil.log("SKIP Task : check !");
     }
     
     gulp.src([
@@ -133,11 +151,11 @@ gulp.task('test', function() {
     // TODO 
     // execution des tests sous jasmin ? 
     if (!bTests) {
-        console.log("SKIP Task : test !");
+        gutil.log("SKIP Task : test !");
         return;
     }
     
-    console.log("Not yet implemented : test !");
+    gutil.log("Not yet implemented : test !");
     
     // return gulp.src(sourcedir + 'js/test/jasmine/spec/*.js')
     //    .pipe(jasmine({verbose:true}));
@@ -146,9 +164,80 @@ gulp.task('test', function() {
     //     .pipe((bTests ? gulp.dest(targetdir + "test/") : gutil.noop() ));
 });
 
-// recuperation des dependances via "bower"s 
+// OPTIONS FACULTATIF : --> "--doc"
+// JSdoc
+gulp.task('doc', function() {
+    
+    // FIXME en version beta 
+    // car difficulté à mettre en place la JSDoc avec DocStrap sur la gestion
+    // des tutoriaux ...
+    gutil.log("Not yet released : doc (Beta) !");
+    
+    if (bDoc) {
+        
+        return gulp.src([
+            sourcedir + "js/lib/*.js", 
+            sourcedir + "js/cfg/*.js", 
+            sourcedir + "js/modules/*.js",
+            sourcedir + "js/modules/ui/*.js",
+            sourcedir + "js/doc/README.md",
+        ])
+        .pipe(debug({title: '  --> doc-src:'}))
+        .pipe(jsdoc(
+        
+            // destination
+            targetdir + 'doc', 
+            // template
+            {		
+                // DocStrap ?
+                path                    : "ink-docstrap",
+                
+		"systemName"            : "Player Ground JS",
+		"footer"                : "playgroundjs version 1.0.1",
+		"copyright"             : "Geoportail - Copyright (c) IGN, released under the BSD license",
+		"navType"               : "vertical",
+		"theme"                 : "cerulean",
+		"linenums"              : true,
+		"collapseSymbols"       : false,
+		"inverseNav"            : true,
+		"highlightTutorialCode" : true
+              },
+              //infos
+              {
+                    name: '',
+                    kind: 'package',
+                    longname: '',
+                    description: 'test',
+                    version: '',
+                    licenses: [],
+                    tags: {
+                      allowUnknownTags: true
+                    },
+                    plugins: false
+              },
+              // options
+              {
+                    "cleverLinks"           : false,
+                    "monospaceLinks"        : false,
+                    "dateFormat"            : "ddd MMM Do YYYY",
+                    "outputSourceFiles"     : true,
+                    "outputSourcePath"      : true
+              }
+        ));
+    }
+    
+    gutil.log("SKIP Task : doc !");
+    
+});
+
+// recuperation des dependances via "bower" 
 gulp.task('download', ["clean"], function() {
-  return runtask();
+    
+     if (bDownload) {
+        return runtask();
+    }
+    
+    gutil.log("SKIP Task : download !");
 });
 
 // normalisation des noms de dependances issu de "bower"
@@ -157,10 +246,19 @@ gulp.task('normalize', ["download"], function() {
     // les dependances doivent être placées dans le répertoire : target/build/js/external/
     // avec la possibilité d'utilisé une version minifiée ou non (cf. --dev)
     // Il faut normaliser les nons des lib., cad on ne veut pas de *.min.js !
-	
-    return gulp.src(bower(), {base: './bower_components'})
-        .pipe(normalize({bowerJson: './bower.json', flatten:true}))
-        .pipe(gulp.dest('./bower_dependencies/'));
+    // Attention, il est possible qu'il n'y ait pas de lib. à normaliser...
+
+    fs.exists('./bower_components', function (exist) {
+        if (exist) {
+            gulp.src(bower(), {base: './bower_components'})
+                .pipe(normalize({bowerJson: './bower.json', flatten:true}))
+                .pipe(gulp.dest('./bower_dependencies/'));
+        }
+        else {
+            gutil.log("No bower components !");
+        }
+    });
+    
 });
 
 // construction
@@ -245,8 +343,22 @@ gulp.task('build:third-party', ["normalize"], function () {
 });
 
 // ajout des JS externes (dependances)
-gulp.task('build:dependencies', ["normalize"], function () {
-   
+gulp.task('build:dependencies', [
+    'build:dependencies:local',
+    'build:dependencies:remote'
+]);
+
+// lib. JS du projet
+gulp.task('build:dependencies:local', ["normalize"], function () {
+    // Par defaut, on prend les lib. externes du projet
+    return gulp.src(sourcedir + 'js/external/*.js')
+        .pipe(!bDev ? uglify() : gutil.noop())
+	.pipe(gulp.dest(targetdir + 'js/external/'));
+});
+
+// lib. JS téléchargées
+gulp.task('build:dependencies:remote', ["build:dependencies:local"], function () {
+    // puis, on ajoute les autres..., si elles existent...
     return gulp.src('./bower_dependencies/js/*.js')
 		.pipe(!bDev ? uglify() : gutil.noop())
 		.pipe(gulp.dest(targetdir + 'js/external/'));
@@ -262,9 +374,9 @@ gulp.task('build:image', ["normalize"], function () {
 	}
 	
 	var imagemin = new image()
-        .src(sourcedir  + 'js/modules/img/*.*')
-        .dest(targetdir + 'js/modules/img/')
-        .use(image.jpegtran({ progressive: true }));
+            .src(sourcedir  + 'js/modules/img/*.*')
+            .dest(targetdir + 'js/modules/img/')
+            .use(image.jpegtran({ progressive: true }));
  
     imagemin.run(
         function (err, files) {
@@ -286,8 +398,8 @@ gulp.task('build:css', ["normalize"], function () {
         .pipe(gulp.dest(targetdir + 'js/'));
         
     gulp.src(sourcedir + 'js/modules/**/*.css')
-		.pipe(!bDev ? css() : gutil.noop())
-        .pipe(gulp.dest(targetdir + 'js/modules/'));    
+            .pipe(!bDev ? css() : gutil.noop())
+            .pipe(gulp.dest(targetdir + 'js/modules/'));    
 
 });
 
@@ -302,7 +414,7 @@ gulp.task('build:html', ["normalize"], function () {
 gulp.task('build:sample', ["normalize"], function() {
     
     if (!bSamples) {
-        console.log("SKIP Task : samples !");
+        gutil.log("SKIP Task : samples !");
     }
     
     return gulp.src(sourcedir + "samples/**")

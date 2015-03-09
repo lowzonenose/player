@@ -1,30 +1,18 @@
+ /**
+ * Gestion des types d'API.
+ * @tutorial Type
+ * @module Type
+ */
 define(function () {
-    
-    /**
-     * DESCRIPTION
-     *  Gestion des types d'API.
-     *  
-     * INFORMATION
-     *  
-     * 
-     * USAGE
-     *  var obj  = new Type("extended");
-     *  var type = obj.getType(); // Extended
-     * 
-     * ou
-     *  
-     *  (static)
-     *  Type.isExist("extended"); // true / false
-     * 
-     * RETURN
-     *  Le type d'API
-     * 
-     * SEE ASLO
-     *  
-     */
-    
+
     "use strict";
     
+    /**
+     * Description
+     * @method Type
+     * @param {} type
+     * @return 
+     */
     function Type(type) {
         
         if (!(this instanceof Type)) {
@@ -36,6 +24,12 @@ define(function () {
       
     Type.DEFAULT = "Extended";
     
+    /**
+     * Description
+     * @method isExist
+     * @param {} type
+     * @return ConditionalExpression
+     */
     Type.isExist = function(type) {
         
         var obj = new Type(type);
@@ -47,6 +41,11 @@ define(function () {
         
         constructor: Type,
         
+        /**
+         * Description
+         * @method check
+         * @return MemberExpression
+         */
         check: function() {
             
             switch (true) {
@@ -79,6 +78,11 @@ define(function () {
             return this.type;
         },
         
+        /**
+         * Description
+         * @method getType
+         * @return MemberExpression
+         */
         getType: function () {
             
             if (this.check() == null) {
@@ -87,6 +91,12 @@ define(function () {
             return this.type;
         },
         
+        /**
+         * Description
+         * @method setType
+         * @param {} type
+         * @return 
+         */
         setType: function (type) {
             this.type = type;
         }

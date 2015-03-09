@@ -812,11 +812,27 @@ define([
                     }
             };
             
-            // TODO 
-            // callback à mettre en place !
-            var strCallbackOnLoad = function callbackOnLoad() {
-                alert("callbackOnLoad");
-            };
+            // FIXME 
+            // mettre en place l'image de la patience..., et donc attendre la fin du
+            // chargement de l'IFrame.
+            // 1. hummm..., si le document n'est pas encore chargé, 
+            // comment peut on afficher l'image ou avoir une interaction avec qqch qui est 
+            // en train de se charger ?
+            // 2. comment savoir si l'iframe est chargée ?
+            
+            var strLoadImage = '<div id="myloading"><img src="img/loading.gif"/></div>';
+            
+            var strSetTimout = '\
+            setTimeout(function(){\n\
+                document.getElementById("myloading").style.display="none";\n\
+            }, 5000);';
+            
+            var strLoadCallback = '\
+            function loadCallback () {\n\
+                console.log("document in iframe is ready!");\n\
+                parent.loadIFrameCallback();\n\
+                // document.getElementById("myloading").style.display="none";\n\
+            };';
             
             // resultat 
             var html = "";
@@ -827,8 +843,9 @@ define([
                 html = html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
                 html = html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
                 html = html.concat("<!-- Scripts -->", '\n');
-                html = html.concat("<script type=\"text/javascript\">", '\n');
-                html = html.concat('function callbackOnLoad() {console.log("callbackOnLoad");}', '\n');
+                html = html.concat('<script type="text/javascript">', '\n');
+                // html = html.concat(strSetTimout, '\n');
+                html = html.concat(strLoadCallback, '\n');
                 html = html.concat("</script>", '\n');
                 html = html.concat("<!-- CSS API Deps -->", '\n');
                 html = html.concat(result.css_api_deps, '\n');
@@ -836,7 +853,8 @@ define([
                 html = html.concat(result.code.css, '\n');
                 html = html.concat("</style>", '\n');
                 html = html.concat('</head>', '\n');
-                html = html.concat('<body onload=\"callbackOnLoad()\">', '\n');
+                html = html.concat('<body onload="loadCallback()">', '\n');
+                // html = html.concat(strLoadImage, '\n');
                 html = html.concat(result.code.html, '\n');
                 html = html.concat("<script type=\"text/javascript\">", '\n');
                 html = html.concat(result.code.js, '\n');

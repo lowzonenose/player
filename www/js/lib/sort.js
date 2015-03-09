@@ -1,60 +1,18 @@
+ /**
+ * Tri du liste de chemins (path).
+ * @tutorial Sort
+ * @module Sort
+ */
 define(function () {
-    
-    /**
-     * DESCRIPTION
-     *   
-     *   Tri du liste de chemins (path).
-     *   
-     * INFORMATION
-     * 
-     *  Exemple de liste :
-     *  - string
-     *  [
-     *     "sample/",
-     *     "sample/folder/",
-     *     "sample/folder/README",
-     *     "sample/sample.css",
-     *     "sample/sample.html",
-     *     "sample/sample.js",
-     *     "sample/folder-bis/",
-     *     "sample/folder-bis/README"
-     *   ]
-     *   
-     *   - object 
-     *   [
-     *      {path:"sample/"},
-     *      {path:"sample/folder/"},
-     *      {path:"sample/folder/README", content:"contenu du fichier README!"},
-     *      {path:"sample/sample.css"},
-     *      {path:"sample/sample.html"},
-     *      {path:"sample/sample.js"},
-     *      {path:"sample/folder-bis/"},
-     *      {path:"sample/folder-bis/README", content:"contenu du fichier README!"}
-     *   ]
-     *   
-     * USAGE
-     * 
-     *      var s = new Sort([
-     *          {path:"sample/"},
-     *          {path:"sample/folder/"},
-     *          {path:"sample/folder/README", content:"contenu du fichier README!"},
-     *          {path:"sample/sample.css"},
-     *          {path:"sample/sample.html"},
-     *          {path:"sample/sample.js"},
-     *          {path:"sample/folder-bis/"},
-     *          {path:"sample/folder-bis/README", content:"contenu du fichier README!"}]);
-     *      var array = s.pathsort();
-     *      
-     * RETURN
-     * 
-     *  Liste triée
-     *  
-     * SEE ASLO
-     * 
-     */
-    
+
     "use strict";
     
+    /**
+     * Description
+     * @method Sort
+     * @param {} array_paths
+     * @return 
+     */
     function Sort(array_paths) {
         
         if (!(this instanceof Sort)) {
@@ -82,6 +40,12 @@ define(function () {
     Sort.prototype = {
         
         constructor: Sort,
+        /**
+         * Description
+         * @method pathsort
+         * @param {} sep
+         * @return array_sort
+         */
         pathsort : function(sep) {
         
             var $this = this;
@@ -138,6 +102,13 @@ define(function () {
             
             return array_sort;
         },
+        /**
+         * Description
+         * @method _sorter
+         * @param {} a
+         * @param {} b
+         * @return 
+         */
         _sorter : function(a, b) {
         
             var l = Math.max(a.length, b.length);

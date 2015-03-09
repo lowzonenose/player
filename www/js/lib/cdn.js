@@ -1,78 +1,18 @@
 /**
- * References sur le CORS :
- *  http://www.eriwen.com/javascript/how-to-cors/
- *  https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Browser_compatibility
- *  https://xhr.spec.whatwg.org/
- *  http://arunranga.com/examples/access-control/
+ * Content Delivery Networks
+ * @tutorial CDN
+ * @module CDN
  */
-
 define(function () {
-    
-    /**
-     * DESCRIPTION
-     *  Gestion des librairies externes à ajouter dans l'exemple,  
-     *  via une API de consultation d'un 'Content Delivery Networks for JS'.
-     *  
-     * INFORMATION 
-     *  Par defaut, on télécharge les libraries sur http://api.cdnjs.com/libraries
-     *  La recherche se fait via la construction de l'url suivante :
-     *    http://api.cdnjs.com/libraries?search=jquery&fields=version
-     *    on obtient un objet JSON (liste de resultats).
-     *  Cette liste est affichée pour selection dans le menu de la page principale.
-     * 
-     * USAGE
-     *  var cdn = new CDN("codemirror");
-     *  // en mode JSON (par defaut)
-     *  cdn.request(); 
-     *  
-     *  // en mode JSONP
-     *  var options = { 
-     *       mode: "jsonp",                         // par defaut, "json"
-     *       url: "http://api.cdnjs.com/libraries", // par defaut
-     *       callback: function () {}               // par defaut, cf. fonction 'insert'
-     *  }
-     *  cdn.request(options); 
-     * 
-     * RETURN 
-     *  Reponse en JSONP ou JSON
-     *  Ex. JSONP par defaut
-     *  typeof insert === 'function' && insert(
-     *  {
-     *    results: [
-     *     {
-     *       name: "codemirror",
-     *       latest: "http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js",
-     *       version: "4.8.0"
-     *     }
-     *    ],
-     *    total: 1
-     *  });
-     *  
-     * JSONP
-     * 
-     *  (...)
-     *  <select id="liste"></select>
-     * 
-     *  <script>
-     *   function insert(json) {
-     *     for(var i=0; i< json.results.length; i++) {
-     *       var x = document.getElementById("liste");
-     *       var option = document.createElement("option");
-     *       option.text = json.results[i].name + json.results[i].version + "(" + json.results[i].latest + ")";
-     *       x.add(option);
-     *     }
-     *   }
-     * 
-     *   var script = document.createElement('script');
-     *   script.src = 'http://api.cdnjs.com/libraries?search=codemirror&fields=version&callback=insert';
-     *   document.body.appendChild(script);
-     *  </script> 
-     *  (...)
-     * 
-     */
     
     "use strict";
     
+    /**
+     * Content Delivery Networks
+     * @constructor CDN
+     * @param {String} library's name
+     * @return {Object} Object CDN
+     */
     function CDN(library) {
         
         if (!(this instanceof CDN)) {
@@ -91,6 +31,7 @@ define(function () {
         
     }
     
+    
     CDN.URL  = "http://api.cdnjs.com/libraries";
     CDN.MODE = "json";
     CDN.CALLBACK = "callback";
@@ -100,12 +41,17 @@ define(function () {
     
     CDN.prototype = {
         
+        /**
+         * Constructor
+         * @constructor
+         */
         constructor: CDN,
         
         /**
          * Requête mode GET de type XHR
+         * @method request
          * @param {type} options
-         * @returns {undefined}
+         * @return 
          */
         request: function (options) {
             
@@ -156,6 +102,12 @@ define(function () {
             
         },
         
+        /**
+         * Description
+         * @method _requestXHR
+         * @param {String} url
+         * @return 
+         */
         _requestXHR: function (url) {
             
             var $self = this;
@@ -167,7 +119,17 @@ define(function () {
                 
                 XHR = new XMLHttpRequest();
                 XHR.open('GET', url, true);
+                /**
+                 * Description
+                 * @method onerror
+                 * @return 
+                 */
                 XHR.onerror = function () {throw new Error("Errors Occured on Http Request with XMLHttpRequest !");};
+                /**
+                 * Description
+                 * @method onreadystatechange
+                 * @return 
+                 */
                 XHR.onreadystatechange = function () {
 
                     if (XHR.readyState == 4) { // DONE
@@ -191,7 +153,17 @@ define(function () {
                     
                     XHR = new XDomainRequest();
                     XHR.open('GET', url);
+                    /**
+                     * Description
+                     * @method onerror
+                     * @return 
+                     */
                     XHR.onerror = function () {throw new Error("Errors Occured on Http Request with XDomainRequest !");};
+                    /**
+                     * Description
+                     * @method onload
+                     * @return 
+                     */
                     XHR.onload = function() {
                         $self.response = JSON.parse(XHR.responseText);   
                         if ($self.settings.callback !== null && typeof $self.settings.callback === 'function') {
@@ -205,6 +177,13 @@ define(function () {
             }
         },
         
+        /**
+         * Description
+         * @method _requestScript
+         * @param {String} url
+         * @param {Boolean} is
+         * @return 
+         */
         _requestScript: function (url, is) {
             
             // INFO
@@ -235,17 +214,31 @@ define(function () {
         },
         
         /**
-         * TODO
-         * Setter/Getter
+         * Description
+         * @method setUrl
+         * @param {String} url
+         * @return 
          */
         setUrl: function(url) {
             
         },
         
+        /**
+         * Description
+         * @method setParams
+         * @param {} params
+         * @return 
+         */
         setParams: function (params) {
             
         },
         
+        /**
+         * Description
+         * @method setMode
+         * @param {} mode
+         * @return 
+         */
         setMode: function(mode) {
             
         },
@@ -254,26 +247,54 @@ define(function () {
         // Manipulation de la liste de resultats //
         // ************************************* //
 
+        /**
+         * Description
+         * @method json
+         * @return MemberExpression
+         */
         json: function () {
             return this.response;
         },
         
+        /**
+         * Description
+         * @method length
+         * @return MemberExpression
+         */
         length: function () {
             return this.response.total;
         },
         
+        /**
+         * Description
+         * @method version
+         * @param {} index
+         * @return 
+         */
         version: function (index) {
             if (index < this.length() || index != null) {
                 return this.response.results[index].version;
             }
         }
 ,
+        /**
+         * Description
+         * @method name
+         * @param {} index
+         * @return 
+         */
         name: function (index) {
             if (index < this.length() || index != null) {
                 return this.response.results[index].name;
             }
         },
         
+        /**
+         * Description
+         * @method url
+         * @param {} index
+         * @return 
+         */
         url: function (index) {
             if (index < this.length() || index != null) {
                 return this.response.results[index].latest;

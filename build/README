@@ -10,7 +10,8 @@ installation de nodejs à prévoir
 cf. http://openclassrooms.com/courses/des-applications-ultra-rapides-avec-node-js/installer-node-js
 Sous debian, il faut installer le package nodejs-legacy, ce qui permet d'avoir le lien symbolique nodejs -> node
 !!!
-npm avec package.json
+npm avec package.json + .npmrc pour le proxy
+> npm install
 
 Installation des dependances JS du projet :
 ###########################################
@@ -18,8 +19,8 @@ Installation des dependances JS du projet :
 installation à prévoir :
 > sudo npm install -g bower
 !!!
-bower avec bower.json
-> bower
+bower avec bower.json + .bowerrc pour le proxy
+> bower install 
 
 Utilisation de GULP :
 #####################
@@ -80,8 +81,18 @@ http://bower.io/
 cf. commande NPM
 https://docs.npmjs.com/
 
-cf. gulp-bower-normalize
-https://github.com/cthrax/gulp-bower-normalize
+JSDoc :
+#######
+
+manuel 
+dans ./build/
+> jsdoc -c jsdoc.json
+ou
+> gulp --doc
+
+au préalable, 
+> npm install jsdoc
+> npm install ink-docstrap
 
 Integration dans MAVEN :
 ########################

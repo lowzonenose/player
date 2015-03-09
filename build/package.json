@@ -1,7 +1,7 @@
 {
   "name": "playergroundjs",
   "version": "1.0.0",
-  "description": "",
+  "description": "It's just a jsFiddle like !",
   "license": "Copyright (c) IGN, released under the BSD license",
   "author": "lowzonenose <jpbazonnais@gmail.com>",
   "repository": {
@@ -31,6 +31,9 @@
     "karma-jasmine": "~0.3.5",
     "requirejs": "~2.1.16",
     "karma-requirejs": "~0.2.2",
-    "karma-firefox-launcher": "~0.1.4"
+    "karma-firefox-launcher": "~0.1.4",
+    "gulp-jsdoc": "~0.1.4",
+    "ink-docstrap": "~0.5.2",
+    "gulp-debug": "~2.0.1"
   }
 }

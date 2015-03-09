@@ -2,26 +2,30 @@ define({
     
    /**
     * DESCRIPTION
+    * 
     *  Gestion de la configuration de l'application par defaut.
+    *  
     *  En fonction de l'environnement de deploiement (local, dev, qualif, prod),
     *  il faudra surcharge ces parametres.
     * 
     *  ex. Configuration de Production
-    *  
+    *  ```javascript
     *  - logger: {
     *       active: false,
     *       level: "ERROR"
     *    }
-    *    
+    *  ```  
+    *  ```javascript
     *  - proxy:"/servlet/proxy"
-    *  
+    *  ```
     *  // possibilité de surcharger ces params. dans l'url
+    *  ```javascript
     *  - api: {
     *       url:'http://api.ign.fr/geoportail/api/js/',
     *       version:"2.1.1"                 
     *    }
     *  - ...
-    *  
+    *  ```
     */
    
     application: {

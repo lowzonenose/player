@@ -1,3 +1,12 @@
+/**
+ * Download d'une archive ZIP
+ * @tutorial Download
+ * @module Download
+ * @see module:zip
+ * @see module:zip-utils
+ * @see module:zip-save
+ * @see module:sort
+ */
 define([ 
         "jquery",
         // dependances zip lib.
@@ -8,98 +17,14 @@ define([
         "sort"
     ], function ($, JSZip, JSZipUtils, JSFileSave, Sort) {
     
-    /**
-     * DESCRIPTION
-     *   Gestion des téléchargements des exemples au format 'zip'.
-     *   Gestion de la construction  des archives au format 'zip'.
-     *   
-     * INFORMATION
-     *   types de fonctionnement selon les parametres d'entrée :
-     *    - cas n° 1 : Une archive est fournie 
-     *                  donc simple transfert
-     *                  on peut choisir un mode de téléchargement.
-     *    - cas n° 2 : Une liste de fichier est fournie 
-     *                  donc compression et transfert (mode URI)
-     *    
-     *  Il existe +ieurs mode de téléchargements (param. interne !)
-     *  Par defaut, on utilise le mode TAG :
-     *  cf. notes !
-     *      {
-     *        mode : (
-     *          "TAG", // insertion d'une balise <a>
-     *          "URL", // requete XHR
-     *          "URI"  // requete XHR
-     *          )
-     *       } 
-     * 
-     * USAGE
-     * 
-     *   // cas n° 1 
-     *   var options = { 
-     *      scope    : this,        // cf. notes !
-     *      mode     : "URI",       // cf. notes !
-     *      archive  : "exemple",   // ex. exemple.zip
-     *      base     : "./www/site/download/",
-     *      onsuccess: callback,
-     *      onfailure: callback,
-     *   };
-     *   var dl = new Download(options);
-     *   dl.send();
-     *   
-     *   // cas n° 2
-     *   var options = {  
-     *      scope    : this,                // cf. notes  
-     *      archive  : "exemple",           // ex. exemple.zip
-     *      base     : "./www/site/download/",
-     *      files    : ["exemple/",
-     *                  "exemple/file.js", 
-     *                  "exemple/file.html",
-     *                  "exemple/file.css"], 
-     *      onsuccess: callback,
-     *      onfailure: callback,
-     *   };
-     *   var dl = new Download(options);
-     *   dl.send();
-     *   
-     *   // cas n° 2 avec gestion des contents
-     *   var options = {  
-     *      scope    : this,             // cf. notes  
-     *      archive  : "exemple",        // ex. exemple.zip
-     *      base     : "./www/site/download/",               
-     *      files    : [
-     *                  {path: "sample/"},
-                        {path: "sample/file.1",content:"test contenu!"},
-                        {path: "sample/file.2",content:"test contenu!"}"
-                       ] 
-     *      onsuccess: callback,
-     *      onfailure: callback,
-     *   };
-     *   var dl = new Download(options);
-     *   dl.send();
-     *   
-     * NOTES
-     * 
-     *  - scope
-     *   l'option 'scope' permet d'interagir avec la fonction 'callback':
-     *   Si "scope : this", le this du callback renvoie l'objet 'player'.
-     *   Par defaut, si le scope n'est pas renseignée, this est associé à l'objet 
-     *   'Download'.
-     *   
-     *  - mode
-     *   l'option 'mode' est utile dans le cas d'un téléchargement d'une archive. 
-     *   par defaut, on est dans le mode 'TAG'.
-     *   (fonctionnalité orientée maintenance !)
-     *   
-     * RETURN
-     * 
-     *  une archive !
-     *  
-     * SEE ASLO
-     * 
-     */
-    
     "use strict";
     
+    /**
+     * Description
+     * @method Download
+     * @param {} options
+     * @return 
+     */
     function Download(options) {
         
         if (!(this instanceof Download)) {
@@ -175,12 +100,24 @@ define([
         //  * onsuccess 
         //  * onfailure
         if (this.settings.onsuccess == null) {
+            /**
+             * Description
+             * @method onsuccess
+             * @param {} message
+             * @return 
+             */
             this.settings.onsuccess = function(message) {
                 console.log("[INTERNE] success : " + message);
             };
         }
         
         if  (this.settings.onfailure == null) {
+            /**
+             * Description
+             * @method onfailure
+             * @param {} message
+             * @return 
+             */
             this.settings.onfailure = function(message) {
                 throw new Error("[INTERNE] failure : " + message);
             };
@@ -198,6 +135,12 @@ define([
         }
     };
     
+    /**
+     * Description
+     * @method _checkMode
+     * @param {} mode
+     * @return bgood
+     */
     function _checkMode (mode) {
             
         // test du mode 
@@ -224,6 +167,11 @@ define([
         
         constructor: Download,
         
+        /**
+         * Description
+         * @method send
+         * @return 
+         */
         send : function () {
             
             switch(this.instance) {
@@ -256,6 +204,11 @@ define([
             
         },
         
+        /**
+         * Description
+         * @method sendArchive
+         * @return 
+         */
         sendArchive : function () {
             
             switch (this.getMode()) {
@@ -277,6 +230,11 @@ define([
             
         },
         
+        /**
+         * Description
+         * @method createArchive
+         * @return 
+         */
         createArchive : function () {
             
             var $self = this;
@@ -322,6 +280,12 @@ define([
             }
             
             // callback
+            /**
+             * Description
+             * @method callback_failure
+             * @param {} message
+             * @return 
+             */
             var callback_failure = function(message) {
                 if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
                     if ($self.settings.scope) {
@@ -331,6 +295,12 @@ define([
                     }
                 }
             };
+            /**
+             * Description
+             * @method callback_success
+             * @param {} message
+             * @return 
+             */
             var callback_success = function(message) {
                 if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
                         if ($self.settings.scope) {
@@ -361,9 +331,19 @@ define([
                 });
         },
         
-        /****************************
+        /**
+         * **************************
          * Méthode d'archivage 
-         ****************************/
+         * **************************/
+         
+        /**
+         *
+         * @method _deferredAddFilesZip
+         * @param {} url
+         * @param {} files
+         * @param {} zip
+         * @return deferreds
+         */
         _deferredAddFilesZip : function(url, files, zip) {
             
             var $self = this;
@@ -439,6 +419,15 @@ define([
             return deferreds;
         },
         
+        /**
+         * Description
+         * @method _deferredAddFileZip
+         * @param {} source
+         * @param {} target
+         * @param {} content
+         * @param {} zip
+         * @return deferred
+         */
         _deferredAddFileZip : function(source, target, content, zip ) {
             var deferred = $.Deferred();
             if (!content) {
@@ -466,8 +455,8 @@ define([
         /**
          * Mise en place d'une balise <a> dans le "document", 
          * et execution de l'evenement "click()".
-         * 
-         * @returns {undefined}
+         * @method _sendWithModeTAG
+         * @return 
          */
         _sendWithModeTAG: function () {
             
@@ -544,8 +533,8 @@ define([
          * Mise en place d'une requête XHR avec passage du content de l'archive 
          * en URI data scheme.
          * appel de "document.location"
-         * 
-         * @returns {undefined}
+         * @method _sendWithModeXHRtoURI
+         * @return 
          */
         _sendWithModeXHRtoURI: function () {
             
@@ -579,6 +568,11 @@ define([
             
             var XHR = null;
             
+            /**
+             * Description
+             * @method callbackOnLoad
+             * @return 
+             */
             var callbackOnLoad  = function() {
                 // INFO 
                 // je recupère une reponse de type 'blob' !
@@ -586,6 +580,12 @@ define([
 
                 var reader = new FileReader();
 
+                /**
+                 * Description
+                 * @method onload
+                 * @param {} event
+                 * @return 
+                 */
                 reader.onload = function (event) {
                     var contents = event.target.result;
                     console.log("[mode:XHR][URI] File contents: " + contents);
@@ -605,6 +605,12 @@ define([
                     }
                 };
 
+                /**
+                 * Description
+                 * @method onerror
+                 * @param {} event
+                 * @return 
+                 */
                 reader.onerror = function(event) {
                     var code     = event.target.error.code;
                     var response = event.target.responseText;
@@ -620,6 +626,12 @@ define([
 
                 reader.readAsDataURL(blob);
             };
+            /**
+             * Description
+             * @method callbackOnError
+             * @param {} message
+             * @return 
+             */
             var callbackOnError = function(message) {
                 if ($self.settings.scope) {
                     $self.settings.onfailure.call($self.settings.scope, message);
@@ -637,11 +649,22 @@ define([
                 XHR.responseType = "blob";
                 XHR.overrideMimeType('application/zip');
 
+                /**
+                 * Description
+                 * @method onerror
+                 * @return 
+                 */
                 XHR.onerror = function () {
                         var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
                         callbackOnError(message);
                     };
 
+                /**
+                 * Description
+                 * @method onreadystatechange
+                 * @param {} e
+                 * @return 
+                 */
                 XHR.onreadystatechange = function(e) {
 
                     if (XHR.readyState == 4) { // DONE
@@ -672,6 +695,11 @@ define([
                     XHR = new XDomainRequest();
                     XHR.open('GET', archive_url);
                     
+                    /**
+                     * Description
+                     * @method onerror
+                     * @return 
+                     */
                     XHR.onerror = function () {
                         var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
                         callbackOnError(message);
@@ -686,8 +714,8 @@ define([
         
         /**
          * Create an object URL for the binary data (blob) from the XHR response.
-         * 
-         * @returns {undefined}
+         * @method _sendWithModeXHRtoURL
+         * @return 
          */
         _sendWithModeXHRtoURL: function () {
             
@@ -709,6 +737,11 @@ define([
                             + '.zip';
             
             var XHR = null;
+            /**
+             * Description
+             * @method callbackOnLoad
+             * @return 
+             */
             var callbackOnLoad  = function() {
                 
                 var imageObjectURL = window.URL.createObjectURL(XHR.response);
@@ -729,6 +762,12 @@ define([
                     }
                 }
             };
+            /**
+             * Description
+             * @method callbackOnError
+             * @param {} message
+             * @return 
+             */
             var callbackOnError = function(message) {
                 if ($self.settings.scope) {
                     $self.settings.onfailure.call($self.settings.scope, message);
@@ -746,11 +785,22 @@ define([
                 XHR.responseType = "blob";
                 XHR.overrideMimeType('application/zip');
 
+                /**
+                 * Description
+                 * @method onerror
+                 * @return 
+                 */
                 XHR.onerror = function () {
                         var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
                         callbackOnError(message);
                     };
 
+                /**
+                 * Description
+                 * @method onreadystatechange
+                 * @param {} e
+                 * @return 
+                 */
                 XHR.onreadystatechange = function(e) {
 
                     if (XHR.readyState == 4) { // DONE
@@ -781,6 +831,11 @@ define([
                     XHR = new XDomainRequest();
                     XHR.open('GET', archive_url);
                     
+                    /**
+                     * Description
+                     * @method onerror
+                     * @return 
+                     */
                     XHR.onerror = function () {
                         var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
                         callbackOnError(message);
@@ -793,33 +848,69 @@ define([
             }
         },
         
-        /***************
+        /**
+         * *************
          * Getter/Setter
-         ***************/
-        
+         * *************/
+      
+        /**
+         * Description
+         * @method setMode
+         * @param {} mode
+         * @return 
+         */
         setMode: function (mode) {
             this.settings.mode = mode;
         },
         
+        /**
+         * Description
+         * @method getMode
+         * @return MemberExpression
+         */
         getMode: function () {
             return this.settings.mode;
         },
         
+        /**
+         * Description
+         * @method getDefaultMode
+         * @return MemberExpression
+         */
         getDefaultMode: function () {
             return Download.DEFAULT_MODE;
         },
         
+        /**
+         * Description
+         * @method setOptions
+         * @param {} options
+         * @return 
+         */
         setOptions: function (options) {
             this.settings = options || {};
         },
         
+        /**
+         * Description
+         * @method getOptions
+         * @return MemberExpression
+         */
         getOptions: function () {
             return this.settings;
         },
 
-        /****************
+        /**
+         * **************
          * Other function
-         ****************/
+         * **************/
+         
+        /**
+         * Description
+         * @method sortFiles
+         * @param {} array
+         * @return sort_array
+         */
         sortFiles : function (array) {
 
             var s = new Sort(array);

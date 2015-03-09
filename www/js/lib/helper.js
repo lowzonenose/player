@@ -1,19 +1,15 @@
+/**
+ * Classe utilitaire
+ * @tutorial Helper
+ * @module Helper
+ */
 define({
-    /**
-     * DESCRIPTION
-     * 
-     * USAGE
-     * 
-     * RETURN
-     * 
-     * SEE ASLO
-     * 
-     */
     
     /**
      * Obtenir l'url de l'application.
-     *   WARNING, toujours un '/' à la fin de l'URL !
-     * @returns URI
+     * WARNING, toujours un '/' à la fin de l'URL !
+     * @method url
+     * @return url
      */
     url: function() {
         
@@ -32,19 +28,16 @@ define({
     /**
      * Tri et decomposition en chemins 
      * ex.
-     *  Pour une liste de fichiers et/ou répertoires :
-
-     *      "root/folder/files/file"
-     *      
-     *  on aura en sortie la liste suivante :
-     *  
-     *      "root/"
-     *      "root/folder/"
-     *      "root/folder/files/"
-     *      "root/folder/files/file"
-     *     
+     * Pour une liste de fichiers et/ou répertoires :
+     *   "root/folder/files/file"
+     * on aura en sortie la liste suivante :
+     *   "root/"
+     *   "root/folder/"
+     *   "root/folder/files/"
+     *   "root/folder/files/file"
+     * @method paths
      * @param {type} lstpath
-     * @returns {Array}
+     * @return CallExpression
      */
     paths: function(lstpath) {
         
@@ -77,13 +70,13 @@ define({
     /**
      * Gestion des chemins relatifs 
      * ex.
-     *   URL  : "/root/folder/"
-     *   PATH : "/root/folder/files/file.html"
-     *   on a en sortie : "files/file.html"
-     *   
+     *  URL  : "/root/folder/"
+     *  PATH : "/root/folder/files/file.html"
+     * on a en sortie : "files/file.html"
+     * @method path2relative
      * @param {type} url
      * @param {type} path
-     * @returns {String}
+     * @return path_rel
      */
     path2relative : function(url, path) {
         
@@ -132,9 +125,9 @@ define({
      *  (...)
      *  on a une liste en sortie :
      *    "img/image.png"
-     *    
+     * @method pathIntoCSS
      * @param {type} css
-     * @returns {Array}
+     * @return lstresources
      */
     pathIntoCSS : function (css) {
         
@@ -168,8 +161,9 @@ define({
     
     /**
      * Ajouter une balise 'link' dans l'entête (head) du document courant.
-     * 
+     * @method loadCss
      * @param {type} url
+     * @return 
      */
     loadCss : function (url) {
         var link  = document.createElement("link");
@@ -181,8 +175,9 @@ define({
     
     /**
      * Ajouter une balise 'script' dans l'entête (head) du document courant.
-     * 
+     * @method loadScript
      * @param {type} url
+     * @return 
      */
     loadScript : function (url) {
         var script  = document.createElement("script");
@@ -191,10 +186,18 @@ define({
         document.getElementsByTagName("head")[0].appendChild(script);
     },
     
-    /*************************
+    /**
+     * ***********************
      * Create Element (string)
-     *************************/
-    
+     * ***********************
+     */
+  
+    /**
+     * Description
+     * @method createCss
+     * @param {} url
+     * @return MemberExpression
+     */
     createCss : function (url) {
         // cf. https://developer.mozilla.org/en-US/docs/Web/API/element.outerHTML
         var link  = document.createElement("link");
@@ -204,6 +207,12 @@ define({
         return link.outerHTML;
     },
     
+    /**
+     * Description
+     * @method createScript
+     * @param {} url
+     * @return MemberExpression
+     */
     createScript : function (url) {
         var script  = document.createElement("script");
         script.type = "text/javascript";
@@ -218,19 +227,23 @@ define({
     /**
      * Surcharge de la methode 'parseFromString' 
      * du parser 'DOMParser'.
-     * 
+     * @method parser
      * @param {type} DOMParser
+     * @return 
      */
     parser: function(DOMParser) {  
-        // FIXME 
+        // INFO
         // DOMException: NOT_SUPPORTED_ERR 
         // pb sur certains navigateurs (ex. Opera)
+        // use polyfill
         
         /* 
          * DOMParser HTML extension 
          * 2012-02-02 
          * 
          * By Eli Grey, http://eligrey.com 
+         * cf. https://github.com/eligrey
+         * cf. https://gist.github.com/eligrey/1129031
          * Public domain. 
          * NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK. 
          */  
@@ -250,6 +263,13 @@ define({
             console.log(ex);
         }  
 
+        /**
+         * Description
+         * @method parseFromString
+         * @param {} markup
+         * @param {} type
+         * @return 
+         */
         DOMParser_proto.parseFromString = function(markup, type) {  
             if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {  
                 var doc = document.implementation.createHTMLDocument("")
@@ -271,6 +291,12 @@ define({
         };  
     },
     
+    /**
+     * Description
+     * @method getDoc
+     * @param {String} text
+     * @return doc
+     */
     getDoc : function (text) {
         
         (this.parser(DOMParser));
@@ -281,6 +307,12 @@ define({
         return doc;
     },
     
+    /**
+     * Description
+     * @method extractBody
+     * @param {String} text
+     * @return body_without_scripts
+     */
     extractBody : function (text) {
         
         var body = this.getDoc(text).getElementsByTagName("body");
@@ -288,6 +320,12 @@ define({
         return body_without_scripts;
     },
     
+    /**
+     * Description
+     * @method extractScripts
+     * @param {String} text
+     * @return lstscripts
+     */
     extractScripts : function (text) {
 
         var scripts = this.getDoc(text).getElementsByTagName("script");

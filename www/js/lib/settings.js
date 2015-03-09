@@ -1,59 +1,16 @@
-/**     
- * INFO
- * This example make use of requireJS to provide a clean and simple way to split 
- * JavaScript class definitions into separate files and avoid global namespace pollution.  
- * http://requirejs.org/
- *
- * We start by defining the definition within the require block inside a function; 
- * this means that any new variables / methods will not be added to the global namespace; 
- * requireJS simply requires us to return a single value (function / Object) 
- * which represents this definition.  
- * In our case, we will be returning the Class' function.
+/**
+ * Gestion des parametres de l'URL.
+ * @tutorial Settings
+ * @module Settings
  */
 define(function () {
-    
-    /**
-     * DESCRIPTION
-     *  Gestion des parametres de l'URL.
-     *  Permet de definir les informations sur :
-     *  - l'API : version, type, url
-     *  - l'exemple
-     *  - la colorisation synthaxique
-     *  
-     * USAGE
-     *  var obj = new Settings();
-     *  obj.getSettings();
-     * 
-     * RETURN
-     *  {
-     *      applySyntaxHighlighter: ...,
-     *      typeApiJs: ...,
-     *      versionApiJs: ...,
-     *      urlApiJs: ...,
-     *      loadSample : {
-     *          sample_path:  ...,
-     *          sample_name:  ...,
-     *          sample_file: {
-     *              html: ...,
-     *              css:  ...,
-     *              js:   ...,
-     *          }
-     *      }
-     *  }
-     * 
-     * SEE ASLO
-     *  obj.set*()
-     *  obj.get*()
-     * 
-     */
-         
-    // INFO
-    // Forces the JavaScript engine into strict mode
-    // http://stackoverflow.com/questions/1335851/what-does-use-strict-do-in-javascript-and-what-is-the-reasoning-behind-it
+
     "use strict";
     
     /**
-     * Constructor
+     * Description
+     * @method Settings
+     * @return 
      */
     function Settings() {
         
@@ -63,12 +20,7 @@ define(function () {
         
         this.settings = {};
     }
-    
-    /**
-     * INFO
-     * Adding static properties is as simple as adding them directly to the constructor
-     * function directly.
-     */
+
     Settings.PARAMS_HIGHLIGHTER = true;
     Settings.PARAMS_TYPE_API    = "Extended";
     Settings.PARAMS_SAMPLE_PATH = "samples";
@@ -77,22 +29,25 @@ define(function () {
     Settings.PARAMS_SAMPLE_FILE_JS   = "sample_1.js";
     Settings.PARAMS_SAMPLE_FILE_CSS  = "sample_1.css";
     
+
     /**
-     * INFO
-     * Any functions not added to the Settings reference won't be visible, or 
-     * accessible outside of this file (closure); however, these methods and 
-     * functions don't belong to the Settings class either and are static as a result.
+     * Description
+     * @method hasParams
+     * @return 
      */
     function hasParams () {
-        // INFO Note that 'this' does not refer to the Settings object from inside this method.
         if (location.search) {
            var parts = location.search.substring(1).split('&');
            return (parts.length > 0) ? true : false;
         }
     };
     
+    /**
+     * Description
+     * @method getParams
+     * @return params
+     */
     function getParams() {
-        // INFO Note that 'this' does not refer to the Settings object from inside this method.
         var params = {};
         
         if (location.search) {
@@ -110,18 +65,12 @@ define(function () {
     
     Settings.prototype = {
         
-        /**
-         * INFO
-    	 * Whenever you replace an Object's Prototype, you need to repoint
-    	 * the base Constructor back at the original constructor Function, 
-    	 * otherwise `instanceof` calls will fail.
-    	 */
     	constructor: Settings,
         
         /**
-         * INFO
-         * All methods added to a Class' prototype are public (visible); they are able to 
-         * access the properties and methods of the Person class via the `this` keyword.
+         * Description
+         * @method getSettings
+         * @return MemberExpression
          */
         getSettings: function() {
             

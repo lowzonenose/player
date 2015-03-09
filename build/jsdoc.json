@@ -1,0 +1,44 @@
+{
+	"tags"      : {
+		"allowUnknownTags" : true
+	},
+	"plugins"   : ["plugins/markdown"],
+        "source"    : {
+		"include" : [
+                        "../www/js/cfg/",
+                        "../www/js/lib/",
+                        "../www/js/modules/",
+                        "../www/js/modules/ui/",
+			"../www/js/doc/README.md"
+		]
+	},
+	"templates" : {
+		"cleverLinks"           : false,
+		"monospaceLinks"        : false,
+		"dateFormat"            : "ddd MMM Do YYYY",
+		"outputSourceFiles"     : true,
+		"outputSourcePath"      : true,
+		"systemName"            : "Player Ground JS",
+		"footer"                : "playgroundjs version 1.0.1",
+		"copyright"             : "Geoportail - Copyright (c) IGN, released under the BSD license",
+		"navType"               : "vertical",
+		"theme"                 : "cerulean",
+		"linenums"              : true,
+		"collapseSymbols"       : false,
+		"inverseNav"            : true,
+		"highlightTutorialCode" : true
+	},
+	"markdown"  : {
+		"parser"   : "gfm",
+		"hardwrap" : true
+	},
+        "opts": {
+            "template": "./node_modules/ink-docstrap/template/",
+            "encoding": "utf8",
+            "destination": "./target/build/doc/",
+            "recurse": true,
+            "lenient": true,
+	    "verbose": true,
+            "tutorials": "../www/js/doc/tutorials"
+        }
+}

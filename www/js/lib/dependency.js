@@ -1,54 +1,18 @@
+
+/**
+ * Gestion des dependances des exemples.
+ * @tutorial Dependency
+ * @module Dependency
+ */
 define(function () {
-    
-    /**
-     * DESCRIPTION
-     *  Gestion des dependances des exemples.
-     *  Permet d'extraire une liste de librairies interne et/ou externe utilisées 
-     *  dans l'exemple chargé.
-     *  Pour information, cette liste est affichée dans le menu de la page principale.
-     *  
-     * USAGE
-     *  var dep = new Dependency();
-     *  
-     *  var lstUrl = null;
-     *  lstUrl = dep.getScriptsIntoBody();
-     *  lstUrl = dep.getScriptsIntoHead();
-     *  lstUrl = dep.getScriptsInternal();
-     *  lstUrl = dep.getScriptsExternal();
-     *  
-     *  ou
-     *  
-     *  (cf. Helper.getDoc)
-     *  var parser = new DOMParser();
-     *  var doc    = parser.parseFromString(code_html, "text/html");
-     *  var dep = new Dependency(doc);
-     *  
-     *  var lstUrl = null;
-     *  lstUrl = dep.getScriptsIntoBody();
-     *  lstUrl = dep.getScriptsIntoHead();
-     *  lstUrl = dep.getScriptsInternal();
-     *  lstUrl = dep.getScriptsExternal();
-     *  
-     * RETURN
-     *  Ex. de liste de dependances 
-     *  - External  http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js
-     *  - External  http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
-     *  - Internal  js/apiconfig.js
-     *  - Internal  ./sample.js
-     *  - Internal  ./api/js/2.1.1-SNAPSHOT/Geoportal.js
-     *  - Internal  ./thirdParty/Cesium/Cesium.js
-     *  - External  http://api.ign.fr/geoportail/api/js/2.1.0/Geoportal.js
-     *  
-     *  SEE ASLO
-     *   dep.getScripts()
-     *   dep.isEmpty()
-     *   Helper.getDoc()
-     */
-    
+
     "use strict";
     
     /**
      * Constructor
+     * @method Dependency
+     * @param {} adoc
+     * @return 
      */
     function Dependency(adoc) {
         
@@ -127,6 +91,13 @@ define(function () {
         }
     };
     
+    /**
+     * Description
+     * @method filterUrl
+     * @param {} url
+     * @param {} filter
+     * @return Literal
+     */
     function filterUrl (url, filter) {
         if (Dependency.FILTER) {
             var regex = new RegExp(filter);
@@ -151,9 +122,9 @@ define(function () {
         
         /**
          * Liste des dependances en fonction du type (js ou css)
-         * 
+         * @method getDeps
          * @param {type} type
-         * @returns {Array}
+         * @return deps
          */
         getDeps: function(type) {
             var $this = this;
@@ -182,12 +153,13 @@ define(function () {
         
         /**
          * Liste des scripts
-         *   var script = {
-         *     parent: [HEAD|BODY],
-         *     source: "url",
-         *     type  : "js"
-         *   };
-         * @returns {Array}
+         * var script = {
+         * parent: [HEAD|BODY],
+         * source: "url",
+         * type  : "js"
+         * };
+         * @method getScripts
+         * @return scripts
          */
         getScripts : function () {
             var scripts = [];
@@ -201,12 +173,13 @@ define(function () {
         
         /**
          * Liste des css
-         *   var css = {
-         *     parent: [HEAD|BODY],
-         *     source: "url",
-         *     type  : "css"
-         *   };
-         * @returns {Array}
+         * var css = {
+         * parent: [HEAD|BODY],
+         * source: "url",
+         * type  : "css"
+         * };
+         * @method getCss
+         * @return css
          */
         getCss: function () {
             var css = [];
@@ -220,7 +193,8 @@ define(function () {
         
         /**
          * Liste des scripts dans la balise BODY
-         * @returns {undefined|Array}
+         * @method getScriptsIntoBody
+         * @return scripts
          */
         getScriptsIntoBody : function () {
             
@@ -239,7 +213,8 @@ define(function () {
         
         /**
          * Liste des scripts dans la balise HEAD
-         * @returns {undefined|Array}
+         * @method getScriptsIntoHead
+         * @return scripts
          */
         getScriptsIntoHead : function () {
             
@@ -258,7 +233,8 @@ define(function () {
         
         /**
          * Liste des css dans la balise HEAD
-         * @returns {undefined|Array}
+         * @method getCssIntoHead
+         * @return css
          */
         getCssIntoHead : function () {
             
@@ -278,8 +254,9 @@ define(function () {
         /**
          * Liste des scripts internes
          * Possibilité d'ajouter une base url aux lib. trouvées
-         * 
-         * @returns {undefined|Array}
+         * @method getScriptsInternal
+         * @param {} baseUrl
+         * @return scripts
          */
         getScriptsInternal : function (baseUrl) {
             
@@ -313,8 +290,9 @@ define(function () {
         /**
          * Liste des css internes
          * Possibilité d'ajouter une base url aux lib. trouvées
-         * 
-         * @returns {undefined|Array}
+         * @method getCssInternal
+         * @param {} baseUrl
+         * @return css
          */
         getCssInternal : function (baseUrl) {
  
@@ -348,7 +326,8 @@ define(function () {
         /**
          * Liste des scripts externes 
          * (url en http)
-         * @returns {undefined|Array}
+         * @method getScriptsExternal
+         * @return scripts
          */
         getScriptsExternal : function () {
             
@@ -370,8 +349,9 @@ define(function () {
         /**
          * Liste des css internes
          * Possibilité d'ajouter une base url aux lib. trouvées
-         * 
-         * @returns {undefined|Array}
+         * @method getCssExternal
+         * @param {} baseUrl
+         * @return css
          */
         getCssExternal : function (baseUrl) {
  
@@ -392,7 +372,9 @@ define(function () {
         
         /**
          * Tableau de scripts vide ?
-         * @returns {Boolean}
+         * @method isEmpty
+         * @param {} type
+         * @return Literal
          */
         isEmpty : function (type) {
             
@@ -413,6 +395,13 @@ define(function () {
             return false;
         },
         
+        /**
+         * Description
+         * @method getDependencyName
+         * @param {} index
+         * @param {} type
+         * @return 
+         */
         getDependencyName : function (index, type) {
             
             if (this.isEmpty(type)) {
@@ -440,6 +429,13 @@ define(function () {
 
         },
         
+        /**
+         * Description
+         * @method getDependencySource
+         * @param {} index
+         * @param {} type
+         * @return 
+         */
         getDependencySource : function (index, type) {
             
             if (this.isEmpty(type)) {
