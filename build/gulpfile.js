@@ -9,8 +9,8 @@ var uglify    = require('gulp-uglify');
 var normalize = require('gulp-bower-normalize');
 var bower     = require('main-bower-files');
 var runtask   = require('gulp-bower');
-var jsdoc     = require("gulp-jsdoc");
 var debug     = require('gulp-debug');
+var shell     = require('gulp-shell');
 // optimisation des images...
 var image     = require('imagemin');
 // system file...
@@ -168,62 +168,14 @@ gulp.task('test', function() {
 // JSdoc
 gulp.task('doc', function() {
     
-    // FIXME en version beta 
-    // car difficulté à mettre en place la JSDoc avec DocStrap sur la gestion
-    // des tutoriaux ...
     gutil.log("Not yet released : doc (Beta) !");
     
     if (bDoc) {
         
-        return gulp.src([
-            sourcedir + "js/lib/*.js", 
-            sourcedir + "js/cfg/*.js", 
-            sourcedir + "js/modules/*.js",
-            sourcedir + "js/modules/ui/*.js",
-            sourcedir + "js/doc/README.md",
-        ])
-        .pipe(debug({title: '  --> doc-src:'}))
-        .pipe(jsdoc(
-        
-            // destination
-            targetdir + 'doc', 
-            // template
-            {		
-                // DocStrap ?
-                path                    : "ink-docstrap",
-                
-		"systemName"            : "Player Ground JS",
-		"footer"                : "playgroundjs version 1.0.1",
-		"copyright"             : "Geoportail - Copyright (c) IGN, released under the BSD license",
-		"navType"               : "vertical",
-		"theme"                 : "cerulean",
-		"linenums"              : true,
-		"collapseSymbols"       : false,
-		"inverseNav"            : true,
-		"highlightTutorialCode" : true
-              },
-              //infos
-              {
-                    name: '',
-                    kind: 'package',
-                    longname: '',
-                    description: 'test',
-                    version: '',
-                    licenses: [],
-                    tags: {
-                      allowUnknownTags: true
-                    },
-                    plugins: false
-              },
-              // options
-              {
-                    "cleverLinks"           : false,
-                    "monospaceLinks"        : false,
-                    "dateFormat"            : "ddd MMM Do YYYY",
-                    "outputSourceFiles"     : true,
-                    "outputSourcePath"      : true
-              }
-        ));
+        return gulp.src("jsdoc.json")
+        .pipe(shell([
+            'jsdoc -c <%= file.path %>'
+        ]));
     }
     
     gutil.log("SKIP Task : doc !");

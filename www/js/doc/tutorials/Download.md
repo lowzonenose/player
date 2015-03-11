@@ -26,7 +26,8 @@
           "URI"  // requete XHR
           )
        } 
- 
+ ``` 
+
 ## USAGE
 
  ```javascript

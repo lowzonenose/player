@@ -9,9 +9,9 @@ define(function () {
     
     /**
      * Content Delivery Networks
-     * @constructor CDN
-     * @param {String} library's name
-     * @return {Object} Object CDN
+     * @method CDN
+     * @param {String} library - library name to search
+     * @return {Object} - Object CDN
      */
     function CDN(library) {
         
@@ -43,6 +43,7 @@ define(function () {
         
         /**
          * Constructor
+         * @alias CDN
          * @constructor
          */
         constructor: CDN,
@@ -50,8 +51,12 @@ define(function () {
         /**
          * Requête mode GET de type XHR
          * @method request
-         * @param {type} options
-         * @return 
+         * @public
+         * @param {Object} options
+         * @param {Object} options.scope - this (cad objet CDN par defaut)
+         * @param {String} options.mode - json (par defaut) ou jsonp
+         * @param {String} options.url
+         * @param {} options.callback
          */
         request: function (options) {
             
@@ -59,11 +64,12 @@ define(function () {
             
             // en mode par defaut, on fait du CORS !
             $self.settings = options || {
-                    mode    : CDN.MODE,
-                    url     : CDN.URL,
-                    callback: null,
-                    onsucess: null, // FIXME ???
-                    onerror : null  // FIXME ???
+                    scope    : $self, // l'objet CDN !
+                    mode     : CDN.MODE,
+                    url      : CDN.URL,
+                    callback : null,
+                    onsuccess: null, // TODO ???
+                    onerror  : null  // TODO ???
             };
             
             if ($self.settings.mode == null)
@@ -106,7 +112,6 @@ define(function () {
          * Description
          * @method _requestXHR
          * @param {String} url
-         * @return 
          */
         _requestXHR: function (url) {
             
@@ -122,13 +127,13 @@ define(function () {
                 /**
                  * Description
                  * @method onerror
-                 * @return 
+                 * @private
                  */
                 XHR.onerror = function () {throw new Error("Errors Occured on Http Request with XMLHttpRequest !");};
                 /**
                  * Description
                  * @method onreadystatechange
-                 * @return 
+                 * @private
                  */
                 XHR.onreadystatechange = function () {
 
@@ -136,8 +141,14 @@ define(function () {
                         if (XHR.status == 200) {
                             $self.response = JSON.parse(XHR.responseText);
                             // callback de la reponse !
+                            
                             if ($self.settings.callback !== null && typeof $self.settings.callback === 'function') {
-                                $self.settings.callback.call($self, $self.response.results);
+                                if ($self.settings.scope) {
+                                    $self.settings.callback.call($self.settings.scope, $self.response.results);
+                                }
+                                else {
+                                    $self.settings.callback.call($self, $self.response.results);
+                                }
                             }
                         } else {
                             throw new Error("Errors Occured on Http Request Status (" + XHR.status + ") !");
@@ -156,18 +167,23 @@ define(function () {
                     /**
                      * Description
                      * @method onerror
-                     * @return 
+                     * @private
                      */
                     XHR.onerror = function () {throw new Error("Errors Occured on Http Request with XDomainRequest !");};
                     /**
                      * Description
                      * @method onload
-                     * @return 
+                     * @private
                      */
                     XHR.onload = function() {
                         $self.response = JSON.parse(XHR.responseText);   
                         if ($self.settings.callback !== null && typeof $self.settings.callback === 'function') {
-                            $self.settings.callback($self.response.results);
+                            if ($self.settings.scope) {
+                                $self.settings.callback.call($self.settings.scope, $self.response.results);
+                            }
+                            else {
+                                $self.settings.callback.call($self, $self.response.results);
+                            }
                         }
                     };
                     XHR.send();
@@ -181,8 +197,7 @@ define(function () {
          * Description
          * @method _requestScript
          * @param {String} url
-         * @param {Boolean} is
-         * @return 
+         * @param {Boolean} is - is a function or a string ?
          */
         _requestScript: function (url, is) {
             
@@ -216,8 +231,8 @@ define(function () {
         /**
          * Description
          * @method setUrl
+         * @todo Implement this function.
          * @param {String} url
-         * @return 
          */
         setUrl: function(url) {
             
@@ -226,8 +241,8 @@ define(function () {
         /**
          * Description
          * @method setParams
+         * @todo Implement this function.
          * @param {} params
-         * @return 
          */
         setParams: function (params) {
             
@@ -236,8 +251,8 @@ define(function () {
         /**
          * Description
          * @method setMode
-         * @param {} mode
-         * @return 
+         * @todo Implement this function.
+         * @param {String} mode
          */
         setMode: function(mode) {
             
@@ -250,7 +265,7 @@ define(function () {
         /**
          * Description
          * @method json
-         * @return MemberExpression
+         * @return {Object}
          */
         json: function () {
             return this.response;
@@ -259,7 +274,7 @@ define(function () {
         /**
          * Description
          * @method length
-         * @return MemberExpression
+         * @return {Number}
          */
         length: function () {
             return this.response.total;
@@ -268,8 +283,8 @@ define(function () {
         /**
          * Description
          * @method version
-         * @param {} index
-         * @return 
+         * @param {Number} index
+         * @return {String}
          */
         version: function (index) {
             if (index < this.length() || index != null) {
@@ -280,8 +295,8 @@ define(function () {
         /**
          * Description
          * @method name
-         * @param {} index
-         * @return 
+         * @param {Number} index
+         * @return {String}
          */
         name: function (index) {
             if (index < this.length() || index != null) {
@@ -292,8 +307,8 @@ define(function () {
         /**
          * Description
          * @method url
-         * @param {} index
-         * @return 
+         * @param {Number} index
+         * @return {String}
          */
         url: function (index) {
             if (index < this.length() || index != null) {

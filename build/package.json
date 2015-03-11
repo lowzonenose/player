@@ -34,6 +34,8 @@
     "karma-firefox-launcher": "~0.1.4",
     "gulp-jsdoc": "~0.1.4",
     "ink-docstrap": "~0.5.2",
-    "gulp-debug": "~2.0.1"
+    "gulp-debug": "~2.0.1",
+    "gulp-shell": "~0.3.0",
+    "jsdoc": "~3.3.0-beta2"
   }
 }

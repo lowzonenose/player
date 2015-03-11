@@ -49,7 +49,11 @@
     "requirejs": "~2.1.16",
     "karma-requirejs": "~0.2.2",
     "karma-firefox-launcher": "~0.1.4",
-    "gulp-jsdoc": "~0.1.4"
+    "gulp-jsdoc": "~0.1.4",
+    "ink-docstrap": "~0.5.2",
+    "gulp-debug": "~2.0.1",
+    "gulp-shell": "~0.3.0",
+    "jsdoc": "~3.3.0"
 }
 </pre></code>
 
@@ -134,34 +138,3 @@ ou
 │   └── sample_5
 └── template.html
 </pre></code>
-
-- - -
-# Link
-
-* [cdn] [1]
-* [config] [2]
-* [dependency] [3]
-* [download] [4]
-* [helper] [5]
-* [logger] [6]
-* [playgroundjs] [7]
-* [settings] [8]
-* [sort] [9]
-* [syntaxhighlighter] [10]
-* [codearea] [11]
-* [sidebar] [12]
-* [crossbar] [13]
-
-[1]: cdn.js.html
-[2]: config.js.html
-[3]: dependency.js.html
-[4]: download.js.html
-[5]: helper.js.html
-[6]: logger.js.html
-[7]: playgroundjs.js.html
-[8]: settings.js.html
-[9]: sort.js.html
-[10]: syntaxhighlighter.js.html
-[11]: ui-codearea.js.html
-[12]: ui-sidebar.js.html
-[13]: ui-crossbar.js.html

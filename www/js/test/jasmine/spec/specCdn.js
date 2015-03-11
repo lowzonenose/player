@@ -11,12 +11,9 @@ define(["cdn"], function (CDN) {
         var name    = "codemirror";
         var url     = "http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.js";
         
-        beforeEach(function() {
-            
-            
-        });
+        beforeEach(function() {});
        
-        it("Test requete avec callback sur mode JSON (anonyme)", function() {
+        it("Test requete avec callback(anonyme) en mode JSON ", function() {
 
             cdn = new CDN("codemirror");
             cdn.request({
@@ -39,24 +36,61 @@ define(["cdn"], function (CDN) {
         
         it("Test requete avec callback sur mode JSON", function() {
             
-            cdn = new CDN("codemirror");
-            cdn.request({
-                callback: callback
-            });
+            var status     = false;
+            var myresponse = null;
             
-            function callback (response) {
-                console.log(response);
-                console.log(response.length);
-                console.log(response[0].version);
-                console.log(response[0].name);
-                console.log(response[0].latest);
+            cdn = new CDN("codemirror");
+            
+//            runs(
+//                    function() {
+                        cdn.request({
+                            scope: this,
+                            callback: callback
+                        });
+//                    }
+//            );
+//            
+//            function callback (response) {
+//                if (response) {
+//                    this.myresponse = response;
+//                    status = true;
+//                }
+//            }
+//            
+//            waitsFor(function(){
+//                return status;
+//            }, "AJAX should complete", 1000);
+//            
+//            runs(function() {
+//                expect(status).toBe(true);
+//                
+//                expect(myresponse).toBeDefined();
+//                expect(myresponse.lenght).toEqual("1");
+//                expect(myresponse[0].version).toEqual("4.8.0");
+//                expect(myresponse[0].name).toEqual("codemirror");
+//                expect(myresponse[0].latest).toEqual("http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js");
+//            });
+            
+            function callback (myresponse) {
+                // jasmine.getEnv().expect(true).toBe(true);
+                console.log(myresponse);
+                // jasmine.getEnv().expect(myresponse).toBeDefined();
+                console.log(myresponse.length);
+                // jasmine.getEnv().expect(myresponse.lenght).toEqual("1");
+                console.log(myresponse[0].version);
+                // jasmine.getEnv().expect(myresponse[0].version).toEqual("4.8.0");
+                console.log(myresponse[0].name);
+                // jasmine.getEnv().expect(myresponse[0].name).toEqual("codemirror");
+                console.log(myresponse[0].latest); 
+                // jasmine.getEnv(). expect(myresponse[0].latest).toEqual("http://cdnjs.cloudflare.com/ajax/libs/codemirror/4.8.0/codemirror.min.js");
             };
         });
         
-        it("Test requete avec callback sur mode JSONP (anonyme)", function() {
+        it("Test requete avec callback(anonyme) sur mode JSONP", function() {
             
             cdn = new CDN("codemirror");
             cdn.request({
+                scope: this,
                 mode: "jsonp",
                 callback: function (response) {
                     console.log(response);
@@ -86,17 +120,14 @@ define(["cdn"], function (CDN) {
         
         });
         
-        it("Test requete sans resultat", function() {
+        it("Test requete avec scope", function() {
 
             cdn = new CDN("test");
             cdn.request({
+                scope: this,
                 mode: "jsonp",
                 callback: function (response) {
                     console.log(response);
-                    console.log(response.total);
-                    console.log(response.results[0].version);
-                    console.log(response.results[0].name);
-                    console.log(response.results[0].latest);
                 }
             });
 

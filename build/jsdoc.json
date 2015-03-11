@@ -9,7 +9,7 @@
                         "../www/js/lib/",
                         "../www/js/modules/",
                         "../www/js/modules/ui/",
-			"../www/js/doc/README.md"
+						"../www/js/doc/README.md"
 		]
 	},
 	"templates" : {
@@ -38,7 +38,7 @@
             "destination": "./target/build/doc/",
             "recurse": true,
             "lenient": true,
-	    "verbose": true,
+	    	"verbose": true,
             "tutorials": "../www/js/doc/tutorials"
         }
 }

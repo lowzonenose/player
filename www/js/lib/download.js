@@ -1,11 +1,12 @@
 /**
- * Download d'une archive ZIP
+ * Téléchargement d'une archive ZIP (coté client)
  * @tutorial Download
  * @module Download
  * @see module:zip
  * @see module:zip-utils
  * @see module:zip-save
  * @see module:sort
+ * @todo !!! SUPPRIMER LA DEPENDANCE <JQUERY> !!!
  */
 define([ 
         "jquery",
@@ -22,8 +23,14 @@ define([
     /**
      * Description
      * @method Download
-     * @param {} options
-     * @return 
+     * @param {Object} options.scope
+     * @param {String} options.mode
+     * @param {String} options.archive
+     * @param {String} options.base
+     * @param {String} options.files
+     * @param {String} options.onsuccess
+     * @param {String} options.onfailure
+     * @return {Object} Download
      */
     function Download(options) {
         
@@ -104,7 +111,6 @@ define([
              * Description
              * @method onsuccess
              * @param {} message
-             * @return 
              */
             this.settings.onsuccess = function(message) {
                 console.log("[INTERNE] success : " + message);
@@ -116,7 +122,6 @@ define([
              * Description
              * @method onfailure
              * @param {} message
-             * @return 
              */
             this.settings.onfailure = function(message) {
                 throw new Error("[INTERNE] failure : " + message);
@@ -138,8 +143,9 @@ define([
     /**
      * Description
      * @method _checkMode
-     * @param {} mode
-     * @return bgood
+     * @static
+     * @param {String} mode - "TAG", "URL", "URI"
+     * @return Boolean
      */
     function _checkMode (mode) {
             
@@ -165,12 +171,18 @@ define([
     
     Download.prototype = {
         
+        /**
+         * Constructor
+         * @alias Download
+         * @constructor
+         */
         constructor: Download,
         
         /**
          * Description
          * @method send
-         * @return 
+         * @public
+         * @exception {Error}
          */
         send : function () {
             
@@ -207,7 +219,6 @@ define([
         /**
          * Description
          * @method sendArchive
-         * @return 
          */
         sendArchive : function () {
             
@@ -233,7 +244,6 @@ define([
         /**
          * Description
          * @method createArchive
-         * @return 
          */
         createArchive : function () {
             
@@ -283,8 +293,7 @@ define([
             /**
              * Description
              * @method callback_failure
-             * @param {} message
-             * @return 
+             * @param {String} message
              */
             var callback_failure = function(message) {
                 if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
@@ -298,8 +307,7 @@ define([
             /**
              * Description
              * @method callback_success
-             * @param {} message
-             * @return 
+             * @param {String} message 
              */
             var callback_success = function(message) {
                 if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
@@ -339,10 +347,10 @@ define([
         /**
          *
          * @method _deferredAddFilesZip
-         * @param {} url
-         * @param {} files
-         * @param {} zip
-         * @return deferreds
+         * @param {String} url
+         * @param {String[]} files - liste de fichiers à ajouter 
+         * @param {Object} zip - objet zip
+         * @return {Object[]}
          */
         _deferredAddFilesZip : function(url, files, zip) {
             
@@ -422,11 +430,11 @@ define([
         /**
          * Description
          * @method _deferredAddFileZip
-         * @param {} source
-         * @param {} target
-         * @param {} content
-         * @param {} zip
-         * @return deferred
+         * @param {String} source
+         * @param {String} target
+         * @param {String} content
+         * @param {Object} zip
+         * @return {Object} deferred
          */
         _deferredAddFileZip : function(source, target, content, zip ) {
             var deferred = $.Deferred();
@@ -456,7 +464,6 @@ define([
          * Mise en place d'une balise <a> dans le "document", 
          * et execution de l'evenement "click()".
          * @method _sendWithModeTAG
-         * @return 
          */
         _sendWithModeTAG: function () {
             
@@ -534,7 +541,6 @@ define([
          * en URI data scheme.
          * appel de "document.location"
          * @method _sendWithModeXHRtoURI
-         * @return 
          */
         _sendWithModeXHRtoURI: function () {
             
@@ -571,7 +577,6 @@ define([
             /**
              * Description
              * @method callbackOnLoad
-             * @return 
              */
             var callbackOnLoad  = function() {
                 // INFO 
@@ -584,7 +589,6 @@ define([
                  * Description
                  * @method onload
                  * @param {} event
-                 * @return 
                  */
                 reader.onload = function (event) {
                     var contents = event.target.result;
@@ -609,7 +613,6 @@ define([
                  * Description
                  * @method onerror
                  * @param {} event
-                 * @return 
                  */
                 reader.onerror = function(event) {
                     var code     = event.target.error.code;
@@ -630,7 +633,6 @@ define([
              * Description
              * @method callbackOnError
              * @param {} message
-             * @return 
              */
             var callbackOnError = function(message) {
                 if ($self.settings.scope) {
@@ -652,7 +654,6 @@ define([
                 /**
                  * Description
                  * @method onerror
-                 * @return 
                  */
                 XHR.onerror = function () {
                         var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
@@ -662,8 +663,7 @@ define([
                 /**
                  * Description
                  * @method onreadystatechange
-                 * @param {} e
-                 * @return 
+                 * @param {} event
                  */
                 XHR.onreadystatechange = function(e) {
 
@@ -698,7 +698,6 @@ define([
                     /**
                      * Description
                      * @method onerror
-                     * @return 
                      */
                     XHR.onerror = function () {
                         var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
@@ -715,7 +714,6 @@ define([
         /**
          * Create an object URL for the binary data (blob) from the XHR response.
          * @method _sendWithModeXHRtoURL
-         * @return 
          */
         _sendWithModeXHRtoURL: function () {
             
@@ -740,7 +738,6 @@ define([
             /**
              * Description
              * @method callbackOnLoad
-             * @return 
              */
             var callbackOnLoad  = function() {
                 
@@ -765,8 +762,7 @@ define([
             /**
              * Description
              * @method callbackOnError
-             * @param {} message
-             * @return 
+             * @param {String} message
              */
             var callbackOnError = function(message) {
                 if ($self.settings.scope) {
@@ -788,7 +784,6 @@ define([
                 /**
                  * Description
                  * @method onerror
-                 * @return 
                  */
                 XHR.onerror = function () {
                         var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
@@ -798,8 +793,7 @@ define([
                 /**
                  * Description
                  * @method onreadystatechange
-                 * @param {} e
-                 * @return 
+                 * @param {} event
                  */
                 XHR.onreadystatechange = function(e) {
 
@@ -834,7 +828,6 @@ define([
                     /**
                      * Description
                      * @method onerror
-                     * @return 
                      */
                     XHR.onerror = function () {
                         var message = "[mode:XHR][URL] Errors Occured on Http Request with XMLHttpRequest !" ;
@@ -856,8 +849,7 @@ define([
         /**
          * Description
          * @method setMode
-         * @param {} mode
-         * @return 
+         * @param {String} mode
          */
         setMode: function (mode) {
             this.settings.mode = mode;
@@ -866,7 +858,7 @@ define([
         /**
          * Description
          * @method getMode
-         * @return MemberExpression
+         * @return {String} mode
          */
         getMode: function () {
             return this.settings.mode;
@@ -875,7 +867,7 @@ define([
         /**
          * Description
          * @method getDefaultMode
-         * @return MemberExpression
+         * @return {String} mode
          */
         getDefaultMode: function () {
             return Download.DEFAULT_MODE;
@@ -884,8 +876,7 @@ define([
         /**
          * Description
          * @method setOptions
-         * @param {} options
-         * @return 
+         * @param {Object} options
          */
         setOptions: function (options) {
             this.settings = options || {};
@@ -894,7 +885,7 @@ define([
         /**
          * Description
          * @method getOptions
-         * @return MemberExpression
+         * @return {Object} options
          */
         getOptions: function () {
             return this.settings;
@@ -908,8 +899,9 @@ define([
         /**
          * Description
          * @method sortFiles
-         * @param {} array
-         * @return sort_array
+         * @see {@link Sort}
+         * @param {String[]} array
+         * @return {String[]} array sorted
          */
         sortFiles : function (array) {
 

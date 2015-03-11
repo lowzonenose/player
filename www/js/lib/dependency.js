@@ -11,8 +11,8 @@ define(function () {
     /**
      * Constructor
      * @method Dependency
-     * @param {} adoc
-     * @return 
+     * @param {Document} adoc - un document (DOM), optionnel
+     * @return {Object} Dependency
      */
     function Dependency(adoc) {
         
@@ -94,9 +94,10 @@ define(function () {
     /**
      * Description
      * @method filterUrl
-     * @param {} url
-     * @param {} filter
-     * @return Literal
+     * @static
+     * @param {String} url
+     * @param {String} filter - filtre, ex. "http://"
+     * @return Boolean
      */
     function filterUrl (url, filter) {
         if (Dependency.FILTER) {
@@ -118,13 +119,18 @@ define(function () {
     
     Dependency.prototype = {
         
+        /**
+         * Constructor
+         * @alias Dependency
+         * @constructor
+         */
         constructor: Dependency,
         
         /**
          * Liste des dependances en fonction du type (js ou css)
          * @method getDeps
-         * @param {type} type
-         * @return deps
+         * @param {type} type - 'js' ou 'css'
+         * @return {Object[]} deps - liste des dependances
          */
         getDeps: function(type) {
             var $this = this;
@@ -154,12 +160,12 @@ define(function () {
         /**
          * Liste des scripts
          * var script = {
-         * parent: [HEAD|BODY],
-         * source: "url",
-         * type  : "js"
+         *  parent: [HEAD|BODY],
+         *  source: "url",
+         *  type  : "js"
          * };
          * @method getScripts
-         * @return scripts
+         * @return {Object[]} scripts
          */
         getScripts : function () {
             var scripts = [];
@@ -174,12 +180,12 @@ define(function () {
         /**
          * Liste des css
          * var css = {
-         * parent: [HEAD|BODY],
-         * source: "url",
-         * type  : "css"
+         *  parent: [HEAD|BODY],
+         *  source: "url",
+         *  type  : "css"
          * };
          * @method getCss
-         * @return css
+         * @return {Object[]} css
          */
         getCss: function () {
             var css = [];
@@ -194,7 +200,7 @@ define(function () {
         /**
          * Liste des scripts dans la balise BODY
          * @method getScriptsIntoBody
-         * @return scripts
+         * @return {String[]} scripts
          */
         getScriptsIntoBody : function () {
             
@@ -214,7 +220,7 @@ define(function () {
         /**
          * Liste des scripts dans la balise HEAD
          * @method getScriptsIntoHead
-         * @return scripts
+         * @return {String[]} scripts
          */
         getScriptsIntoHead : function () {
             
@@ -234,7 +240,7 @@ define(function () {
         /**
          * Liste des css dans la balise HEAD
          * @method getCssIntoHead
-         * @return css
+         * @return {String[]} css
          */
         getCssIntoHead : function () {
             
@@ -255,8 +261,8 @@ define(function () {
          * Liste des scripts internes
          * Possibilité d'ajouter une base url aux lib. trouvées
          * @method getScriptsInternal
-         * @param {} baseUrl
-         * @return scripts
+         * @param {String} baseUrl 
+         * @return {String[]} scripts
          */
         getScriptsInternal : function (baseUrl) {
             
@@ -291,8 +297,8 @@ define(function () {
          * Liste des css internes
          * Possibilité d'ajouter une base url aux lib. trouvées
          * @method getCssInternal
-         * @param {} baseUrl
-         * @return css
+         * @param {String} baseUrl
+         * @return {String[]} css
          */
         getCssInternal : function (baseUrl) {
  
@@ -327,7 +333,7 @@ define(function () {
          * Liste des scripts externes 
          * (url en http)
          * @method getScriptsExternal
-         * @return scripts
+         * @return {String[]} scripts
          */
         getScriptsExternal : function () {
             
@@ -350,8 +356,8 @@ define(function () {
          * Liste des css internes
          * Possibilité d'ajouter une base url aux lib. trouvées
          * @method getCssExternal
-         * @param {} baseUrl
-         * @return css
+         * @param {String} baseUrl
+         * @return {String[]} css
          */
         getCssExternal : function (baseUrl) {
  
@@ -373,8 +379,8 @@ define(function () {
         /**
          * Tableau de scripts vide ?
          * @method isEmpty
-         * @param {} type
-         * @return Literal
+         * @param {String} type - 'js' ou 'css'
+         * @return Boolean
          */
         isEmpty : function (type) {
             
@@ -398,9 +404,10 @@ define(function () {
         /**
          * Description
          * @method getDependencyName
-         * @param {} index
-         * @param {} type
-         * @return 
+         * @param {Number} index
+         * @param {String} type - 'js' ou 'css'
+         * @return {String}
+         * @exception {RangeError}
          */
         getDependencyName : function (index, type) {
             
@@ -432,9 +439,10 @@ define(function () {
         /**
          * Description
          * @method getDependencySource
-         * @param {} index
-         * @param {} type
-         * @return 
+         * @param {Number} index
+         * @param {String} type - 'js' ou 'css'
+         * @return {String}
+         * @exception {RangeError}
          */
         getDependencySource : function (index, type) {
             

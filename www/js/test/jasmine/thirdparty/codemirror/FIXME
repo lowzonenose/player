@@ -1,0 +1,3 @@
+hummm...
+L'intégration avec requireJS m'oblige à mettre la lib. CodeMirror dans le répertoire 
+suivant : ./cm/lib/codemirror.(css|js). Pourquoi ?
