@@ -13,8 +13,8 @@
             'zip-utils': "../test/jasmine/lib/jszip-utils", 
             'zip-save': "../test/jasmine/lib/FileSaver", 
             'jquery': "../test/jasmine/lib/jquery",
-            "cm" : "../test/jasmine/thirdparty/codemirror"
-            // "uri" : "../test/jasmine/lib/URI"
+            "cm" : "../test/jasmine/thirdparty/codemirror",
+            "promise" : "../test/jasmine/lib/promise"
         },
 
         shim: {
@@ -40,7 +40,7 @@
     specs.push('../test/jasmine/spec/specDownload');
     specs.push('../test/jasmine/spec/specSyntaxHighlighter');
     specs.push('../test/jasmine/spec/specSort');
-    // specs.push('../test/jasmine/spec/specURI');
+    specs.push('../test/jasmine/spec/specXHR');
     
     require(['boot'], function () {
 

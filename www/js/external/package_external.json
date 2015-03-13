@@ -33,5 +33,10 @@
         "desc" : "URI.js is a javascript library for working with URLs (build contains: IPv6.js, punycode.js, SecondLevelDomains.js, URI.js)",
         "url" : "http://medialize.github.io/URI.js/ | https://github.com/medialize/URI.js",
         "version" : "1.14.1"
+    },
+    "es6-promise" : {
+        "desc" : "This is a polyfill of the ES6 Promise.",
+        "url" : "https://github.com/jakearchibald/es6-promise",
+        "version" : "2.0.1"
     }
 }

@@ -67,6 +67,10 @@ define(["log4js", "config"], function (Log4js, Config) {
     
     Logger.prototype = {
         
+        /**
+         * @alias Logger
+         * @constructor Logger
+         */
         constructor: Logger,
         /**
          * Description

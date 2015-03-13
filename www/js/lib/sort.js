@@ -39,6 +39,10 @@ define(function () {
       
     Sort.prototype = {
         
+        /**
+         * @alias Sort
+         * @constructor Sort
+         */
         constructor: Sort,
         /**
          * Description
@@ -57,16 +61,19 @@ define(function () {
             
             // type de liste : 
             // string ou objet json ?
+            // et on supprime les doublons...
             if (!$this.isJson) {
-                array = $this.array;
+                array = $this._clean($this.array);
             }
             else {
+                var array_tmp = [];
                 for(var i=0; i<$this.array.length; i++) {
-                    array.push($this.array[i].path);
+                    array_tmp.push($this.array[i].path);
                 }
+                array = $this._clean(array_tmp);
             }
             
-            //trie
+            // trie
             array_sort = array.map(
                         function(el) {
                             return el.split(sep);
@@ -80,6 +87,7 @@ define(function () {
             if ($this.isJson) {
                 var array_sort_json = [];
                 for(var i=0; i<array_sort.length; i++) {
+                    // FIXME on n'ecarte pas les doublons...
                     (function(j) {
                         for(var o in $this.array) {
                             if ($this.array[o].path == array_sort[j]) {
@@ -120,7 +128,21 @@ define(function () {
                   if (a.length < b.length) return -1;
                   if (a.length > b.length) return +1;
             }
+        },
+        
+        _clean : function (array) {
+            
+            var i, j, len = array.length, array_clean = [], obj = {};
+            
+            for (i = 0; i < len; i++) {
+                obj[array[i]] = 0;
+            }
+            for (j in obj) {
+                array_clean.push(j);
+            }
+            return array_clean;
         }
+        
     };
     
     return Sort;

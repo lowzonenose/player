@@ -174,8 +174,11 @@ gulp.task('doc', function() {
         
         return gulp.src("jsdoc.json")
         .pipe(shell([
-            'jsdoc -c <%= file.path %>'
-        ]));
+            './node_modules/.bin/jsdoc -c <%= file.path %>'
+        ], {
+            quiet: true,
+            ignoreErrors: true
+        }));
     }
     
     gutil.log("SKIP Task : doc !");

@@ -1,3 +1,21 @@
+/**
+ * Programme principal
+ * @tutorial PlayGroundJS
+ * @module PlayGroundJS
+ * @see module:helper
+ * @see module:settings
+ * @see module:syntaxhighlighter
+ * @see module:logger
+ * @see module:dependency
+ * @see module:download
+ * @see module:config
+ * @see module:xhr
+ * @see module:ui/ui-crossbar
+ * @see module:ui/ui-sidebar
+ * @see module:ui/ui-codearea
+ * @todo !!! version avec ou sans JQuery !!!
+ */
+
 define([
     "jquery", 
     // libs :
@@ -8,6 +26,7 @@ define([
     "logger",
     "dependency",
     "download",
+    "xhr",
     // GUI :
     "ui/ui-crossbar",
     "ui/ui-sidebar",
@@ -24,6 +43,7 @@ define([
     Logger,
     Dependency,
     Download,
+    RequestXHR,
     // GUI :
     UICrossBar,
     UISideBar,
@@ -36,7 +56,13 @@ define([
     "use strict";
     
     /**
-     * 
+     * Description
+     * @method PlayGroundJS
+     * @param {Object} options
+     * @param {String} options.div
+     * @param {String} options.onsuccess
+     * @param {String} options.onerror
+     * @return {Object} PlayGroundJS
      */
     function PlayGroundJS(options) {
 
@@ -46,8 +72,8 @@ define([
         
         this.player = null;
         
-        // TODO options : 
-        //  - callbacks 
+        // options : 
+        //  - callbacks : onsuccess et onerror
         //  - div 
         //  - ...
         this.options = options || {};
@@ -73,7 +99,13 @@ define([
         
     };
     
-    // div ID du player par defaut !
+    /**
+     * div ID du player.
+     * 
+     * @type {string}
+     * @constant
+     * @default
+     */ 
     PlayGroundJS.DIV = '#PlayGroundJS';
     
     PlayGroundJS.prototype = {
@@ -83,15 +115,17 @@ define([
          ****************************/
         
         /**
-         * div ID du player
-         * Par defaut, "#PlayGroundJS"
+         * div ID du player.
+         * 
          * Information fournie via le param. options de la classe.
-          */
+         * @example #PlayGroundJS
+         * @type {string}
+         */
         m_divPlayer: null,
         
         /**
-         * Object
          * Gestionnaire de log
+         * @type {Object}
          */
         m_Logger: null,
 
@@ -104,25 +138,29 @@ define([
          * - Gouv
          * - Flash
          * - Standard
-         * ${String} issue des paramètres de l'URL 
-         *   (cf. params.type)
+         * 
+         * issue des paramètres de l'URL (cf. params.type)
+         * 
          * Par defaut, utilisation de la lib. API JS Extended
+         * @type {string}
          */
         m_jsApiType: null,
         
         /**
          * Version de l'API
-         * ${String} issue de la configuration 
-         * ou surchargée des paramètres de l'URL  
-         *   (cf. params.version)
+         * 
+         * issue de la configuration 
+         * ou surchargée des paramètres de l'URL (cf. params.version)
+         * @type {string}
          */
         m_jsApiVersion: null,
         
         /**
          * URL de l'API
-         * ${String} issue de la configuration 
-         * ou surchargée des paramètres de l'URL  
-         *   (cf. params.url)
+         * 
+         * issue de la configuration 
+         * ou surchargée des paramètres de l'URL (cf. params.url)
+         * @type {string}
          */
         m_jsApiUrl: null,
         
@@ -137,28 +175,37 @@ define([
          *               js:   , // ex "/samples/sample_1/js/sample_1.js"
          *           }
          *       }
-         * ${Objet} issue des paramètres de l'URL 
-         *   (cf. params.loadsample)
+         * issue des paramètres de l'URL (cf. params.loadsample)
+         * @typedef loadSample
+         * @type {Object} 
+         * @property {string} sample_path
+         * @property {string} sample_name
+         * @property {string} sample_file.html
+         * @property {string} sample_file.css
+         * @property {string} sample_file.js
          */
         m_loadSample: null,
 
         /**
          * Active/Desactive la colorisation syntaxique
-         * ${Bolean} issue des paramètres de l'URL 
-         *   (cf. params.applysyntaxhighlighter)
          * Par defaut, active...
+         * 
+         * issue des paramètres de l'URL (cf. params.applysyntaxhighlighter)
+         * @type {Boolean}
          */
         m_applySyntaxHighlighter: true,
         
         /**
-         * Object
          * CodeMirror is a code-editor component that can be embedded in Web pages
          * cf. http://codemirror.net/
+         * @type {Object}
+         * @see SyntaxHighlighter
          */
         m_SyntaxHighlighter: null,
 
         /**
          * Page HTML de sortie en mode 'standalone'.
+         * @type {string}
          */
         m_resultStandAlone: null,
         
@@ -167,12 +214,21 @@ define([
          * (appel externe)
          ********************/
         
+        /**
+         * @constructor PlayGroundJS
+         * @alias PlayGroundJS
+         */
         constructor: PlayGroundJS,
         
         /**
          * fonction principale de chargement !
-         * 
-         * @returns {undefined}
+         * @method load
+         * @see doLog
+         * @see Settings
+         * @see doInit
+         * @see doImport
+         * @see doGenerate
+         * @see doRun
          */
         load: function() {
             
@@ -199,15 +255,14 @@ define([
                     $this.doRun();
                 }
             });
-
-            
         },
         
         /**
          * Calcul de la taille des fenetres 
          *  (par ex., aprés deplacement de la fenetres principale)
-         * 
-         * @returns {undefined}
+         *  
+         * @method resize
+         * @todo instruction CSS à supprimer !
          */
         resize: function() {
             
@@ -263,8 +318,7 @@ define([
         /**
          * Reinitialiser le player à vide.
          *  (Not yet used !)
-         * 
-         * @returns {undefined}
+         * @method doEmpty
          */
         doEmpty: function () {
             
@@ -285,8 +339,7 @@ define([
         /**
          * Initialisation d'un logger.
          *  (désactivé en production)
-         *  
-         * @returns {undefined}
+         * @method doLog
          */
         doLog: function() {
             var $this = this;
@@ -301,7 +354,7 @@ define([
          * - colorisation synthaxique
          * - l'exemple à charger
          * 
-         * @returns {undefined}
+         * @method doInit
          */
         doInit: function() {
             var $this = this;
@@ -427,9 +480,9 @@ define([
                 $this.m_divPlayer = PlayGroundJS.DIV;
             }
             
-            // callback de fin de chargement ou d'erreur !
-            if ($this.options.onload == null) {
-                    $this.options.onload = function (message) {console.log(message);}
+            // callback de fin de chargement ou d'erreur du player !
+            if ($this.options.onsuccess == null) {
+                    $this.options.onsuccess = function (message) {console.log(message);}
             }
             
             if ($this.options.onerror == null) {
@@ -443,7 +496,7 @@ define([
          * - creation du menu action (crossbar)
          * - creation des zones de codes (codearea)
          * 
-         * @returns {$this}
+         * @method doGenerate
          */
         doGenerate: function() {
             var $this = this;
@@ -494,14 +547,18 @@ define([
 
         /**
          * Import de l'exemple dans la page.
+         * 
          *  Chaque fichier, html, js et css, est placé dans sa zone d'edition 
          *  de code avec la colorisation synthaxique.
+         *  
          *  Les dependances sont extraites de l'exemple.
          *  
-         * @param {function} callback de fin d'import !
-         * @returns {undefined}
+         * @method __doImport
+         * @param {function} callback - fin d'import !
+         * @deprecated
+         * @see {@link doImport}
          */
-        doImport: function(callback) {
+        __doImport: function(callback) {
 
             var $this = this;
 
@@ -526,10 +583,6 @@ define([
             var url = Helper.url();
             $this.m_Logger.debug(url);
 
-            // FIXME
-            // revoir implementation AJAX avec JQuery 
-            // cf. http://api.jquery.com/jquery.ajax/
-
             // INFO 
             // cf. http://stackoverflow.com/questions/4368946/javascript-callback-for-multiple-ajax-calls
             
@@ -537,6 +590,8 @@ define([
             // impl. promises sous IE ? 
             // l'utilisation à travers JQuery devrait fonctionner ?
             // cf. http://caniuse.com/#feat=promises
+            
+            
             $.when(
                 
                 // HTML
@@ -666,8 +721,8 @@ define([
                 // INFO succes : callback de fin de chargement !
                 function(html, js, css){   
                     $this.m_Logger.debug("all request ajax : DONE !");
-                    if ($this.options.onload != null && typeof $this.options.onload === 'function') {
-                        $this.options.onload.call($this, "Gestionnaire de fin de chargement !");
+                    if ($this.options.onsuccess != null && typeof $this.options.onsuccess === 'function') {
+                        $this.options.onsuccess.call($this, "Gestionnaire de fin de chargement !");
                     }
                 }
             ).fail(
@@ -698,13 +753,207 @@ define([
             );
 
         },
+        
+        /**
+         * Import de l'exemple dans la page.
+         * 
+         *  Chaque fichier, html, js et css, est placé dans sa zone d'edition 
+         *  de code avec la colorisation synthaxique.
+         *  
+         *  Les dependances sont extraites de l'exemple.
+         *  
+         * @method doImport
+         * @param {function} callback - fin d'import !
+         */
+        doImport: function(callback) {
+            
+            var $this = this;
 
+            $this.m_Logger.debug("call : doImport !");
+            
+            // Au cas ou ...
+            if (! $this.m_loadSample) {
+                if (! $this.m_loadSample.sample_file.html) {
+                    $this.boxHTML.append("code html à inserer.");
+                }
+                if (! $this.m_loadSample.sample_file.js) {
+                    $this.boxJS.append("code js à inserer.");
+                }
+                if (! $this.m_loadSample.sample_file.css) {
+                    $this.boxCSS.append("code css à inserer.");
+                }
+
+                return;
+            }
+
+            // Url de l'application
+            var url = Helper.url();
+            $this.m_Logger.debug(url);
+            
+            var xhr  = new RequestXHR();
+            
+            var lstUrl  = [];
+            lstUrl.push(url.concat($this.m_loadSample.sample_file.html));
+            lstUrl.push(url.concat($this.m_loadSample.sample_file.js));
+            lstUrl.push(url.concat($this.m_loadSample.sample_file.css));
+            
+            Promise.all(xhr.gets(lstUrl))
+                    .catch(
+                        // INFO 
+                        // echec d'une requête !
+                        // callback onerror
+                        function(){
+                            $this.m_Logger.debug("request Ajax FAILED (onError Callback) !");
+                            if ($this.options.onerror != null && typeof $this.options.onerror === 'function') {
+                                $this.options.onerror.call($this, "Gestionnaire d'erreur de chargement !");
+                            }   
+                        }
+                    )
+                    .then(
+                        // INFO 
+                        // on charge les fichiers dans le GUI
+                        function(responses){
+                            $this.m_Logger.debug("data into GUI LOADED !");
+                            
+                            var resp_html, resp_js, resp_css;
+                            resp_html = responses[0];
+                            resp_js   = responses[1];
+                            resp_css  = responses[2];
+                            
+                            __loadUI_HTML(resp_html);
+                            __loadUI_JS(resp_js);
+                            __loadUI_CSS(resp_css);
+                        }
+                    )
+                    .then(
+                        // INFO
+                        // appel de cette fonction de colorisation synthaxique !
+                        function(){
+                            $this.applySyntaxHighlighterAll();
+
+                        }
+                    )
+                    .then(
+                        // INFO 
+                        // reussite de toutes les requetes !
+                        // callback onfinish pour notifier la fin de l'import !
+                        // callback : declenche l'execution
+                        function(){
+                            $this.m_Logger.debug("import sample FINISHED (onFinish Callback) !");
+                            if (callback != null && typeof callback.onfinish === 'function') {
+                                callback.onfinish.call($this, ["Import de l'exemple : OK !"]);
+                            }
+                        }
+                    )
+                    .then(
+                        // INFO 
+                        // reussite du chargement du player
+                        // callback onsuccess
+                        function() {
+                            $this.m_Logger.debug("Player chargé avec succes !");
+                            if ($this.options.onsuccess != null && typeof $this.options.onsuccess === 'function') {
+                                $this.options.onsuccess.call($this, "Player chargé avec succes !");
+                            }
+                        }
+                    );
+            
+            /**
+             * Chargement du HTML dans la fenetre GUI
+             * @method __loadUI_HTML
+             * @param {String} response
+             */
+            function __loadUI_HTML(response) {
+                
+                $this.m_Logger.debug("code : " + response);
+
+                // extraction du body
+                var body = Helper.extractBody(response);
+                // insertion du code dans la page
+                $this.uicodearea.boxHTML.text(body);
+                $this.m_Logger.debug("body : " + body);
+
+                // extraction des dependances
+                var dep = new Dependency(Helper.getDoc(response));
+
+                // INFO
+                // ajout du path url dans les lib. internes de l'exemple !
+                // on enleve le '/' de fin de l'URL !
+                var thisurl     = url.concat($this.m_loadSample.sample_file.html);
+                var path_absolu = thisurl.substring(0, thisurl.lastIndexOf("/"));
+                var path_relatif= thisurl.substring(url.length, thisurl.lastIndexOf("/"));
+
+                $this.m_Logger.debug('url abs. : ' + path_absolu);
+                $this.m_Logger.debug('url rel. : ' + path_relatif);
+
+                var lstUrlInterne = dep.getScriptsInternal(path_relatif);
+                $this.uisidebar.set_jsapi_dependencies(lstUrlInterne);
+                $this.m_Logger.debug("url interne : " +lstUrlInterne);
+
+                // extraction des dependances externes
+                var lstUrlExterne = dep.getScriptsExternal();
+                $this.uisidebar.set_jsapi_dependencies(lstUrlExterne);
+                $this.m_Logger.debug("url externe : " + lstUrlExterne);
+
+                // extraction des dependances css
+                var lstUrlCssInterne = dep.getCssInternal(path_relatif);
+                $this.uisidebar.set_jsapi_dependencies_css(lstUrlCssInterne);
+                $this.m_Logger.debug("css interne : " +lstUrlCssInterne);
+
+                // extraction des dependances css externes
+                var lstUrlCssExterne = dep.getCssExternal();
+                $this.uisidebar.set_jsapi_dependencies_css(lstUrlCssExterne);
+                $this.m_Logger.debug("css externe : " +lstUrlCssExterne);
+            
+            };
+    
+            /**
+             * Chargement du JS dans la fenetre GUI
+             * @method __loadUI_JS
+             * @param {String} response
+             */
+            function __loadUI_JS(response) {
+                $this.m_Logger.debug("code : " + response);
+                // insertion du code dans la page
+                $this.uicodearea.boxJS.text(response);
+            }
+            
+            /**
+             * Chargement du CSS dans la fenetre GUI
+             * @method __loadUI_CSS
+             * @param {String} response
+             */
+            function __loadUI_CSS(response) {
+                $this.m_Logger.debug("code : " + response);
+
+                // FIXME hummm..., pb de path relatif...
+                // ex. url(img/loading.png)
+                //     au lieu de url(samples/sample_4/img/loading.png)
+                var css_text = response;
+
+                var css =  Helper.pathIntoCSS(response);
+                for(var i=0; i<css.length; i++) {
+                    // sinon, on determine le nom de l'archive à partir du fichier HTML
+                    var file = $this.m_loadSample.sample_file.css;
+                    var path = file.substring(0, file.lastIndexOf("/")+1);
+                    (function(k){
+                        var v = css[k];
+                        css_text = css_text.replace(v, path + v);
+                    })(i);
+                }
+
+                // insertion du code dans la page
+                $this.uicodearea.boxCSS.text(css_text);
+            }
+
+        },
+        
         /**
          * Export de l'exemple dans un fichier de sortie.
-         *  Les fichiers html, js et css sont placés dans une page html, sans les ressources...
-         *  (Not yet used !)
          * 
-         * @returns {undefined}
+         *  Les fichiers html, js et css sont placés dans une page html, sans les ressources...
+         * 
+         * @method doExport
+         * @deprecated Not yet used !
          */
         doExport: function () {
             
@@ -727,12 +976,13 @@ define([
         },
         
         /**
-         * Execution de l'exemple.
+         * Execution de l'exemple
+         * 
          *  Chaque fragment de code (html, cc et js) est concaténé dans une chaine de 
          *  caractères. Les dependances (interne et externe) de l'exemple y sont ajoutées.
          *  Cette chaine est insérée dans une 'iframe' pour execution.
          *  
-         * @returns {undefined}
+         *  @method doRun
          */
         doRun: function() {
             
@@ -829,7 +1079,6 @@ define([
             
             var strLoadCallback = '\
             function loadCallback () {\n\
-                console.log("document in iframe is ready!");\n\
                 parent.loadIFrameCallback();\n\
                 // document.getElementById("myloading").style.display="none";\n\
             };';
@@ -872,7 +1121,7 @@ define([
         /**
          * Recharge l'exemple initiale
          * 
-         * @returns {undefined}
+         * @method doReset
          */
         doReset: function() {
             
@@ -894,9 +1143,10 @@ define([
 
         /**
          * Sauvegarde.
-         *  Un fichier archive contenant le code HTML, JS et CSS.
          * 
-         * @returns {undefined}
+         *  Un fichier archive contenant le code HTML, JS et CSS.
+         *
+         * @method doSave
          */
         doSave: function () {
             
@@ -920,7 +1170,8 @@ define([
             
             if ($this.m_loadSample.sample_name) {
                 // on prend le nom de l'exemple 
-                archive = $this.m_loadSample.sample_name;
+                var name = $this.m_loadSample.sample_name;
+                archive = name.substring(0, name.lastIndexOf("/"));
             }
             else {
                 // sinon, on determine le nom de l'archive à partir du fichier HTML
@@ -939,193 +1190,212 @@ define([
                 onfailure: callbackOnFailure,
             };
                       
-            // options à modifier
+            // le code est il modifié ?
             var sampleIsModified = $this.uicodearea.isModified();
             if (sampleIsModified) {
-                // INFO
-                // cas où les fichiers ont été modifié, on ne peut plus prendre 
-                // l'archive pré calculée !
-                var entries = {
-                    files :[]
-                };
-
-                var m_strApiJS           = "", 
-                    m_strApiCSSDeps      = "", 
-                    m_strApiJSDeps       = "", 
-                    m_strExternalJSDeps  = "", 
-                    m_strFrameworkJSDeps = "";
-            
-                m_strApiJS = '<script type="text/javascript" src="' + this.uisidebar.get_jsapi_selected() + '"></script>';
-                
-                // INFO
-                // les paths internes doivent être relatifs à l'exemple, 
-                // et non pas par rapport à l'execution dans l'application !
-                // on reconstruit donc les chemins...
-                var url_sample = this.m_loadSample.sample_file.html;
-                var url_base   = url_sample.substring(0, url_sample.lastIndexOf("/"));
-                
-                var jsDeps = this.uisidebar.get_jsapi_dependencies();
-                for(var i=0; i<jsDeps.length; i++) {
-                    var v = Helper.path2relative(url_base, jsDeps[i]);
-                    m_strApiJSDeps += Helper.createScript(v);
-                }
-
-                var cssDeps = this.uisidebar.get_jsapi_dependencies_css();
-                for(var i=0; i<cssDeps.length; i++) {
-                    var v = Helper.path2relative(url_base, cssDeps[i]);
-                    m_strApiCSSDeps += Helper.createCss(v);
-                }
-                
-                // INFO
-                // cas SPECIAL où le fichier HTML est livré sans entête (head)... possible !?
-                // on ajoute donc la dependance CSS et JS !
-                if (m_strApiCSSDeps == "" && m_strApiJSDeps == "") {
-                    m_strApiCSSDeps = Helper.createCss(Helper.path2relative(url_base, this.m_loadSample.sample_file.css));
-                    m_strApiJSDeps  = Helper.createScript(Helper.path2relative(url_base, this.m_loadSample.sample_file.js));
-                }
-
-                // INFO
-                // pas de gestion des paths sur des lib. externes...
-                var jsFrameworks = this.uisidebar.get_jsdep_cdn();
-                for(var i=0; i<jsFrameworks.length; i++) {
-                    // par contre, on filtre celles qui sont nulles !
-                    if (jsFrameworks[i] != null) {
-                        m_strFrameworkJSDeps += Helper.createScript(jsFrameworks[i]);
-                    }
-                }
-                
-                // INFO
-                // pas de gestion des paths sur des dependances externes...
-                var jsExternals = this.uisidebar.get_jsdep_external();
-                for(var i=0; i<jsExternals.length; i++) {
-                    // par contre, on filtre celles qui sont nulles !
-                    if (jsExternals[i] != null) {
-                        m_strExternalJSDeps += Helper.createScript(jsExternals[i]);
-                    }
-                }
-                
-                // on enregistre les differents resultats
-                // (c'est un peu pourri comme méthode...)
-                var result = {
-                    script_api            : m_strApiJS,
-                    css_api_deps          : m_strApiCSSDeps,
-                    script_api_deps       : m_strApiJSDeps,
-                    script_external_deps  : m_strExternalJSDeps,
-                    script_framework_deps : m_strFrameworkJSDeps,
-                    code: {
-                        css : this.uicodearea.getCSS(),
-                        html: this.uicodearea.getHTML(),
-                        js  : this.uicodearea.getJS()
-                    }
-                };
-                
-                // INFO
-                // obtenir une liste de fichiers avec leur chemin dans l'archive sur :
-                // - des fichiers HTML, CSS et JS, 
-                // - des ressources du CSS, 
-                // - des dependances JS,
-                // - des dependances CSS
-                
-                var filepath_html = $this.m_loadSample.sample_file.html;
-                var filepath_css  = $this.m_loadSample.sample_file.css;
-                var filepath_js   = $this.m_loadSample.sample_file.js;
-
-                // INFO
-                // ajout de l'entête du fichier HTML
-                // avec encodage du fichier : UTF-8 -> ISO-8859-15
-                var content_html = "";
-                    content_html = content_html.concat('<html> ', '\n');
-                    content_html = content_html.concat('<head>',  '\n');
-                    content_html = content_html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
-                    content_html = content_html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
-                    content_html = content_html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
-                    content_html = content_html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
-                    content_html = content_html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
-                    content_html = content_html.concat("<!-- CSS API Deps -->", '\n',     result.css_api_deps, '\n');
-                    content_html = content_html.concat('</head>', '\n');
-                    content_html = content_html.concat('<body'  , '\n');
-                    content_html = content_html.concat(result.code.html, '\n');
-                    content_html = content_html.concat('</body' , '\n');
-                    content_html = content_html.concat('</html> ','\n');
-
-                // INFO
-                // gestion des paths des ressources des CSS 
-                // ex. les images (cf. doImport(), importation du fichier CSS)
-                var content_css = result.code.css;
-                
-                var css = Helper.pathIntoCSS(result.code.css);
-                for(var i=0; i<css.length; i++) {
-                    var path = filepath_css.substring(0, filepath_css.lastIndexOf("/")+1);
-                    (function(k){
-                        var v = css[k];
-                        content_css = content_css.replace(path, '');
-                    })(i);
-                 }
-                        
-                // ajout des fichiers HTML, JS et CSS
-                entries.files.push(
-                    {path:filepath_html, content: content_html},
-                    {path:filepath_css,  content: content_css},
-                    {path:filepath_js,   content: result.code.js}
-                );
-                
-                // on recherche des paths dans les fichiers HTML, JS et CSS, 
-                // et ajout des chemins dans l'archive
-                var files = [];
-                files.push(filepath_html);
-                files.push(filepath_css);
-                files.push(filepath_js);
-
-                var paths_file = Helper.paths(files);
-                for(var i=0; i<paths_file.length; i++) {
-                    entries.files.push( {path:paths_file[i]} );
-                }
-                
-                // ajout des ressources des CSS (internes uniquement)
-                // et recherche des paths
-                //  ex. les images
-                var resources_css = Helper.pathIntoCSS(result.code.css);
-                for(var i=0; i<resources_css.length; i++) {
-                    entries.files.push( {path:resources_css[i]} );
-                }
-                
-                var paths_css = Helper.paths(resources_css);
-                for(var i=0; i<paths_css.length; i++) {
-                    entries.files.push( {path:paths_css[i]} );
-                }
-                
-                // ajout des CSS en dependances (internes uniquement)
-                // et recherche des paths
-                for(var i=0; i<cssDeps.length; i++) {
-                    var regex = new RegExp("http://");
-                    if (! regex.test(cssDeps[i])) {
-                        entries.files.push( {path:cssDeps[i]} );
-                    }
-                }
-                
-                var paths_css_deps = Helper.paths(cssDeps);
-                for(var i=0; i<paths_css_deps.length; i++) {
-                    entries.files.push( {path:paths_css_deps[i]} );
-                }
-                
-                // ajout des JS en dependances (internes uniquement)
-                // et recherche des paths
-                for(var i=0; i<jsDeps.length; i++) {
-                    var regex = new RegExp("http://");
-                    if (! regex.test(jsDeps[i])) {
-                        entries.files.push( {path:jsDeps[i]} );
-                    }
-                }
-                
-                var paths_js_deps = Helper.paths(jsDeps);
-                for(var i=0; i<paths_js_deps.length; i++) {
-                    entries.files.push( {path:paths_js_deps[i]} );
-                }
-                
-                // extend options
-                $.extend( true, options,  entries);
-                $.extend( true, options,  {base:Helper.url()});
+                $this.m_Logger.debug("Code modifié !");
             }
+            
+            // INFO
+            // on ne traite plus le cas où on utilise une archive pré calculée !
+            var entries = {
+                files :[]
+            };
+
+            var m_strApiJS           = "", 
+                m_strApiCSSDeps      = "", 
+                m_strApiJSDeps       = "", 
+                m_strExternalJSDeps  = "", 
+                m_strFrameworkJSDeps = "";
+
+            m_strApiJS = '<script type="text/javascript" src="' + this.uisidebar.get_jsapi_selected() + '"></script>';
+
+            // INFO
+            // les paths internes doivent être relatifs à l'exemple, 
+            // et non pas par rapport à l'execution dans l'application !
+            // on reconstruit donc les chemins...
+            var url_sample = this.m_loadSample.sample_file.html;
+            var url_base   = url_sample.substring(0, url_sample.lastIndexOf("/"));
+
+            var jsDeps = this.uisidebar.get_jsapi_dependencies();
+            for(var i=0; i<jsDeps.length; i++) {
+                var v = Helper.path2relative(url_base, jsDeps[i]);
+                m_strApiJSDeps += Helper.createScript(v);
+            }
+
+            var cssDeps = this.uisidebar.get_jsapi_dependencies_css();
+            for(var i=0; i<cssDeps.length; i++) {
+                var v = Helper.path2relative(url_base, cssDeps[i]);
+                m_strApiCSSDeps += Helper.createCss(v);
+            }
+
+            // INFO
+            // cas SPECIAL où le fichier HTML est livré sans entête (head)... possible !?
+            // on ajoute donc la dependance CSS et JS !
+            if (m_strApiCSSDeps == "" && m_strApiJSDeps == "") {
+                m_strApiCSSDeps = Helper.createCss(Helper.path2relative(url_base, this.m_loadSample.sample_file.css));
+                m_strApiJSDeps  = Helper.createScript(Helper.path2relative(url_base, this.m_loadSample.sample_file.js));
+            }
+
+            // INFO
+            // pas de gestion des paths sur des lib. externes...
+            var jsFrameworks = this.uisidebar.get_jsdep_cdn();
+            for(var i=0; i<jsFrameworks.length; i++) {
+                // par contre, on filtre celles qui sont nulles !
+                if (jsFrameworks[i] != null) {
+                    m_strFrameworkJSDeps += Helper.createScript(jsFrameworks[i]);
+                }
+            }
+
+            // INFO
+            // pas de gestion des paths sur des dependances externes...
+            var jsExternals = this.uisidebar.get_jsdep_external();
+            for(var i=0; i<jsExternals.length; i++) {
+                // par contre, on filtre celles qui sont nulles !
+                if (jsExternals[i] != null) {
+                    m_strExternalJSDeps += Helper.createScript(jsExternals[i]);
+                }
+            }
+
+            // on enregistre les differents resultats
+            // (c'est un peu pourri comme méthode...)
+            var result = {
+                script_api            : m_strApiJS,
+                css_api_deps          : m_strApiCSSDeps,
+                script_api_deps       : m_strApiJSDeps,
+                script_external_deps  : m_strExternalJSDeps,
+                script_framework_deps : m_strFrameworkJSDeps,
+                code: {
+                    css : this.uicodearea.getCSS(),
+                    html: this.uicodearea.getHTML(),
+                    js  : this.uicodearea.getJS()
+                }
+            };
+
+            // INFO
+            // obtenir une liste de fichiers avec leur chemin dans l'archive sur :
+            // - des fichiers HTML, CSS et JS, 
+            // - des ressources du CSS, 
+            // - des dependances JS,
+            // - des dependances CSS
+
+            var filepath_html = $this.m_loadSample.sample_file.html;
+            var filepath_css  = $this.m_loadSample.sample_file.css;
+            var filepath_js   = $this.m_loadSample.sample_file.js;
+
+            // INFO
+            // ajout de l'entête du fichier HTML
+            // avec encodage du fichier : UTF-8 -> ISO-8859-15
+            var content_html = "";
+                content_html = content_html.concat('<html> ', '\n');
+                content_html = content_html.concat('<head>',  '\n');
+                content_html = content_html.concat('<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-15"/>', '\n');
+                content_html = content_html.concat("<!-- JS Deps externes -->", '\n', result.script_external_deps, '\n');
+                content_html = content_html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
+                content_html = content_html.concat("<!-- JS API Deps -->", '\n',      result.script_api_deps, '\n');
+                content_html = content_html.concat("<!-- JS API -->", '\n',           result.script_api, '\n');
+                content_html = content_html.concat("<!-- CSS API Deps -->", '\n',     result.css_api_deps, '\n');
+                content_html = content_html.concat('</head>', '\n');
+                content_html = content_html.concat('<body'  , '\n');
+                content_html = content_html.concat(result.code.html, '\n');
+                content_html = content_html.concat('</body' , '\n');
+                content_html = content_html.concat('</html> ','\n');
+
+            // INFO
+            // gestion des paths des ressources des CSS 
+            // ex. les images (cf. doImport(), importation du fichier CSS)
+            var content_css = result.code.css;
+
+            var css = Helper.pathIntoCSS(result.code.css);
+            for(var i=0; i<css.length; i++) {
+                var path = filepath_css.substring(0, filepath_css.lastIndexOf("/")+1);
+                (function(k){
+                    var v = css[k];
+                    content_css = content_css.replace(path, '');
+                })(i);
+             }
+
+            // ajout des fichiers HTML, JS et CSS 
+            // avec leur contenu
+            entries.files.push(
+                {path:filepath_html, content: content_html},
+                {path:filepath_css,  content: content_css},
+                {path:filepath_js,   content: result.code.js}
+            );
+
+            // on recherche des paths dans les fichiers HTML, JS et CSS, 
+            // epour ajout dans l'archive
+            //  ex. sur le fichier "./sample/sample_1/sample.html", 
+            //  on aura une liste de path :
+            //    -> ./sample/
+            //    -> ./sample/sample_1/
+            //    -> ./sample/sample_1/sample.html (Attention, déjà ajouté !)
+            var files = [];
+            var path_html = filepath_html.substring(0,filepath_html.lastIndexOf("/")+1);
+            var path_css  = filepath_css.substring(0,filepath_css.lastIndexOf("/")+1);
+            var path_js   = filepath_js.substring(0,  filepath_js.lastIndexOf("/")+1);
+            
+            files.push(path_html);
+            files.push(path_css);
+            files.push(path_js);
+
+            var paths_file = Helper.paths(files);
+            for(var i=0; i<paths_file.length; i++) {
+                entries.files.push( {path:paths_file[i]} );
+            }
+
+            // on recherche des paths dans les ressources des CSS (internes uniquement)
+            // pour ajout dans l'archive
+            //  ex. les images
+            var resources_css = Helper.pathIntoCSS(result.code.css);
+            for(var i=0; i<resources_css.length; i++) {
+                entries.files.push( {path:resources_css[i]} );
+            }
+
+            var paths_css = Helper.paths(resources_css);
+            for(var i=0; i<paths_css.length; i++) {
+                entries.files.push( {path:paths_css[i]} );
+            }
+
+            // on recherche des paths des dependances CSS (internes uniquement)
+            // pour ajout dans l'archive
+
+            for(var i=0; i<cssDeps.length; i++) {
+                var regex = new RegExp("http://");
+                if (! regex.test(cssDeps[i])) {
+                    if(cssDeps[i] == filepath_css) {
+                        continue;
+                    }
+                    entries.files.push( {path:cssDeps[i]} );
+                }
+            }
+
+            var paths_css_deps = Helper.paths(cssDeps);
+            for(var i=0; i<paths_css_deps.length; i++) {
+                entries.files.push( {path:paths_css_deps[i]} );
+            }
+
+            // on recherche des paths des dependances JS (internes uniquement)
+            // pour ajout dans l'archive
+
+            for(var i=0; i<jsDeps.length; i++) {
+                var regex = new RegExp("http://");
+                if (! regex.test(jsDeps[i])) {
+                    if(jsDeps[i] == filepath_js) {
+                        continue;
+                    }
+                    entries.files.push( {path:jsDeps[i]} );
+                }
+            }
+
+            var paths_js_deps = Helper.paths(jsDeps);
+            for(var i=0; i<paths_js_deps.length; i++) {
+                entries.files.push( {path:paths_js_deps[i]} );
+            }
+
+            // on sauvegarde le tout dans "options"
+            $.extend( true, options,  entries);
+            $.extend( true, options,  {base:Helper.url()});
             
             var dl = new Download(options);
             dl.send();
@@ -1133,10 +1403,11 @@ define([
         
         /**
          * Sauvegarde.
+         * 
          *  Un fichier archive contenant le code HTML, JS et CSS.
-         *  (Not yet used !)
          *  
-         * @returns {undefined}
+         * @method doSave_servlet
+         * @deprecated Not yet used !
          */
         doSave_servlet: function() {
 
@@ -1204,8 +1475,9 @@ define([
         /**
          * fonction de Test
          * 
+         * @method doTest
          * @param {type} e
-         * @returns {undefined}
+         * @deprecated Orienté maintenance !
          */
         doTest: function(e) {
             
@@ -1218,8 +1490,8 @@ define([
         /**
          * Ecriture de la page de résultat dans la zone d'execution (iframe).
          * 
-         * @param {String} result
-         * @returns {undefined}
+         * @method doWriteResult
+         * @param {String} document
          */
         doWriteResult: function(result) {
             
@@ -1233,7 +1505,13 @@ define([
             
             this.m_Logger.debug("call : doWriteResult !");
             
-            var iframe = this.uicodearea.boxResult[0];
+            // INFO
+            // on nettoie l'ancienne iframe car selon les navigateurs, on a des pb de mise à jour...
+            var iframe_old = document.getElementById("iframe");
+            var iframe_new = this.uicodearea.boxResult[0]; // attention, c'est du JQuery !
+            var parent = iframe_old.parentNode;
+            parent.removeChild(iframe_old);
+            parent.appendChild(iframe_new);
             
             // INFO 
             // ça ne fonctionne pas avec ce type d'ajout de contenu dans une iframe...
@@ -1243,32 +1521,36 @@ define([
             // };
             
             var doc = null;
-            if(iframe.contentDocument) {
-                doc = iframe.contentDocument;
+            if(iframe_new.contentDocument) {
+                doc = iframe_new.contentDocument;
             }
-            else if(iframe.contentWindow) {
-                doc = iframe.contentWindow.document;
+            else if(iframe_new.contentWindow) {
+                doc = iframe_new.contentWindow.document;
             }
             else {
-                doc = iframe.document;
+                doc = iframe_new.document;
             }
-
+            
+            
             doc.open();
             doc.writeln(result);
             doc.close();
             
-            this.m_Logger.debug(iframe);
+            this.m_Logger.debug(iframe_new);
+            
+            // TODO
+            // callback onerror et onsuccess
 
         },
 
         /**
          * Application de la colorisation synthaxique.
-         *  INFO : on recalcule la taille des fenetres après la mise en colorisation !
-         *  cf. resize()
          * 
-         * @param {String} code
-         * @returns {undefined}
+         *  On recalcule la taille des fenetres après la mise en colorisation !
          * 
+         * @method applySyntaxHighlighter
+         * @param {String} code - "html","js","css"
+         * @see applySyntaxHighlighterAll
          */
         applySyntaxHighlighter: function(code) {
             var $this = this;
@@ -1291,7 +1573,8 @@ define([
         /**
          * Application de la colorisation synthaxique.
          * 
-         * @returns {undefined}
+         * @method applySyntaxHighlighterAll
+         * @see applySyntaxHighlighter
          */
         applySyntaxHighlighterAll: function() {
             this.m_Logger.debug("call : applySyntaxHighlighterAll !");
@@ -1309,7 +1592,7 @@ define([
                     this.applySyntaxHighlighter(code[i]);
                 }
             }
-        },
+        }
         
     };
     

@@ -65,6 +65,10 @@ define(function () {
     
     Settings.prototype = {
         
+        /**
+         * @alias Settings
+         * @constructor Settings
+         */
     	constructor: Settings,
         
         /**

@@ -82,12 +82,14 @@
 ## NOTES
  
   - scope
+
    l'option 'scope' permet d'interagir avec la fonction 'callback':
    Si "scope : this", le this du callback renvoie l'objet 'player'.
    Par defaut, si le scope n'est pas renseignée, this est associé à l'objet 
    'Download'.
    
   - mode
+
    l'option 'mode' est utile dans le cas d'un téléchargement d'une archive. 
    par defaut, on est dans le mode 'TAG'.
    (fonctionnalité orientée maintenance !)
@@ -95,5 +97,17 @@
 ## RETURN
  
   une archive !
-  
-    
+
+## REFERENCE
+
+### mode requête XHR avec URI data scheme
+
+[blog - save and download](http://hackworthy.blogspot.fr/2012/05/savedownload-data-generated-in.html)
+
+[XmlHttpRequest](http://openclassrooms.com/courses/ajax-et-l-echange-de-donnees-en-javascript/l-objet-xmlhttprequest-1)
+
+### data URI scheme
+
+[Data URI Scheme - wikipedia](http://en.wikipedia.org/wiki/Data_URI_scheme)
+
+[blog - how to create downloads on fly](http://webreflection.blogspot.fr/2011/08/html5-how-to-create-downloads-on-fly.html)

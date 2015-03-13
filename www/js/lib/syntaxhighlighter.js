@@ -39,6 +39,10 @@ define([
 
         SyntaxHighlighter.prototype = {
 
+            /**
+             * @alias SyntaxHighlighter
+             * @constructor SyntaxHighlighter
+             */
             constructor: SyntaxHighlighter,
 
             /**

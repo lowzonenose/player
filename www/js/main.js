@@ -15,10 +15,11 @@ requirejs.config({
         // framework external
         "jquery": "../external/jquery",
         "log4js": "../external/log4javascript",
+        "promise" : "../external/promise",
         // zip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",
-        "zip-save"  : "../external/FileSaver",
+        "zip-save"  : "../external/FileSaver"
        
     }
 });
@@ -29,11 +30,11 @@ requirejs(["module/playgroundjs"], function (PlayGroundJS) {
     var player  = null;
     var options = {
         div: 'PlayGroundJS',
-        onload  : function (e) {
-            console.log('message INFO  : ' + e);
+        onsuccess : function (e) {
+            console.log(e);
         },
         onerror : function (e) {
-            console.log('message ERROR : ' + e);
+            console.log(e);
         }
     };
     

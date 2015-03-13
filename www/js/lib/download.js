@@ -6,24 +6,30 @@
  * @see module:zip-utils
  * @see module:zip-save
  * @see module:sort
- * @todo !!! SUPPRIMER LA DEPENDANCE <JQUERY> !!!
+ * @todo !!! version avec ou sans JQuery !!!
  */
 define([ 
-        "jquery",
+        // "jquery",
+        "promise",
         // dependances zip lib.
         "zip",
         "zip-utils",
         "zip-save",
         // libs. 
         "sort"
-    ], function ($, JSZip, JSZipUtils, JSFileSave, Sort) {
+    ], function (
+            // $, 
+            ES6Promise, 
+            JSZip, JSZipUtils, JSFileSave, 
+            Sort) {
     
     "use strict";
     
     /**
      * Description
      * @method Download
-     * @param {Object} options.scope
+     * @param {Object} options
+     * @param {String} options.scope
      * @param {String} options.mode
      * @param {String} options.archive
      * @param {String} options.base
@@ -38,6 +44,9 @@ define([
             throw new TypeError("Download constructor cannot be called as a function.");
         }
         
+        // To polyfill the global environment 
+        ES6Promise.polyfill();
+            
         this.settings = options || {};
         this.instance = 0;
         
@@ -172,14 +181,14 @@ define([
     Download.prototype = {
         
         /**
-         * Constructor
+         * Constructor@constructor
          * @alias Download
-         * @constructor
+         * @constructor Download
          */
         constructor: Download,
         
         /**
-         * Description
+         * Selon les options fournies, on a un téléchargement ou une création/téléchargement de l'archive.
          * @method send
          * @public
          * @exception {Error}
@@ -217,7 +226,24 @@ define([
         },
         
         /**
-         * Description
+         * Téléchargement d'une archive existante.
+         * 
+         * Possibilité de choisir un mode d'implémentation du téléchargement via l'option 'mode' :
+         * 
+         *  - "TAG", // insertion d'une balise html
+         *  - "URL", // requete XHR avec 'createObjectURL' dans une fenêtre 'window.open'
+         *  - "URI"  // requete XHR avec 'URI data scheme' dans 'document.location'
+         *  
+         * @example
+         * var options = { 
+         *  scope    : this,        
+         *  mode     : "URI",       
+         *  archive  : "exemple",   // ex. exemple.zip
+         *  base     : "./www/site/download/",
+         *  onsuccess: callback,
+         *  onfailure: callback,
+         * };
+         * 
          * @method sendArchive
          */
         sendArchive : function () {
@@ -242,10 +268,95 @@ define([
         },
         
         /**
-         * Description
+         * Creation et téléchargement d'une archive.
+         * 
+         * @example
+         * var options = {  
+         *  scope    : this,                // cf. notes  
+         *  archive  : "exemple",           // ex. exemple.zip
+         *  base     : "./www/site/download/",
+         *  files    : ["exemple/",
+         *             "exemple/file.js", 
+         *             "exemple/file.html",
+         *             "exemple/file.css"], 
+         *  onsuccess: callback,
+         *  onfailure: callback,
+         * };
+         * 
          * @method createArchive
          */
         createArchive : function () {
+
+            var $self = this;
+            
+            var zip  = new JSZip();
+
+            var files     = $self.sortFiles($self.settings.files);
+            var archive   = $self.settings.archive + '.zip';
+            var url       = $self.settings.base;
+            
+            var promises =  $self._AddFilesZip(url, files, zip);
+            
+            // callback
+            /**
+             * Description
+             * @method callback_failure
+             * @private
+             * @param {String} message
+             */
+            var callback_failure = function(message) {
+                if ($self.settings.onfailure !== null && typeof $self.settings.onfailure === 'function') {
+                    if ($self.settings.scope) {
+                        $self.settings.onfailure.call($self.settings.scope, message);
+                    } else {
+                        $self.settings.onfailure(message);
+                    }
+                }
+            };
+            /**
+             * Description
+             * @method callback_success
+             * @private
+             * @param {String} message 
+             */
+            var callback_success = function(message) {
+                if ($self.settings.onsuccess !== null && typeof $self.settings.onsuccess === 'function') {
+                        if ($self.settings.scope) {
+                            // this : Player class
+                            $self.settings.onsuccess.call($self.settings.scope, message);
+                            // this : FileReader class
+                            // $self.settings.onsuccess.call(this, "[mode:XHR][URI] cool!");
+                        } else {
+                            // this : Download class
+                            $self.settings.onsuccess.call($self, message);
+                        }
+                }
+            };
+            
+            Promise.all(promises)
+                    .catch (function(err, source) {
+                        callback_failure("Source : " + source + " | ERROR (" + err + ")!");
+                    })
+                    .then(function() {
+                
+                        var blob = zip.generate({type:"blob"});
+
+                        // see FileSaver.js
+                        saveAs(blob, archive);
+
+                        var message = "Archive ("+ archive  +") créée et téléchargée !";
+                        callback_success(message);
+                
+                    });
+            
+        },
+        
+        /**
+         * Ne pas utiliser !
+         * @method createArchive
+         * @deprecated Version avec Promise de JQUery
+         */
+        __createArchive : function () {
             
             var $self = this;
 
@@ -283,7 +394,7 @@ define([
             var archive   = $self.settings.archive + '.zip';
             var url       = $self.settings.base;
             
-            var deferreds = $self._deferredAddFilesZip(url, files, zip)
+            var deferreds = $self._AddFilesZip(url, files, zip)
             
             if(! deferreds) {
                 // TODO
@@ -293,6 +404,7 @@ define([
             /**
              * Description
              * @method callback_failure
+             * @private
              * @param {String} message
              */
             var callback_failure = function(message) {
@@ -307,6 +419,7 @@ define([
             /**
              * Description
              * @method callback_success
+             * @private
              * @param {String} message 
              */
             var callback_success = function(message) {
@@ -339,20 +452,19 @@ define([
                 });
         },
         
-        /**
-         * **************************
+        /***************************
          * Méthode d'archivage 
-         * **************************/
+         ***************************/
          
         /**
-         *
-         * @method _deferredAddFilesZip
+         * Ajout des fichiers et repértoires dans l'archive
+         * @method _AddFilesZip
          * @param {String} url
          * @param {String[]} files - liste de fichiers à ajouter 
          * @param {Object} zip - objet zip
          * @return {Object[]}
          */
-        _deferredAddFilesZip : function(url, files, zip) {
+        _AddFilesZip : function(url, files, zip) {
             
             var $self = this;
                        
@@ -419,7 +531,8 @@ define([
                     // c'est un fichier !
                     var filename_target = filepath_target.substring(filepath_target.lastIndexOf("/")+1);
                     console.log("> add file : " + filename_target + " into the last directory");
-                    deferreds.push($self._deferredAddFileZip(filepath_source, filename_target, content, hdl_zip));
+                    // deferreds.push($self._deferredAddFileZip(filepath_source, filename_target, content, hdl_zip));
+                    deferreds.push($self._promiseAddFileZip(filepath_source, filename_target, content, hdl_zip));
 
                 })(value);
                 
@@ -428,7 +541,8 @@ define([
         },
         
         /**
-         * Description
+         * Ne pas utiliser !
+         * @deprecated Version avec Promise de JQUery
          * @method _deferredAddFileZip
          * @param {String} source
          * @param {String} target
@@ -456,36 +570,69 @@ define([
             return deferred;
         },
         
+        /**
+         * Description
+         * @method _promiseAddFileZip
+         * @param {String} source
+         * @param {String} target
+         * @param {String} content
+         * @param {Object} zip
+         * @return {Object} promise
+         */
+        _promiseAddFileZip : function(source, target, content, zip ) {
+            
+            var promise = new Promise(
+                function(resolve, reject) {
+
+                    if (!content) {
+                       JSZipUtils.getBinaryContent(source, function (err, data) {
+                            if(err) {
+                                reject(err, source);
+                            } else {
+                                zip.file(target, data, {binary:true});
+                                resolve(data);
+                            }
+                        }); 
+                    }
+                    else {
+                       zip.file(target, content, {binary:true});
+                       resolve(content);
+                    }
+            });
+            
+            return promise;
+        },
+        
         /****************************
          * Méthode de téléchargements 
          ****************************/
         
         /**
-         * Mise en place d'une balise <a> dans le "document", 
+         * Mise en place d'une balise html dans le "document", 
          * et execution de l'evenement "click()".
+         * 
+         * compatibilité entre navigateur :
+         * - FF 34       :  OK
+         * - FF 35       :  OK
+         * - Chromium 39 :  OK
+         * - Opera 12.16 :  OK
+         * - IE          :  OK
+         * 
+         * @example
+         * <a href=... download=... style="visibility: hidden;" />
          * @method _sendWithModeTAG
          */
         _sendWithModeTAG: function () {
             
             var $self = this;
+
+            /** 
+             * FAKE
+             * à cause d'un BUG sous FF, il faut mettre en place reellement la balise 
+             * de téléchargement mais on la cache :
+             * '<a href=... download=... style="visibility: hidden;" />'
+             */
             
-            // INFO
-            // mode avec la mise en place de la balise 
-            //   '<a href=... download=... />'
-            // puis, execution de l'event 'click'
-            
-            // FAKE
-            // à cause d'un BUG sous FF, il faut mettre en place reellement la balise 
-            // de téléchargement mais cachée :
-            // '<a href=... download=... style="visibility: hidden;" />'
-            
-            // FIXME 
-            // compatibilité entre navigateur
-            //   * FF 34       :  OK
-            //   * FF 35       :  OK
-            //   * Chromium 39 :  OK
-            //   * Opera 12.16 :  OK
-            //   * IE          :  OK
             
             var archive_name = 
                     Download.PARAMS_ARCHIVE_NAME + '.' + 
@@ -539,7 +686,15 @@ define([
         /**
          * Mise en place d'une requête XHR avec passage du content de l'archive 
          * en URI data scheme.
-         * appel de "document.location"
+         * 
+         *  compatibilité entre navigateur 
+         *  - FF 34       :  OK but not allow to define a file name (random name)
+         *  - Chromium 39 :  OK
+         *  - Opera 12.16 :  OK but not allow to define a file name (random name)
+         *  - IE          : NOK car l'URI risque d'etre trop grande pour IE !!!
+         * 
+         * On passe par "document.location" pour le download...
+         * 
          * @method _sendWithModeXHRtoURI
          */
         _sendWithModeXHRtoURI: function () {
@@ -556,14 +711,8 @@ define([
             // cf. http://en.wikipedia.org/wiki/Data_URI_scheme
             // cf. http://webreflection.blogspot.fr/2011/08/html5-how-to-create-downloads-on-fly.html
             
-            // FIXME 
-            // compatibilité entre navigateur 
-            //   * FF 34       :  OK but not allow to define a file name (random name)
-            //   * Chromium 39 :  OK
-            //   * Opera 12.16 :  OK but not allow to define a file name (random name)
-            //   * IE          : NOK car l'URI risque d'etre trop grande pour IE !!!
             
-            // FIXME
+            // TODO
             // - probleme de contexte de 'this' (impl. du scope)
             // - comment capturer le message d'erreur envoyé par XHR
             
@@ -654,6 +803,7 @@ define([
                 /**
                  * Description
                  * @method onerror
+                 * @private
                  */
                 XHR.onerror = function () {
                         var message = "[mode:XHR][URI] Errors Occured on Http Request with XMLHttpRequest !" ;
@@ -713,20 +863,22 @@ define([
         
         /**
          * Create an object URL for the binary data (blob) from the XHR response.
+         * 
+         * compatibilité entre navigateur
+         * - FF 34       :  OK
+         * - FF 35       :  OK
+         * - Chromium 39 :  OK
+         * - Opera 12.16 : NOK
+         * - IE          : NOK car pb de sécurité à ouvrir une fenetre ?!
+         * 
+         * On passe par "window.URL.createObjectURL" pour le download...
+         * 
          * @method _sendWithModeXHRtoURL
          */
         _sendWithModeXHRtoURL: function () {
             
             // INFO
             // cf. http://blogs.adobe.com/webplatform/2012/01/17/displaying-xhr-downloaded-images-using-the-file-api/
-
-            // FIXME 
-            // compatibilité entre navigateur
-            //   * FF 34       :  OK
-            //   * FF 35       :  OK
-            //   * Chromium 39 :  OK
-            //   * Opera 12.16 : NOK
-            //   * IE          : NOK car pb de sécurité à ouvrir une fenetre ?!
             
             var $self = this;
             

@@ -122,7 +122,7 @@ define(function () {
         /**
          * Constructor
          * @alias Dependency
-         * @constructor
+         * @constructor Dependency
          */
         constructor: Dependency,
         

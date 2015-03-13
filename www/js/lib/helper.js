@@ -8,8 +8,8 @@ define({
     /**
      * Obtenir l'url de l'application.
      * WARNING, toujours un '/' à la fin de l'URL !
-     * @method url
-     * @return url
+     * @method {string} url
+     * @return {string} url
      */
     url: function() {
         
@@ -36,8 +36,8 @@ define({
      *   "root/folder/files/"
      *   "root/folder/files/file"
      * @method paths
-     * @param {type} lstpath
-     * @return CallExpression
+     * @param {string[]} lstpath
+     * @return {string[]} 
      */
     paths: function(lstpath) {
         
@@ -74,9 +74,9 @@ define({
      *  PATH : "/root/folder/files/file.html"
      * on a en sortie : "files/file.html"
      * @method path2relative
-     * @param {type} url
-     * @param {type} path
-     * @return path_rel
+     * @param {string} url
+     * @param {string} path
+     * @return {string} path_rel
      */
     path2relative : function(url, path) {
         
@@ -126,8 +126,8 @@ define({
      *  on a une liste en sortie :
      *    "img/image.png"
      * @method pathIntoCSS
-     * @param {type} css
-     * @return lstresources
+     * @param {string} css
+     * @return {string[]} lstresources
      */
     pathIntoCSS : function (css) {
         
@@ -162,8 +162,7 @@ define({
     /**
      * Ajouter une balise 'link' dans l'entête (head) du document courant.
      * @method loadCss
-     * @param {type} url
-     * @return 
+     * @param {string} url
      */
     loadCss : function (url) {
         var link  = document.createElement("link");
@@ -176,8 +175,7 @@ define({
     /**
      * Ajouter une balise 'script' dans l'entête (head) du document courant.
      * @method loadScript
-     * @param {type} url
-     * @return 
+     * @param {string} url
      */
     loadScript : function (url) {
         var script  = document.createElement("script");
@@ -195,8 +193,8 @@ define({
     /**
      * Description
      * @method createCss
-     * @param {} url
-     * @return MemberExpression
+     * @param {string} url
+     * @return {string} outerHTML
      */
     createCss : function (url) {
         // cf. https://developer.mozilla.org/en-US/docs/Web/API/element.outerHTML
@@ -210,8 +208,8 @@ define({
     /**
      * Description
      * @method createScript
-     * @param {} url
-     * @return MemberExpression
+     * @param {string} url
+     * @return {string} outerHTML
      */
     createScript : function (url) {
         var script  = document.createElement("script");
@@ -228,8 +226,8 @@ define({
      * Surcharge de la methode 'parseFromString' 
      * du parser 'DOMParser'.
      * @method parser
-     * @param {type} DOMParser
-     * @return 
+     * @param {Object} DOMParser
+     * @return {Object} DOMParser
      */
     parser: function(DOMParser) {  
         // INFO
@@ -266,9 +264,9 @@ define({
         /**
          * Description
          * @method parseFromString
-         * @param {} markup
-         * @param {} type
-         * @return 
+         * @param {String} markup
+         * @param {String} type
+         * @return {Object} document
          */
         DOMParser_proto.parseFromString = function(markup, type) {  
             if (/^\s*text\/html\s*(?:;|$)/i.test(type)) {  
@@ -295,7 +293,7 @@ define({
      * Description
      * @method getDoc
      * @param {String} text
-     * @return doc
+     * @return {Object} document
      */
     getDoc : function (text) {
         
@@ -311,7 +309,7 @@ define({
      * Description
      * @method extractBody
      * @param {String} text
-     * @return body_without_scripts
+     * @return {String} body_without_scripts
      */
     extractBody : function (text) {
         
@@ -324,7 +322,7 @@ define({
      * Description
      * @method extractScripts
      * @param {String} text
-     * @return lstscripts
+     * @return {String[]} lstscripts
      */
     extractScripts : function (text) {
 

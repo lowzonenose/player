@@ -39,6 +39,10 @@ define(function () {
     
     Type.prototype = {
         
+        /**
+         * @alias Type
+         * @constructor Type
+         */
         constructor: Type,
         
         /**

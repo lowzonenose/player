@@ -44,7 +44,7 @@ define(function () {
         /**
          * Constructor
          * @alias CDN
-         * @constructor
+         * @constructor CDN
          */
         constructor: CDN,
         
