@@ -13,6 +13,7 @@
   
   "dependencies": {
       "jquery" : "~2.1.3",
+      "jquery-ui" : "~1.11.4",
       "jszip" : "~2.4.0",
       "jszip-utils" : "~0.0.2",
       "log4javascript" : "~1.4.9",
@@ -23,7 +24,10 @@
   
   "overrides": {
       "FileSaver" : {
-            "main": "FileSaver.js"
+          "main": "FileSaver.js"
+      },
+      "jszip-utils" : {
+          "main": ["dist/jszip-utils.js", "dist/jszip-utils-ie.js"]
       }
   }
 }

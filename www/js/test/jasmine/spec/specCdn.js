@@ -106,17 +106,10 @@ define(["cdn"], function (CDN) {
 
             cdn = new CDN("codemirror");
             cdn.request({
+                scope: this,
                 mode: "jsonp",
                 callback: "callback4jsonp"
             });
-            
-            function callback4jsonp (response) {
-                    console.log(this.json());
-                    console.log(this.length());
-                    console.log(this.version(0));
-                    console.log(this.name(0));
-                    console.log(this.url(0));
-            };
         
         });
         

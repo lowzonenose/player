@@ -35,6 +35,7 @@ define(function () {
     CDN.URL  = "http://api.cdnjs.com/libraries";
     CDN.MODE = "json";
     CDN.CALLBACK = "callback";
+    CDN.OBJECT = "RESPONSE";
     CDN.PARAMS_SEARCH = "search=";
     CDN.PARAMS_FIELDS = "fields=version";
     CDN.PARAMS_CALLBACK = "callback=";
@@ -88,17 +89,19 @@ define(function () {
             
             if ($self.settings.mode == "jsonp") {
                 
-                // TODO...
-                if (typeof $self.settings.callback === 'string') {
-                    url = url + '&' + CDN.PARAMS_CALLBACK + $self.settings.callback;
-                    $self._requestScript(url);
-                }
-                
                 // fonction anonyme
                 if (typeof $self.settings.callback === 'function') {
                     url = url + '&' + CDN.PARAMS_CALLBACK + CDN.CALLBACK;
                     $self._requestScript(url, true);
                 }
+                
+                // fonction nommée
+                if (typeof $self.settings.callback === 'string') {
+                    url = url + '&' + CDN.PARAMS_CALLBACK + $self.settings.callback;
+                    $self._requestScript(url, false);
+                }
+                
+                
                 
             }
             else {
@@ -199,7 +202,7 @@ define(function () {
          * @param {String} url
          * @param {Boolean} is - is a function or a string ?
          */
-        _requestScript: function (url, is) {
+        _requestScript: function (url, isFunction) {
             
             // INFO
             // cf. http://openclassrooms.com/courses/ajax-et-l-echange-de-donnees-en-javascript/dynamic-script-loading
@@ -208,14 +211,16 @@ define(function () {
             
             var scriptu, scriptf;
             
-            // si callback == function
-            if (is) {
+            // si callback == function, ok
+            // sinon mise en place d'un JSON global.
+            if (isFunction) {
                 scriptf = document.createElement('script');
                 scriptf.innerHTML = 'var' + ' ' + CDN.CALLBACK + ' = ' + this.settings.callback.toString();
                 document.body.appendChild(scriptf);
             }
-            else { // FIXME utile ???
-                throw new Error("Not Implemented yet !");
+            else { 
+                // TODO...
+                throw new Error("Not yet implemented !");
             }
             
             scriptu = document.createElement('script');

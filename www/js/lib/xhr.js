@@ -63,7 +63,7 @@ define(["promise"],
                          * @private
                          */
                         XHR.onerror = function () {
-
+                            reject(new Error("Errors Occured on Http Request with XMLHttpRequest !"));
                         };
                         
                         /**
@@ -77,7 +77,7 @@ define(["promise"],
                                 if (XHR.status == 200) {
                                     resolve(XHR.response);
                                 }else {
-                                    reject("Errors Occured on Http Request with XMLHttpRequest !");
+                                    reject(new Error("Errors Occured on Http Request !"));
                                 }
                             }
                             
@@ -96,7 +96,7 @@ define(["promise"],
                          * @private
                          */
                         XHR.onerror = function () {
-
+                            reject(new Error("Errors Occured on Http Request with XMLHttpRequest !"));
                         };
                         
                         /**
@@ -110,7 +110,7 @@ define(["promise"],
                                 resolve(XHR.response);
                             }
                             else {
-                                reject("Errors Occured on Http Request with XMLHttpRequest !");
+                                reject(new Error("Errors Occured on Http Request !"));
                             }
                         };
                         

@@ -18,6 +18,7 @@
 
 define([
     "jquery", 
+    "jquery-ui",
     // libs :
     "helper", 
     "settings", 
@@ -34,7 +35,8 @@ define([
     // other
     "config"
 ], function(
-    $, 
+    JQuery,
+    JQueryUI,
     // libs :
     Helper, 
     Settings, 
@@ -592,10 +594,10 @@ define([
             // cf. http://caniuse.com/#feat=promises
             
             
-            $.when(
+            JQuery.when(
                 
                 // HTML
-                $.ajax({
+                JQuery.ajax({
                     url : url.concat($this.m_loadSample.sample_file.html),
                     type : 'GET' ,
                     dataType : 'text',
@@ -654,7 +656,7 @@ define([
                 }),
 
                 // JS
-                $.ajax({
+                JQuery.ajax({
                     url : url.concat($this.m_loadSample.sample_file.js),
                     type : 'GET' ,
                     dataType : 'text',
@@ -678,7 +680,7 @@ define([
                 }),
 
                 // CSS
-                $.ajax({
+                JQuery.ajax({
                     url : url.concat($this.m_loadSample.sample_file.css),
                     type : 'GET' ,
                     dataType : 'text',
@@ -798,31 +800,38 @@ define([
             lstUrl.push(url.concat($this.m_loadSample.sample_file.css));
             
             Promise.all(xhr.gets(lstUrl))
-                    .catch(
-                        // INFO 
-                        // echec d'une requête !
-                        // callback onerror
-                        function(){
-                            $this.m_Logger.debug("request Ajax FAILED (onError Callback) !");
-                            if ($this.options.onerror != null && typeof $this.options.onerror === 'function') {
-                                $this.options.onerror.call($this, "Gestionnaire d'erreur de chargement !");
-                            }   
-                        }
-                    )
                     .then(
                         // INFO 
                         // on charge les fichiers dans le GUI
                         function(responses){
-                            $this.m_Logger.debug("data into GUI LOADED !");
+                            $this.m_Logger.debug("sample data : " + responses);
                             
                             var resp_html, resp_js, resp_css;
-                            resp_html = responses[0];
-                            resp_js   = responses[1];
-                            resp_css  = responses[2];
                             
-                            __loadUI_HTML(resp_html);
-                            __loadUI_JS(resp_js);
-                            __loadUI_CSS(resp_css);
+                            if (responses) {
+                                
+                                resp_html = responses[0];
+                                resp_js   = responses[1];
+                                resp_css  = responses[2];
+
+                                __loadUI_HTML(resp_html);
+                                __loadUI_JS(resp_js);
+                                __loadUI_CSS(resp_css);
+                            }
+                        }
+                    )
+                    .catch(
+                        // INFO 
+                        // echec d'une requête !
+                        // callback onerror
+                        function(error){
+                            $this.m_Logger.debug("sample request Ajax FAILED (onError Callback) !");
+                            if ($this.options.onerror != null && typeof $this.options.onerror === 'function') {
+                                $this.options.onerror.call($this, "Erreur de chargement de l'exemple (" + error.message + ") !");
+                                // si on souhaite  ne pas aller plus loin, 
+                                // on peut toujours relancer cette exception...
+                                throw error;
+                            }   
                         }
                     )
                     .then(
@@ -830,18 +839,17 @@ define([
                         // appel de cette fonction de colorisation synthaxique !
                         function(){
                             $this.applySyntaxHighlighterAll();
-
                         }
                     )
                     .then(
                         // INFO 
                         // reussite de toutes les requetes !
                         // callback onfinish pour notifier la fin de l'import !
-                        // callback : declenche l'execution
+                        // callback : declenche l'execution !
                         function(){
                             $this.m_Logger.debug("import sample FINISHED (onFinish Callback) !");
                             if (callback != null && typeof callback.onfinish === 'function') {
-                                callback.onfinish.call($this, ["Import de l'exemple : OK !"]);
+                                callback.onfinish.call($this, ["Fin de l'import de l'exemple !"]);
                             }
                         }
                     )
@@ -850,9 +858,9 @@ define([
                         // reussite du chargement du player
                         // callback onsuccess
                         function() {
-                            $this.m_Logger.debug("Player chargé avec succes !");
+                            $this.m_Logger.debug("sample LOADED (onSuccess Callback) !");
                             if ($this.options.onsuccess != null && typeof $this.options.onsuccess === 'function') {
-                                $this.options.onsuccess.call($this, "Player chargé avec succes !");
+                                $this.options.onsuccess.call($this, "Succes du chargement de l'exemple !");
                             }
                         }
                     );
@@ -1394,8 +1402,8 @@ define([
             }
 
             // on sauvegarde le tout dans "options"
-            $.extend( true, options,  entries);
-            $.extend( true, options,  {base:Helper.url()});
+            JQuery.extend( true, options,  entries);
+            JQuery.extend( true, options,  {base:Helper.url()});
             
             var dl = new Download(options);
             dl.send();
@@ -1430,13 +1438,13 @@ define([
 
 
             // See: http://api.jquery.com/jQuery.ajaxPrefilter/
-            $.ajaxPrefilter( 
+            JQuery.ajaxPrefilter( 
                 function( options ) {
                     if ( options.crossDomain ) {
                         var newData = {};
                         // Copy the options.data object to the newData.data property.
                         // We need to do this because javascript doesn't deep-copy variables by default.
-                        newData.data = $.extend({}, options.data);
+                        newData.data = JQuery.extend({}, options.data);
                         newData.url = options.url;
 
                         // Reset the options object - we'll re-populate in the following lines.
@@ -1444,12 +1452,12 @@ define([
 
                         // Set the proxy URL
                         options.url = Config.application.proxy + "?url=" + encodeURIComponent( newData.url);
-                        options.data = $.param(newData.data);
+                        options.data = JQuery.param(newData.data);
                         options.crossDomain = false;
                     }
                 });
 
-            $.ajax({
+            JQuery.ajax({
                 url : Config.application.servlet.download,
                 type : 'POST',
                 data : {

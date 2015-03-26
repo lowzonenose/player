@@ -14,11 +14,13 @@ requirejs.config({
         "cm"    : "../thirdparty/codemirror",
         // framework external
         "jquery": "../external/jquery",
+        "jquery-ui": "../external/jquery-ui",
         "log4js": "../external/log4javascript",
         "promise" : "../external/promise",
         // zip
         "zip"       : "../external/jszip",
         "zip-utils" : "../external/jszip-utils",
+        "zip-utils-ie" : "../external/jszip-utils-ie",
         "zip-save"  : "../external/FileSaver"
        
     }
@@ -55,5 +57,14 @@ requirejs(["module/playgroundjs"], function (PlayGroundJS) {
         player.resize();
     });
     
-
 });
+
+requirejs.onError = function (err) {
+    /* 
+        err has the same info as the errback callback:
+        err.requireType & err.requireModules
+    */
+    console.log(err.requireType);
+    // Be sure to rethrow if you don't want to
+    // blindly swallow exceptions here!!!
+};

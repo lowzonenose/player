@@ -264,18 +264,24 @@ gulp.task('build:js', ["normalize"], function () {
                                 sort : "lib/sort",
                                 type : "lib/type",
                                 syntaxhighlighter : "lib/syntaxhighlighter",
+                                xhr : "lib/xhr",
 
                                 // thirdparty
-                                cm    : "empty:",
+                                cm : "empty:",
+                                
+                                //polyfill
+                                "promise" : "empty:",
                                 
                                 // framework
-                                jquery: "empty:",
-                                log4js: "empty:",
+                                "jquery"   : "empty:",
+                                "jquery-ui": "empty:",
+                                "log4js"   : "empty:",
   
                                 // zip
-                                "zip"       : "empty:",
-                                "zip-utils" : "empty:",
-                                "zip-save"  : "empty:",
+                                "zip"          : "empty:",
+                                "zip-utils"    : "empty:",
+                                "zip-utils-ie" : "empty:",
+                                "zip-save"     : "empty:",
                             }
 			}))
 			.pipe(gulp.dest(targetdir + 'js/'));
