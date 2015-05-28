@@ -48,5 +48,10 @@
         "desc" : "Exception Management",
         "url" : "http://",
         "version" : "1.0.0"
+    },
+    "xhr" : {
+        "desc" : "XHR Management",
+        "url" : "http://",
+        "version" : "1.0.0"
     }
 }

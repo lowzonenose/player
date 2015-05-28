@@ -28,5 +28,10 @@
         "desc" : "A saveAs() FileSaver implementation.",
         "url" : "https://github.com/eligrey/FileSaver.js",
         "version" : ""
+    },
+    "es6-promise" : {
+        "desc" : "This is a polyfill of the ES6 Promise.",
+        "url" : "https://github.com/jakearchibald/es6-promise",
+        "version" : "2.0.1"
     }
 }

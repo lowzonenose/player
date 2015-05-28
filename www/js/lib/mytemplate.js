@@ -12,7 +12,27 @@
  */
 
 define(function () {
-       
+    
+    // INFO
+    // 2 methodes pour appeler les dependances avec RequireJS:
+    // 
+    // define([ 
+    //     "zip",
+    //     "zip-utils",
+    //     "zip-save",
+    // ], function (JSZip, JSZipUtils, JSFileSave) {
+    //     // (...)
+    // });
+    // 
+    // ou 
+    // 
+    // define(function(require) {
+    //     var JSZip      = require("zip"),
+    //         JSZipUtils = require("zip-utils"),
+    //         JSFileSave = require("zip-save");
+    //     // (...)
+    // });
+        
     // INFO
     // Forces the JavaScript engine into strict mode
     // http://stackoverflow.com/questions/1335851/what-does-use-strict-do-in-javascript-and-what-is-the-reasoning-behind-it

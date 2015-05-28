@@ -6,15 +6,16 @@
 
         baseUrl: '../../lib',
         paths: {
-            'jasmine': '../test/jasmine/lib/jasmine/jasmine',
-            'jasmine-html': '../test/jasmine/lib/jasmine/jasmine-html',
-            'boot': '../test/jasmine/lib/jasmine/boot',
+            'jasmine': '../test/jasmine/lib/jasmine-2.2.0/jasmine',
+            'jasmine-html': '../test/jasmine/lib/jasmine-2.2.0/jasmine-html',
+            'boot': '../test/jasmine/lib/jasmine-2.2.0/boot',
             'zip': "../test/jasmine/lib/jszip", 
             'zip-utils': "../test/jasmine/lib/jszip-utils", 
             'zip-save': "../test/jasmine/lib/FileSaver", 
             'jquery': "../test/jasmine/lib/jquery",
             "cm" : "../test/jasmine/thirdparty/codemirror",
-            "promise" : "../test/jasmine/lib/promise"
+            "promise" : "../test/jasmine/lib/promise",
+            "mock-promises" : "../test/jasmine/lib/mock-promises",
         },
 
         shim: {

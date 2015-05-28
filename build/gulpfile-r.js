@@ -22,7 +22,7 @@
         ui    : "modules/ui",
         
         // my lib
-        config : "lib/config",
+        config : "cfg/config",
         helper : "lib/helper",
         cdn : "lib/cdn",
         dependency : "lib/dependency",
@@ -32,12 +32,13 @@
         sort : "lib/sort",
         type : "lib/type",
         syntaxhighlighter : "lib/syntaxhighlighter",
+        xhr : "lib/xhr",
         
         // framework
-        
-        jquery: "empty:",
-        log4js: "empty:",
-        cm    : "empty:",
+        promise : "empty:",
+        jquery  : "empty:",
+        log4js  : "empty:",
+        cm      : "empty:",
         
         // INFO :
         // possibilité de ne ps prendre en compte les lib. externes !

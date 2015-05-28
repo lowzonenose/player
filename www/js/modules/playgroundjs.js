@@ -17,8 +17,7 @@
  */
 
 define([
-    "jquery", 
-    "jquery-ui",
+    "jquery",
     // libs :
     "helper", 
     "settings", 
@@ -35,8 +34,7 @@ define([
     // other
     "config"
 ], function(
-    JQuery,
-    JQueryUI,
+    $,
     // libs :
     Helper, 
     Settings, 
@@ -271,7 +269,7 @@ define([
             this.m_Logger.debug("call : resize !");
             
             // on redefinit la taille de la fenetre !?
-            $(this.m_divPlayer).height($(window).height());
+            // $(this.m_divPlayer).height($(window).height());
             
             // FIXME 
             // le calcul CSS des hauteurs dans le javascript me parait douteux...
@@ -289,7 +287,14 @@ define([
             // this.codeArea.css({top: menuHeight, height: playerHeight, width: codeAreaWidth});
 
             // FIXME : on surcharge les CSS de CodeMirror car les tailles des div sont bizarres !
-            var h  = window.innerHeight - this.crossbar.outerHeight(true);
+            
+            var height = this.crossbar.offsetHeight;
+            var style  = getComputedStyle(this.crossbar);
+            height    += parseInt(style.marginTop) + parseInt(style.marginBottom);
+            var h      = window.innerHeight - height;
+            // version avec JQuery !
+            // var h  = window.innerHeight - this.crossbar.outerHeight(true);
+            
             var topLeft, topRight, bottomLeft, bottomRight;
             if (this.m_applySyntaxHighlighter) {
                 topLeft    = $('table._PlayGroundJS_codeAreaTable tbody tr:first-child td:first-child .CodeMirror').height(Math.round(h*0.4));
@@ -546,215 +551,6 @@ define([
             
             return $this.player;
         },
-
-        /**
-         * Import de l'exemple dans la page.
-         * 
-         *  Chaque fichier, html, js et css, est placé dans sa zone d'edition 
-         *  de code avec la colorisation synthaxique.
-         *  
-         *  Les dependances sont extraites de l'exemple.
-         *  
-         * @method __doImport
-         * @param {function} callback - fin d'import !
-         * @deprecated
-         * @see {@link doImport}
-         */
-        __doImport: function(callback) {
-
-            var $this = this;
-
-            $this.m_Logger.debug("call : doImport !");
-            
-            // Au cas ou ...
-            if (! $this.m_loadSample) {
-                if (! $this.m_loadSample.sample_file.html) {
-                    $this.boxHTML.append("code html à inserer.");
-                }
-                if (! $this.m_loadSample.sample_file.js) {
-                    $this.boxJS.append("code js à inserer.");
-                }
-                if (! $this.m_loadSample.sample_file.css) {
-                    $this.boxCSS.append("code css à inserer.");
-                }
-
-                return;
-            }
-
-            // Url de l'application
-            var url = Helper.url();
-            $this.m_Logger.debug(url);
-
-            // INFO 
-            // cf. http://stackoverflow.com/questions/4368946/javascript-callback-for-multiple-ajax-calls
-            
-            // FIXME 
-            // impl. promises sous IE ? 
-            // l'utilisation à travers JQuery devrait fonctionner ?
-            // cf. http://caniuse.com/#feat=promises
-            
-            
-            JQuery.when(
-                
-                // HTML
-                JQuery.ajax({
-                    url : url.concat($this.m_loadSample.sample_file.html),
-                    type : 'GET' ,
-                    dataType : 'text',
-                    success : function(code_text, statut){ 
-                        $this.m_Logger.debug("code : " + code_text);
-
-                        // extraction du body
-                        var body = Helper.extractBody(code_text);
-                        // insertion du code dans la page
-                        $this.uicodearea.boxHTML.text(body);
-                        $this.m_Logger.debug("body : " + body);
-
-                        // extraction des dependances
-                        var dep = new Dependency(Helper.getDoc(code_text));
-
-                        // INFO
-                        // ajout du path url dans les lib. internes de l'exemple !
-                        // on enleve le '/' de fin de l'URL !
-                        var path_absolu = this.url.substring(0, this.url.lastIndexOf("/"));
-                        var path_relatif= this.url.substring(url.length, this.url.lastIndexOf("/"));
-                        
-                        $this.m_Logger.debug('url abs. : ' + path_absolu);
-                        $this.m_Logger.debug('url rel. : ' + path_relatif);
-                        
-                        var lstUrlInterne = dep.getScriptsInternal(path_relatif);
-                        $this.uisidebar.set_jsapi_dependencies(lstUrlInterne);
-                        $this.m_Logger.debug("url interne : " +lstUrlInterne);
-
-                        // extraction des dependances externes
-                        var lstUrlExterne = dep.getScriptsExternal();
-                        $this.uisidebar.set_jsapi_dependencies(lstUrlExterne);
-                        $this.m_Logger.debug("url externe : " + lstUrlExterne);
-
-                        // extraction des dependances css
-                        var lstUrlCssInterne = dep.getCssInternal(path_relatif);
-                        $this.uisidebar.set_jsapi_dependencies_css(lstUrlCssInterne);
-                        $this.m_Logger.debug("css interne : " +lstUrlCssInterne);
-                        
-                        // extraction des dependances css externes
-                        var lstUrlCssExterne = dep.getCssExternal();
-                        $this.uisidebar.set_jsapi_dependencies_css(lstUrlCssExterne);
-                        $this.m_Logger.debug("css externe : " +lstUrlCssExterne);
-
-                    },
-                    error : function(resultat, statut, erreur){
-                        if (!erreur) {erreur="???"}
-                        var message = "### Statut: " + statut + "(" + erreur + ") ###";
-                        $this.uicodearea.boxHTML.html(message);
-                    }
-                    
-//                    complete : function(resultat, statut){
-//                        $this.m_Logger.debug("html ajax complete !");
-//                        // colorisation synthaxique
-//                        $this.applySyntaxHighlighter('html');
-//                    }
-                }),
-
-                // JS
-                JQuery.ajax({
-                    url : url.concat($this.m_loadSample.sample_file.js),
-                    type : 'GET' ,
-                    dataType : 'text',
-                    success : function(code_text, statut){
-                        $this.m_Logger.debug("code : " + code_text);
-                        // insertion du code dans la page
-                        $this.uicodearea.boxJS.text(code_text);
-                        
-                    },
-                    error : function(resultat, statut, erreur){
-                        if (!erreur) {erreur="???"}
-                        var message = "### Statut: " + statut + "(" + erreur + ") ###";
-                        $this.uicodearea.boxJS.html(message);
-                    }
-                    
-//                    complete : function(resultat, statut){
-//                        $this.m_Logger.debug("js ajax complete !");
-//                        // colorisation synthaxique
-//                        $this.applySyntaxHighlighter('js');
-//                    }
-                }),
-
-                // CSS
-                JQuery.ajax({
-                    url : url.concat($this.m_loadSample.sample_file.css),
-                    type : 'GET' ,
-                    dataType : 'text',
-                    success : function(code_text, statut){
-                        $this.m_Logger.debug("code : " + code_text);
-                        
-                        // FIXME hummm..., pb de path relatif...
-                        // ex. url(img/loading.png)
-                        //     au lieu de url(samples/sample_4/img/loading.png)
-                        var css_text = code_text;
-                        
-                        var css =  Helper.pathIntoCSS(code_text);
-                        for(var i=0; i<css.length; i++) {
-                            // sinon, on determine le nom de l'archive à partir du fichier HTML
-                            var file = $this.m_loadSample.sample_file.css;
-                            var path = file.substring(0, file.lastIndexOf("/")+1);
-                            (function(k){
-                                var v = css[k];
-                                css_text = css_text.replace(v, path + v);
-                            })(i);
-                        }
-                        
-                        // insertion du code dans la page
-                        $this.uicodearea.boxCSS.text(css_text);
-                    },
-                    error : function(resultat, statut, erreur){
-                        if (!erreur) {erreur="???"}
-                        var message = "### Statut: " + statut + "(" + erreur + ") ###";
-                        $this.uicodearea.boxCSS.html(message);
-                    }
-                    
-//                    complete : function(resultat, statut){
-//                        $this.m_Logger.debug("css ajax complete !");
-//                        // colorisation synthaxique
-//                        $this.applySyntaxHighlighter('css');
-//                    }
-                })
-                        
-            ).done(
-                // INFO succes : callback de fin de chargement !
-                function(html, js, css){   
-                    $this.m_Logger.debug("all request ajax : DONE !");
-                    if ($this.options.onsuccess != null && typeof $this.options.onsuccess === 'function') {
-                        $this.options.onsuccess.call($this, "Gestionnaire de fin de chargement !");
-                    }
-                }
-            ).fail(
-                // INFO echec : callback !
-                function(){
-                    $this.m_Logger.debug("one request ajax : FAILED !");
-                    if ($this.options.onerror != null && typeof $this.options.onerror === 'function') {
-                        $this.options.onerror.call($this, "Gestionnaire d'erreur de chargement !");
-                    }   
-                }
-            ).always(
-                // INFO
-                // cette fonction de colorisation synthaxique est toujours appelée !
-                function(){
-                    $this.m_Logger.debug("always call after request ajax !");
-                    $this.applySyntaxHighlighterAll();
-                                                
-                }
-            ).then(
-                // INFO 
-                // callback de fin d'import mais uniquement en cas de reussite !
-                function(){
-                    $this.m_Logger.debug("then call after all success request ajax !");
-                    if (callback != null && typeof callback.onfinish === 'function') {
-                        callback.onfinish.call($this, ["Import de l'exemple : OK !"]);
-                    }
-                }
-            );
-
-        },
         
         /**
          * Import de l'exemple dans la page.
@@ -1001,7 +797,9 @@ define([
             // sont intégrées dans l'iframe ?! d'où un chargement long !?
             // cf. http://blog.blary.be/analyse-diff%C3%A9rentes-fa%C3%A7ons-dint%C3%A9grer-un-script-javascript
             
-            
+            // activation de la patience
+            // this.uicodearea.waiting();
+
             var codeHTML, codeCSS, codeJS;
 
             // cas où la colorisation synthaxique est activée, il faut 
@@ -1077,18 +875,10 @@ define([
             // comment peut on afficher l'image ou avoir une interaction avec qqch qui est 
             // en train de se charger ?
             // 2. comment savoir si l'iframe est chargée ?
-            
-            var strLoadImage = '<div id="myloading"><img src="img/loading.gif"/></div>';
-            
-            var strSetTimout = '\
-            setTimeout(function(){\n\
-                document.getElementById("myloading").style.display="none";\n\
-            }, 5000);';
-            
+
             var strLoadCallback = '\
             function loadCallback () {\n\
                 parent.loadIFrameCallback();\n\
-                // document.getElementById("myloading").style.display="none";\n\
             };';
             
             // resultat 
@@ -1101,18 +891,19 @@ define([
                 html = html.concat("<!-- JS Deps Framework -->", '\n',result.script_framework_deps, '\n');
                 html = html.concat("<!-- Scripts -->", '\n');
                 html = html.concat('<script type="text/javascript">', '\n');
-                // html = html.concat(strSetTimout, '\n');
                 html = html.concat(strLoadCallback, '\n');
                 html = html.concat("</script>", '\n');
                 html = html.concat("<!-- CSS API Deps -->", '\n');
                 html = html.concat(result.css_api_deps, '\n');
+                html = html.concat("<!-- CSS -->", '\n');
                 html = html.concat("<style>", '\n');
                 html = html.concat(result.code.css, '\n');
                 html = html.concat("</style>", '\n');
                 html = html.concat('</head>', '\n');
                 html = html.concat('<body onload="loadCallback()">', '\n');
-                // html = html.concat(strLoadImage, '\n');
+                html = html.concat("<!-- HTML -->", '\n');
                 html = html.concat(result.code.html, '\n');
+                html = html.concat("<!-- Scripts -->", '\n');
                 html = html.concat("<script type=\"text/javascript\">", '\n');
                 html = html.concat(result.code.js, '\n');
                 html = html.concat("</script>", '\n');
@@ -1402,82 +1193,11 @@ define([
             }
 
             // on sauvegarde le tout dans "options"
-            JQuery.extend( true, options,  entries);
-            JQuery.extend( true, options,  {base:Helper.url()});
+            Helper.extend(options,  entries);
+            Helper.extend(options,  {base:Helper.url()});
             
             var dl = new Download(options);
             dl.send();
-        },
-        
-        /**
-         * Sauvegarde.
-         * 
-         *  Un fichier archive contenant le code HTML, JS et CSS.
-         *  
-         * @method doSave_servlet
-         * @deprecated Not yet used !
-         */
-        doSave_servlet: function() {
-
-            var $this = this;
-            
-            $this.m_Logger.debug("Not yet implemented : doSave !");
-            
-            // FIXME
-            // téléchargement du fichier resultat zippé avec AJAX en utilisant la servlet du projet API :
-            // XMLHttpRequest cannot load http://localhost:9999/geoportail/api/save?fn=downloadSample2.html&ct=text/html&dt=null. 
-            // No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8383' is therefore not allowed access.
-            // => on a un probleme de cross domain avec des servlets hebergées sur un autre domaine !!!
-            // 
-            // FIXME 
-            // en mode GET, on risque un pb de longueur d'url en mode HTML ...
-            // 
-            // FIXME 
-            // en mode POST, la servlet ne permet de choisir le nom du fichier...
-            // => dev. à prevoir sur la servlet...
-
-
-            // See: http://api.jquery.com/jQuery.ajaxPrefilter/
-            JQuery.ajaxPrefilter( 
-                function( options ) {
-                    if ( options.crossDomain ) {
-                        var newData = {};
-                        // Copy the options.data object to the newData.data property.
-                        // We need to do this because javascript doesn't deep-copy variables by default.
-                        newData.data = JQuery.extend({}, options.data);
-                        newData.url = options.url;
-
-                        // Reset the options object - we'll re-populate in the following lines.
-                        options = {};
-
-                        // Set the proxy URL
-                        options.url = Config.application.proxy + "?url=" + encodeURIComponent( newData.url);
-                        options.data = JQuery.param(newData.data);
-                        options.crossDomain = false;
-                    }
-                });
-
-            JQuery.ajax({
-                url : Config.application.servlet.download,
-                type : 'POST',
-                data : {
-                    fn: "downloadSample.html",
-                    ct: "text/html",
-                    dt: this.m_resultStandAlone
-                },
-                crossDomain: true,
-                success : function(code_text, statut){
-                    $this.m_Logger.debug("Not yet implemented : success !");
-                },
-                error : function(resultat, statut, erreur){
-                    $this.m_Logger.warn("Mode Ajax en échec : on tente un export en mode HTML simple !");
-                    $this.doExport();
-                },
-                complete : function(resultat, statut){
-                    $this.m_Logger.debug("Not yet implemented : complete !");
-                }
-            });
-
         },
 
         /**

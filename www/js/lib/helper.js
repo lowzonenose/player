@@ -155,6 +155,28 @@ define({
         return lstresources;
     },
     
+    /**
+     * Merge 2 ou +ieurs objets javascript properties (json)
+     * 
+     * @todo fusionner des tableaux
+     * @param {object} objet
+     */   
+    extend : function(out) {
+        out = out || {};
+
+        for (var i = 1; i < arguments.length; i++) {
+          if (!arguments[i])
+            continue;
+
+          for (var key in arguments[i]) {
+            if (arguments[i].hasOwnProperty(key))
+              out[key] = arguments[i][key];
+          }
+        }
+
+        return out;
+      },
+      
     /********************
      * load Element (doc)
      ********************/

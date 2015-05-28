@@ -22,7 +22,7 @@ define([
             ES6Promise, 
             JSZip, JSZipUtils, JSFileSave, 
             Sort) {
-    
+        
     "use strict";
     
     /**

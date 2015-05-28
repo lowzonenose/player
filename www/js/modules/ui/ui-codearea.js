@@ -41,7 +41,7 @@ define(["jquery"], function($) {
     UICodeArea.IDBOXJS     = "js";
     UICodeArea.IDBOXCSS    = "css";
     UICodeArea.IDBOXRESULT = "iframe";
-    
+    UICodeArea.IDWAITING   = "myloading";
     
     UICodeArea.prototype = {
 
@@ -53,6 +53,7 @@ define(["jquery"], function($) {
         boxJS: null,
         boxCSS: null,
         boxResult:null, // c'est l'iframe !
+        loading:null,
         
         constructor: UICodeArea,
         
@@ -110,6 +111,7 @@ define(["jquery"], function($) {
                                     $('<td class="_PlayGroundJS_box _PlayGroundJS_boxBottom _PlayGroundJS_boxRight"></td>')
                                     .append(
                                             $('<div class="_PlayGroundJS_boxContainer"></div>')
+                                            // .append($self._waiting())
                                             .append($self._boxResult())
                                     )
                             )
@@ -128,7 +130,7 @@ define(["jquery"], function($) {
             $('#'+UICodeArea.IDBOXJS).val('');
             $('#'+UICodeArea.IDBOXCSS).val('');
             $('#'+UICodeArea.IDBOXRESULT).val('');
-            
+            $('#'+UICodeArea.IDWAITING).toggle();
             
         },
         
@@ -147,6 +149,13 @@ define(["jquery"], function($) {
             var $self = this; // instance de la classe ! 
             
             throw new Error("Not yet implemented !");
+        },
+        
+        waiting: function() {
+            var $this = this.context;
+            var $self = this; // instance de la classe ! 
+
+            $self.loading.show();
         },
         
         /********************
@@ -226,7 +235,12 @@ define(["jquery"], function($) {
         _boxResult: function () {
             this.boxResult = $('<iframe id="iframe" class="_PlayGroundJS_boxEdit" frameBorder="0"></iframe>');
             return this.boxResult;
-        }
+        },
+        
+        _waiting: function () {
+            this.loading = $('<div id="myloading"><img src="img/loading.gif"/></div>');
+            return this.loading;
+        },
 
     };
     

@@ -1,45 +1,27 @@
+/* global expect */
+
 define(["download"], function (Download) {
     
     'use strict';
     
-    describe("Test de la classe Download.",
+    describe("Test de la classe Download (1)",
     function () {
         
-        beforeEach(function() {
-
-        });
+        beforeEach(function() {});
         afterEach (function() {});
         
-        it("Test avec parametres vides !", function() {
-            var options = {
-                archive: "",
-                base: "",
-                mode: ""
-            };
-
-            try {
-                
-                var dl = new Download(options);
-                dl.send();
-                
-                console.log("success !");
-                expect(true).toBe(true);
-                
-            } catch (e) {
-                console.log("failure : " + e);
-                expect(false).toBe(false);
-            }
-
-        });
-        
-        it("Test du téléchargement d'une archive en mode TAG (par defaut)", function() {
+        it("Test du téléchargement d'une archive en mode TAG (par defaut)", function(done) {
             
+            var match = "cool";
             var options = {
                 archive: "sample",
                 base: "resources/",
                 mode: "TAG",
                 onsuccess: function (e) {
                     console.log("success : " + e);
+                    expect(e).toEqual(jasmine.stringMatching(match));
+                    expect(e).toEqual(jasmine.stringMatching("mode:TAG"));
+                    done();
                 },
                 onfailure: function (e) {
                     console.log("failure : " + e);
@@ -63,53 +45,41 @@ define(["download"], function (Download) {
 
         });
         
-        it("Test du téléchargement d'une archive en mode XHR/URI", function() {
+        it("Test du téléchargement d'une archive en mode XHR/URI", function(done) {
             
-            // FIXME 
-            // hummm..., la methode 'expect' de jasmine echoue dans les callback 
-            // car pb de contexte de this !?
-            // comment passer le contexte jasmine ?
-
-            // cf. https://github.com/jasmine/jasmine-ajax
-            
-            // var callbacks = {
-            //     success: jasmine.createSpy(),
-            //     failure: jasmine.createSpy(),
-            // };
-            
+            var match = "cool";
             var options = {
                 archive: "sample",
                 base: "resources/",
                 mode: "URI",
                 onsuccess: function (e) {
                     console.log("success : " + e);
+                    expect(e).toEqual(jasmine.stringMatching(match));
+                    expect(e).toEqual(jasmine.stringMatching("[mode:XHR][URI]"));
+                    done();
                 },
                 onfailure: function (e) {
                     console.log("failure : " + e);
                 }
-                // onsuccess: callbacks.success,
-                // onfailure: callbacks.failure
             };
             
             var dl = new Download(options);
             dl.send();
             
-            // spyOn(dl, 'spy').andCallFake(function(e) {
-            //     e.spy();
-            // });
-            
-            // expect(callbacks.success).toHaveBeenCalled();  //Verifies this was called
-            // expect(callbacks.failure).not.toHaveBeenCalled();  //Verifies this was NOT called
         });
         
-        it("Test du téléchargement d'une archive en mode XHR/URL", function() {
-            // pending();
+        it("Test du téléchargement d'une archive en mode XHR/URL", function(done) {
+            
+            var match = "cool";
             var options = {
                 mode: "URL",
                 archive: "sample",
                 base: "resources/",
                 onsuccess: function (e, o) {
                     console.log("success : " + e);
+                    expect(e).toEqual(jasmine.stringMatching(match));
+                    expect(e).toEqual(jasmine.stringMatching("[mode:XHR][URL]"));
+                    done();
                 },
                 onfailure: function (e) {
                     console.log("failure : " + e);
@@ -121,31 +91,6 @@ define(["download"], function (Download) {
  
         });
         
-        it("Test avec une liste de fichiers vide !", function() {
-            
-            var options = {
-                archive: "sample-fake",
-                base: "resources/",
-                files:[],
-                onsuccess: function () {},
-                onfailure: function () {}
-            };
-            
-            try {
-                
-                var dl = new Download(options);
-                dl.send();
-                
-                console.log("success !");
-                expect(true).toBe(true);
-                
-            } catch (e) {
-                console.log("failure : " + e);
-                expect(false).toBe(false);
-            }
-
-        });
-
         it("Test avec une liste de fichiers !", function() {
 
             var options = {
@@ -334,6 +279,58 @@ define(["download"], function (Download) {
             
             var dl = new Download(options);
             dl.send();
+
+        });
+    });
+    
+    describe("Test de la classe Download (2)",
+    function () {
+        
+        it("Test avec parametres vides !", function() {
+            
+            var options = {
+                archive: "",
+                base: "",
+                mode: ""
+            };
+
+            try {
+                
+                var dl = new Download(options);
+                dl.send();
+                
+                console.log("success !");
+                expect(true).toBe(true);
+                
+            } catch (e) {
+                console.log("failure : " + e);
+                expect(false).toBe(false);
+            }
+
+        });
+        
+        it("Test avec une liste de fichiers vide !", function() {
+            
+            var options = {
+                archive: "sample-fake",
+                base: "resources/",
+                files:[],
+                onsuccess: function () {},
+                onfailure: function () {}
+            };
+            
+            try {
+                
+                var dl = new Download(options);
+                dl.send();
+                
+                console.log("success !");
+                expect(true).toBe(true);
+                
+            } catch (e) {
+                console.log("failure : " + e);
+                expect(false).toBe(false);
+            }
 
         });
     });
